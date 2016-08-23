@@ -1,4 +1,4 @@
-//jshint esversion: 6
+"use strict";
 
 /**
  * @typedef twitchInfo
@@ -37,12 +37,12 @@ var request = require('request');
  * @param {twitchInfo} result - 트위치 방송정보
  */
 exports.update = (ids, callback) => {
-	"use strict";
-	if(!callback) callback = (result) => {};
+
+	if(!callback) callback = () => {};
 
 	ids.forEach((id) => {
-		this.getInfo(id, (err, info) => {
-			if(err) return;
+		this.getInfo(id, (info) => {
+			if(!info.onair) return;
 			callback(info);
 		});
 	});
@@ -57,32 +57,32 @@ exports.update = (ids, callback) => {
  */
 /**
  * @callback getInfoCallback
- * @param {null|string} err - 성공시 null, 에러시 메시지
  * @param {twitchInfo} info - 방송정보
  */
-exports.getInfo = (id, callback) => {
-"use strict";
-try {
-	if(!callback) callback = (err, info) => {};
+exports.getInfo = (id, callback) => { try {
+
+	if(!callback) callback = () => {};
+
 	request({ url: USER_URL+id, timeout: 5000 }, (err, res, body) => {
-		if(err || res.statusCode !== 200) {
-			callback('Connection Error', null);
-			return;
-		}
+
+		if(err || res.statusCode !== 200) return;
+
 		let result = parseUserInfo(body);
+		if(!result.result) return;
+
 		getStreamInfo(id, (err, streamInfo) => {
-			if(err) { callback(err, null); return; }
+			if(err) return;
 			result.title = streamInfo.title;
 			result.description = streamInfo.description;
 			result.url = streamInfo.url;
 			result.thumbnail = streamInfo.thumbnail;
 			result.onair = streamInfo.onair;
 			result.viewer = streamInfo.viewer;
-			callback(null, result);
+			callback(result);
 		});
 	});
 } catch (e) {
-
+	console.log('Error : '+e+'@getInfo() #stream_api/twitch');
 }};
 
 
@@ -97,17 +97,13 @@ try {
  * @param {null|string} err - 성공시 null, 에러시 메세지
  * @param {twitchInfo} info - 방송정보
  */
-var getStreamInfo = (id, callback) => {
-"use strict";
-try {
-	if(!callback) callback = (err, info) => {};
+var getStreamInfo = (id, callback) => { try {
+	if(!callback) callback = () => {};
 	request({ url: STREAM_URL+id, timeout: 5000 }, (err, res, body) => {
-		if(err || res.statusCode !== 200) {
-			callback('Connection Error', null);
-			return;
-		}
-		let info = JSON.parse(body).stream;
 		
+		if(err || res.statusCode !== 200) return;
+		
+		let info = JSON.parse(body).stream;
 		if(!info) return;
 		let result = {
 			title: info.channel.display_name,
@@ -120,7 +116,7 @@ try {
 		callback(null, result);
 	});
 } catch (e) {
-
+	console.log('Error : '+e+'@getStreamInfo() #stream_api/twitch');
 }}; 
 
 
@@ -130,9 +126,8 @@ try {
  * @param {string} body - RawData
  * @return {twitchInfo}
  */
-var parseUserInfo = (body) => {
-"use strict";
-try {
+var parseUserInfo = (body) => { try {
+	
 	let info = JSON.parse(body);
 	if(!info) return { return: false, err: 'Parse Error' };
 	
@@ -149,6 +144,8 @@ try {
 		onair: null,
 		viewer: null
 	};
-} catch(e) {
 
+} catch(e) {
+	console.log('Error : '+e+'@parseUserInfo() #stream_api/twitch');
+	return { result: false, err: e };
 }};

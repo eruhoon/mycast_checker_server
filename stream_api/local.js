@@ -1,3 +1,5 @@
+"use strict";
+
 // Load Module
 var request = require('request');
 var xmlParser = require('xml2js').parseString;
@@ -22,9 +24,7 @@ exports.update = function(users, callback) {
 	}, function(err, res, body) {
 		if(err) return;
 		if(res.statusCode !== 200) return;
-		var host = res.request.host;
-
-		var result = parseInfo(body, users, callback);
+		parseInfo(body, users, callback);
 	});
 	
 };
@@ -40,8 +40,6 @@ var parseInfo = function(body, users, callback) { try {
 
 		streams.forEach(function(e) {
 			var stream = e.$;
-
-			var appName = stream.applicationName;
 			var streamName = stream.streamName;
 			var viewer = stream.sessionsTotal;
 
@@ -61,7 +59,7 @@ var parseInfo = function(body, users, callback) { try {
 				url: VIEW_URL+userEntry.idx,
 				thumbnail: userEntry.broadcast_bgimg,
 				onair: true,
-				viewer: viewer
+				viewer: parseInt(viewer)
 			};
 
 			if(callback) callback(ret);

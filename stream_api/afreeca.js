@@ -1,5 +1,4 @@
-//jshint esversion: 6
-//jshint strict: true
+"use strict";
 
 /**
  * @typedef afreecaInfo
@@ -18,11 +17,11 @@
  */
 
 
-/** @constant {string} */
-const URL = 'http://sch.afreeca.com/api.php?m=liveSearch&v=1.0&szOrder=&c=EUC-KR&szKeyword=';
+/** @constant */
+const URL = (id) => { return 'http://sch.afreeca.com/api.php?m=liveSearch&v=1.0&szOrder=&c=EUC-KR&szKeyword='+id; };
 
 
-// Load Module
+/** @module */
 var request = require('request');
 var iconv = require('iconv-lite');
 iconv.skipDecodeWarning = true;
@@ -38,24 +37,19 @@ iconv.skipDecodeWarning = true;
  * @callback updateCallback
  * @param {afreecaInfo} result - 아프리카 방송정보
  */
-exports.update = (ids, callback) => {
-	"use strict";
+exports.update = (ids, callback) => { try {
+
+	if(!callback) callback = () => {};
 
 	ids.forEach((id) => {
-		request({
-			url: URL + id,
-			encoding: 'binary'
-		}, function(err, res, body) {
-			if(err) return;
-			if(res.statusCode !== 200) return;
-			body = iconv.decode(body, 'euckr');
-			var result = parseInfo(body, id);
-			if(!result.result) return;
-
-			if(callback) callback(result);
+		this.getInfo(id, (info) => {
+			if(!info.onair) return;
+			callback(info);
 		});
 	});
-};
+} catch(e) {
+	console.log('Error : '+e+'@update() #stream_api/afreeca');
+}};
 
 
 /**
@@ -66,33 +60,31 @@ exports.update = (ids, callback) => {
  */
 /**
  * @callback getInfoCallback
- * @param {null|string} err - 성공시 null, 에러시 메시지
  * @param {afreecaInfo} info - 방송정보
  */
-exports.getInfo = (id, callback) => {
-"use strict";
-try {
-	if(!callback) callback = (err, info) => { };
-	var uri = URL + id;
-	request({
-		url: uri,
+exports.getInfo = (id, callback) => { try {
+
+	if(!callback) callback = () => {};
+	
+	let reqOpt = {
+		url: URL(id),
 		encoding: 'binary',
 		timeout: 5000
-	}, (err, res, body) => {
-		if(err || res.statusCode !== 200) {
-			callback('Connection Error', null);
-			return;
-		}
+	};
+
+	request(reqOpt, (err, res, body) => {
+
+		if(err || res.statusCode !== 200) return;
+
 		body = iconv.decode(body, 'euckr');
 		let result = parseInfo(body, id);
-		if(!result.result) {
-			callback('Parse Error', null);
-		}
-		callback(null, result);
+		if(!result.result) return;
+		callback(result);
 	});
 
 } catch(e) {
-	callback(err, { result: false });
+	console.log('Error : '+e+'@getInfo() #stream_api/afreeca');
+	//callback({ result: false, err: e });
 }};
 
 
@@ -103,9 +95,8 @@ try {
  * @param {string} id - 검증용 id
  * @return {afreecaInfo} 방송정보
  */
-var parseInfo = (body, id) => {
-"use strict";
-try {
+var parseInfo = (body, id) => { try {
+	
 	var info = JSON.parse(body);
 	var realBroad = info.REAL_BROAD.find((e) => { return e.user_id === id; });
 	if(!realBroad) return { result: false, err: '방송이 없습니다.' };
@@ -125,9 +116,10 @@ try {
 	};
 
 } catch(e) {
-	console.log('ParseError : '+e+'@parseInfo()');
-	return {
-		result: false,
-		err: 'Unknown Error'
-	};
+	if (e instanceof TypeError) {
+		// ignore TypeError
+	} else {
+		console.log('Error : '+e+'@parseBody() #stream_api/afreeca');	
+	}
+	return { result: false, err: e };
 }};

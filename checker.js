@@ -48,8 +48,7 @@ exports.update = function() {
 
 		externalUsers.forEach((user) => {
 			
-			let getInfoCallback = (err, info) => {
-				if(err) return;
+			let getInfoCallback = (info) => {
 				if(!info.result) return;
 				info = patchFromExternalToLocalInfo(info, user);
 				streams.local.push(info);
@@ -63,7 +62,7 @@ exports.update = function() {
 					Twitch.getInfo(user.twitch_id, getInfoCallback);
 					break;
 				case 'tvpot':
-					//Tvpot.getInfo(user.twitch)
+					Tvpot.getInfo(user.daumpot_id, getInfoCallback);
 					break;
 				default:
 					break;
@@ -98,9 +97,7 @@ exports.update = function() {
 
 exports.getStream = function() {
 	streams.local.sort((a, b) => {
-		if(a.platform < b.platform) return -1;
-		if(a.platform > b.platform) return 1;
-		return a.keyid < b.keyid ? -1 : 1;
+		return a.nickname < b.nickname ? -1 : 1;
 	});
 
 	streams.external.sort((a, b) => {
