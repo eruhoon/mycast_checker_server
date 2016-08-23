@@ -1,4 +1,4 @@
-//jshint esversion: 6
+"use strict";
 
 /**
  * @typedef streamInfo
@@ -21,13 +21,14 @@ var db = require('../database').mysql;
 var Local = require('./stream_api/local');
 var Afreeca = require('./stream_api/afreeca');
 var Azubu = require('./stream_api/azubu');
+var Tvpot = require('./stream_api/tvpot');
 var Twitch = require('./stream_api/twitch');
+
 
 var streams = { local: [], external: [] };
 
 
 exports.update = function() {
-	"use strict";
 	
 	// Local stream
 	streams.local = [];
@@ -44,27 +45,25 @@ exports.update = function() {
 		let externalUsers = users.filter((e) => {
 			return e.broadcast_class !== 'local';
 		});
+
 		externalUsers.forEach((user) => {
+			
+			let getInfoCallback = (err, info) => {
+				if(err) return;
+				if(!info.result) return;
+				info = patchFromExternalToLocalInfo(info, user);
+				streams.local.push(info);
+			};
+
 			switch(user.broadcast_class) {
-				case 'wowza':
-					console.log(user);
-					break;
 				case 'afreeca':
-					Afreeca.getInfo(user.afreeca_id, (err, info) => {
-						if(err) return;
-						if(!info.result) return;
-						info = patchFromExternalToLocalInfo(info, user);
-						streams.local.push(info);
-					});
+					Afreeca.getInfo(user.afreeca_id, getInfoCallback);
 					break;
 				case 'twitch':
-					Twitch.getInfo(user.twitch_id, (err, info) => {
-						console.log(err, info);
-						if(err) return;
-						if(!info.result) return;
-						info = patchFromExternalToLocalInfo(info, user);
-						streams.local.push(info);
-					});
+					Twitch.getInfo(user.twitch_id, getInfoCallback);
+					break;
+				case 'tvpot':
+					//Tvpot.getInfo(user.twitch)
 					break;
 				default:
 					break;
@@ -78,18 +77,21 @@ exports.update = function() {
 		let afreecaIds = [];
 		let azubuIds = [];
 		let twitchIds = [];
+		let tvpotIds = [];
 
 		// Get Ids
 		result.forEach((e) => {
 			if(e.platform === 'afreeca') afreecaIds.push(e.keyid);
 			if(e.platform === 'azubu') azubuIds.push(e.keyid);
 			if(e.platform === 'twitch') twitchIds.push(e.keyid);
+			if(e.platform === 'tvpot') tvpotIds.push(e.keyid);
 		});
 
 		// Stream Update
 		Afreeca.update(afreecaIds, (s) => { streams.external.push(s); });
 		Azubu.update(azubuIds, (s) => { streams.external.push(s); });
 		Twitch.update(twitchIds, (s) => { streams.external.push(s); });
+		Tvpot.update(tvpotIds, (s) => { streams.external.push(s); });
 	});
 };
 

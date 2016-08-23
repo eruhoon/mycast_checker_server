@@ -1,0 +1,22 @@
+{
+	"undef": true,
+
+	"unused": true,
+
+	"esversion": 6,
+
+	"eqnull": true,
+
+	// Project가 Nodejs로 되어있는지 검사
+	"node": true,
+
+	// Strict Mode 범위
+	"strict": "global",
+
+	// == null 체크
+	"eqnull": true,
+	"eqeqeq": true,
+
+	// 미리 정의된 변수
+	"predef": []
+}

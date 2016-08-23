@@ -81,7 +81,7 @@ try {
 		});
 	});
 } catch(e) {
-	console.log('Error : '+e+'@getInfo().azubu.js');
+	console.log('Error : '+e+'@getInfo() #stream_api/azubu');
 	callback(err, null);
 }};
 
