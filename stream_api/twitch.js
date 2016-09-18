@@ -63,8 +63,12 @@ exports.getInfo = (id, callback) => { try {
 
 	if(!callback) callback = () => {};
 
-	request({ url: USER_URL+id, timeout: 5000 }, (err, res, body) => {
-
+	let opt = {
+		url: USER_URL+id,
+		headers: { 'Client-ID': CLIENT_ID },
+		timeout: 5000
+	};
+	request(opt, (err, res, body) => {
 		if(err || res.statusCode !== 200) return;
 
 		let result = parseUserInfo(body);
@@ -99,8 +103,13 @@ exports.getInfo = (id, callback) => { try {
  */
 var getStreamInfo = (id, callback) => { try {
 	if(!callback) callback = () => {};
-	request({ url: STREAM_URL+id, timeout: 5000 }, (err, res, body) => {
-		
+
+	let opt = {
+		url: STREAM_URL+id,
+		headers: { 'Client-ID': CLIENT_ID },
+		timeout: 5000
+	};
+	request(opt, (err, res, body) => {
 		if(err || res.statusCode !== 200) return;
 		
 		let info = JSON.parse(body).stream;
