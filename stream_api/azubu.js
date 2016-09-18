@@ -1,4 +1,4 @@
-//jshint esversion: 6
+"use strict";
 
 /**
  * @typedef azubuInfo
@@ -36,8 +36,7 @@ var request = require('request');
  * @param {azubuInfo} result - 아주부 방송정보
  */
 exports.update = (ids, callback) => {
-	"use strict";
-	if(!callback) callback = (result) => {};
+	if(!callback) callback = () => {};
 
 	ids.forEach((id) => {
 		this.getInfo(id, (err, info) => {
@@ -58,31 +57,22 @@ exports.update = (ids, callback) => {
  */
 /**
  * @callback getInfoCallback
- * @param {null|string} err - 성공시 null, 에러시 메시지
  * @param {afreecaInfo} info - 방송정보
  */
-exports.getInfo = (id, callback) => {
-"use strict";
-try {
-	if(!callback) callback = (err, info) => {};
+exports.getInfo = (id, callback) => { try {
+	if(!callback) callback = () => {};
 	var uri = URL+id;
 	request({ url: uri, timeout: 5000 }, (err, res, body) => {
-		if(err || res.statusCode !== 200) {
-			callback('Connection Error', null);
-			return;
-		}
+		if(err || res.statusCode !== 200) return;
 		let result = parseInfo(body);
-		if(!result.result) {
-			callback('Parse Error', null);
-		}
+		if(!result.result) return;
 		getUrl(result.keyid, (url) => {
 			result.url = url;
-			callback(null, result);
+			callback(result);
 		});
 	});
 } catch(e) {
 	console.log('Error : '+e+'@getInfo() #stream_api/azubu');
-	callback(err, null);
 }};
 
 

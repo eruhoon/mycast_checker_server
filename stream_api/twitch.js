@@ -109,7 +109,7 @@ var getStreamInfo = (id, callback) => { try {
 			title: info.channel.display_name,
 			description: info.channel.status,
 			url: 'https://player.twitch.tv/?channel='+id,
-			thumbnail: info.preview.large,
+			thumbnail: info.preview.large+'?'+new Date().getTime(),
 			onair: true,
 			viewer: parseInt(info.viewers)
 		};

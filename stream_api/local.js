@@ -31,33 +31,31 @@ exports.update = function(users, callback) {
 
 
 var parseInfo = function(body, users, callback) { try {
-	xmlParser(body, function(err, result){
+	xmlParser(body, (err, result) => {
 		if(!result) return;
-		var wowzaServer = result.WowzaMediaServer || result.WowzaStreamingEngine;
+		let wowzaServer = result.WowzaMediaServer || result.WowzaStreamingEngine;
 		if(!wowzaServer) return;
-		var streams = wowzaServer.Stream;
+		let streams = wowzaServer.Stream;
 		if(!streams) return;
 
 		streams.forEach(function(e) {
-			var stream = e.$;
-			var streamName = stream.streamName;
-			var viewer = stream.sessionsTotal;
+			let stream = e.$;
+			let streamName = stream.streamName;
+			let viewer = stream.sessionsTotal;
 
-			var userEntry = users.find(function(e){
-				return e.id === streamName;
-			});
-			if(!userEntry) return;
+			let user = users.find((e) => { return e.id === streamName; });
+			if(!user) return;
 
-			var ret = {
+			let ret = {
 				result: true,
 				platform: 'local',
-				keyid: userEntry.idx,
-				icon: userEntry.icon,
-				nickname: userEntry.nickname,
-				title: userEntry.nickname,
-				description: userEntry.nickname+'의 방송[공용채널]',
-				url: VIEW_URL+userEntry.idx,
-				thumbnail: userEntry.broadcast_bgimg,
+				keyid: user.idx,
+				icon: user.icon,
+				nickname: user.nickname,
+				title: user.nickname,
+				description: user.nickname+'의 방송[공용채널]',
+				url: VIEW_URL+user.idx,
+				thumbnail: user.broadcast_bgimg,
 				onair: true,
 				viewer: parseInt(viewer)
 			};

@@ -110,7 +110,7 @@ var parseInfo = (body, id) => { try {
 		title: realBroad.station_name,
 		description: realBroad.broad_title,
 		url: 'http://play.afreeca.com/'+realBroad.user_id+'/embed',
-		thumbnail: realBroad.sn_url,
+		thumbnail: realBroad.sn_url+'?'+new Date().getTime(),
 		onair: true,
 		viewer: parseInt(realBroad.total_view_cnt)
 	};

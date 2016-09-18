@@ -13,6 +13,7 @@
  * @property {string} thumbnail - 방송 썸네일
  * @property {boolean} onair - 방송중 여부
  * @property {value} viewer - 시청자 수
+ * @property {value} alarm - 알람 수
  * @property {string} err - 실패 시 에러메세지
  */
 
@@ -31,15 +32,15 @@ var streams = { local: [], external: [] };
 exports.update = function() {
 	
 	// Local stream
-	streams.local = [];
 	db.query('SELECT * FROM user', (err, result) => {
 		let users = result;
 
 		// Local
+		let localStreams = [];
 		let localUsers = users.filter((e) => {
 			return e.broadcast_class === 'local';
 		});
-		Local.update(localUsers, (s) => { streams.local.push(s); });
+		Local.update(localUsers, (s) => { localStreams.push(s); });
 
 		// External
 		let externalUsers = users.filter((e) => {
@@ -51,7 +52,7 @@ exports.update = function() {
 			let getInfoCallback = (info) => {
 				if(!info.result) return;
 				info = patchFromExternalToLocalInfo(info, user);
-				streams.local.push(info);
+				localStreams.push(info);
 			};
 
 			switch(user.broadcast_class) {
@@ -68,34 +69,50 @@ exports.update = function() {
 					break;
 			}
 		});
+
+		streams.local = localStreams;
 	});
 
 	// External Stream
-	streams.external = [];
-	db.query('SELECT * FROM stream', (err, result) => {
-		let afreecaIds = [];
-		let azubuIds = [];
-		let twitchIds = [];
-		let tvpotIds = [];
+	let externalQuery = 'SELECT stream.*, (SELECT count(*) FROM stream_alarm WHERE stream.idx=stream_alarm.stream_idx) alarm_count FROM stream ';
+	db.query(externalQuery,	(err, result) => {
+		
+		let externals = [];
 
-		// Get Ids
-		result.forEach((e) => {
-			if(e.platform === 'afreeca') afreecaIds.push(e.keyid);
-			if(e.platform === 'azubu') azubuIds.push(e.keyid);
-			if(e.platform === 'twitch') twitchIds.push(e.keyid);
-			if(e.platform === 'tvpot') tvpotIds.push(e.keyid);
+		result.forEach((stream) => {
+
+			let getInfoCallback = (info) => {
+				if(!info || !info.result) return;
+				if(!info.onair) return;
+				info.alarm = stream.alarm_count;
+				externals.push(info);
+			};
+
+			switch(stream.platform) {
+				case 'afreeca':
+					Afreeca.getInfo(stream.keyid, getInfoCallback);
+					break;
+				case 'azubu':
+					Azubu.getInfo(stream.keyid, getInfoCallback);
+					break;
+				case 'twitch':
+					Twitch.getInfo(stream.keyid, getInfoCallback);
+					break;
+				case 'tvpot':
+					Tvpot.getInfo(stream.keyid, getInfoCallback);
+					break;
+				default:
+					break;
+			}
 		});
 
-		// Stream Update
-		Afreeca.update(afreecaIds, (s) => { streams.external.push(s); });
-		Azubu.update(azubuIds, (s) => { streams.external.push(s); });
-		Twitch.update(twitchIds, (s) => { streams.external.push(s); });
-		Tvpot.update(tvpotIds, (s) => { streams.external.push(s); });
+		streams.external = externals;
+
 	});
 };
 
 
-exports.getStream = function() {
+exports.getStreams = function() {
 	streams.local.sort((a, b) => {
 		return a.nickname < b.nickname ? -1 : 1;
 	});
