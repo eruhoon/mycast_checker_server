@@ -20,7 +20,7 @@
 /** @constant {string} */
 const USER_URL = 'https://api.twitch.tv/kraken/users/';
 const STREAM_URL = 'https://api.twitch.tv/kraken/streams/';
-
+const CLIENT_ID = 'sos9dle7u1v02i5glmv4pgm1ua83mcl';
 
 // Load Module
 var request = require('request');
