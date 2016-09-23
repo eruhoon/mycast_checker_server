@@ -1,5 +1,17 @@
 "use strict";
 
+var db = require('../database').mysql;
+
+var Local = require('./stream_api/local');
+var Afreeca = require('./stream_api/afreeca');
+var Azubu = require('./stream_api/azubu');
+var Tvpot = require('./stream_api/tvpot');
+var Twitch = require('./stream_api/twitch');
+
+var streams = { local: [], external: [] };
+
+const DEFAULT_SENSITIVITY = 5;
+
 /**
  * @typedef streamInfo
  * @type {object}
@@ -16,18 +28,12 @@
  * @property {value} alarm - 알람 수
  * @property {string} err - 실패 시 에러메세지
  */
-
-var db = require('../database').mysql;
-
-var Local = require('./stream_api/local');
-var Afreeca = require('./stream_api/afreeca');
-var Azubu = require('./stream_api/azubu');
-var Tvpot = require('./stream_api/tvpot');
-var Twitch = require('./stream_api/twitch');
-
-
-var streams = { local: [], external: [] };
-
+const streamWrapper = (stream) => {
+	return {
+		stream,
+		sensitivity: DEFAULT_SENSITIVITY
+	};
+};
 
 exports.update = function() {
 	
@@ -78,6 +84,7 @@ exports.update = function() {
 	db.query(externalQuery,	(err, result) => {
 		
 		let externals = [];
+		updateStream();
 
 		result.forEach((stream) => {
 
@@ -85,7 +92,7 @@ exports.update = function() {
 				if(!info || !info.result) return;
 				if(!info.onair) return;
 				info.alarm = stream.alarm_count;
-				externals.push(info);
+				addStream(info);
 			};
 
 			switch(stream.platform) {
@@ -111,19 +118,44 @@ exports.update = function() {
 	});
 };
 
+let updateStream = () => {
+	streams.external = streams.external.map(e => {
+		e.sensitivity--;
+		return e;
+	}).filter(e => e.sensitivity > 0);
+};
 
-exports.getStreams = function() {
-	streams.local.sort((a, b) => {
-		return a.nickname < b.nickname ? -1 : 1;
+let addStream = (info) => {
+	let newStream = streamWrapper(info);
+	let isUpdate = false;
+	streams.external = streams.external.map(e => {
+		let s = e.stream;
+		if(s.keyid === info.keyid && s.platform === info.platform){
+			isUpdate = true;
+			return newStream;
+		}
+		return e;
 	});
 
-	streams.external.sort((a, b) => {
+	if(!isUpdate) streams.external.push(newStream);
+
+};
+
+
+exports.getStreams = function() {
+	
+	var local = streams.local.sort((a, b) => {
+		return a.nickname < b.nickname ? -1 : 1;
+	});
+	
+	let external = streams.external.map(e => e.stream);
+	external.sort((a, b) => {
 		if(a.platform < b.platform) return -1;
 		if(a.platform > b.platform) return 1;
 		return a.keyid < b.keyid ? -1 : 1;
 	});
-
-	return streams;
+	
+	return { local, external };
 };
 
 
