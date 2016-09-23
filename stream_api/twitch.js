@@ -22,25 +22,27 @@ const CLIENT_ID = 'sos9dle7u1v02i5glmv4pgm1ua83mcl';
  * @property {value} viewer - 시청자 수
  * @property {string} err - 실패 시 에러메세지
  */
-const DEFAULT_TWITCH_INFO = {
-	result: false,
-	platform: 'twitch',
-	keyid: null,
-	icon: null,
-	nickname: null,
-	title: null,
-	description: null,
-	url: null,
-	thumbnail: null,
-	onair: false,
-	viewer: 0,
-	err: null
+const DEFAULT_TWITCH_INFO = () => {
+	return {
+		result: false,
+		platform: 'twitch',
+		keyid: null,
+		icon: null,
+		nickname: null,
+		title: null,
+		description: null,
+		url: null,
+		thumbnail: null,
+		onair: false,
+		viewer: 0,
+		err: null
+	};
 };
 
 // Load Module
 var request = require('request');
 
-let init = () => new Promise((resolve) => { resolve(DEFAULT_TWITCH_INFO); });
+let init = () => new Promise((resolve) => { resolve(DEFAULT_TWITCH_INFO()); });
 
 let fillUserToInfo = (id, info) => new Promise((resolve, reject) => {
 	let opt = {
@@ -55,7 +57,7 @@ let fillUserToInfo = (id, info) => new Promise((resolve, reject) => {
 		if(body.error) reject(body.message);
 
 		info.keyid = id;
-		info.icon = body.name;
+		info.icon = body.logo;
 		info.nickname = body.display_name;
 		resolve(info);
 
@@ -118,6 +120,7 @@ exports.getInfo = (id, callback) => {
 		(info) => fillStreamToInfo(id, info),
 		(err) => { console.log('Error : '+err+' #stream_api/twitch'); }
 	).then((info) => {
+		info.result = true;
 		if(!info.onair) return;
 		callback(info);
 	});
