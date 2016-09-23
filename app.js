@@ -12,10 +12,9 @@ var Checker = require('./checker');
 var Sockets = require('./sockets');
 
 // Http
-app.get('/', function (req, res) {
+app.get('/stream/', function (req, res) {
 	var streams = Checker.getStreams();
 	res.json(streams);
-	console.log('GET /');
 });
 
 app.get('/local/', function (req, res) {
@@ -57,4 +56,4 @@ Sockets.refreshStreams(Checker.getStreams());
 setInterval(function() {
 	Checker.update();
 	Sockets.refreshStreams(Checker.getStreams());
-}, 30000);
+}, 20000);
