@@ -3,10 +3,13 @@
 var db = require('../database').mysql;
 
 var Local = require('./stream_api/local');
-var Afreeca = require('./stream_api/afreeca');
-var Azubu = require('./stream_api/azubu');
-var Tvpot = require('./stream_api/tvpot');
-var Twitch = require('./stream_api/twitch');
+
+let Module = {
+	afreeca: require('./stream_api/afreeca'),
+	azubu: require('./stream_api/azubu'),
+	twitch: require('./stream_api/twitch'),
+	tvpot: require('./stream_api/tvpot')
+};
 
 var streams = { local: [], external: [] };
 
@@ -61,19 +64,19 @@ exports.update = function() {
 				localStreams.push(info);
 			};
 
-			switch(user.broadcast_class) {
-				case 'afreeca':
-					Afreeca.getInfo(user.afreeca_id, getInfoCallback);
-					break;
-				case 'twitch':
-					Twitch.getInfo(user.twitch_id, getInfoCallback);
-					break;
-				case 'tvpot':
-					Tvpot.getInfo(user.daumpot_id, getInfoCallback);
-					break;
-				default:
-					break;
-			}
+			let platform = user.broadcast_class;
+			
+			let keyids = {
+				afreeca: 'afreeca_id',
+				twitch: 'twitch_id',
+				tvpot: 'daumpot_id'
+			};
+
+			let keyid = keyids[platform];
+			if(!keyid) return;
+			
+			Module[platform].getInfo(user[keyid], getInfoCallback);
+			
 		});
 
 		streams.local = localStreams;
@@ -95,22 +98,9 @@ exports.update = function() {
 				addStream(info);
 			};
 
-			switch(stream.platform) {
-				case 'afreeca':
-					Afreeca.getInfo(stream.keyid, getInfoCallback);
-					break;
-				case 'azubu':
-					Azubu.getInfo(stream.keyid, getInfoCallback);
-					break;
-				case 'twitch':
-					Twitch.getInfo(stream.keyid, getInfoCallback);
-					break;
-				case 'tvpot':
-					Tvpot.getInfo(stream.keyid, getInfoCallback);
-					break;
-				default:
-					break;
-			}
+			let platform = stream.platform;
+			Module[platform].getInfo(stream.keyid, getInfoCallback);
+
 		});
 
 		streams.external = externals;
