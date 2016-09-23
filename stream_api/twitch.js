@@ -45,12 +45,14 @@ var request = require('request');
 let init = () => new Promise((resolve) => { resolve(DEFAULT_TWITCH_INFO()); });
 
 let fillUserToInfo = (id, info) => new Promise((resolve, reject) => {
+
 	let opt = {
 		url: USER_URL+id,
 		headers: { 'Client-ID': CLIENT_ID },
 		timeout: 5000,
 		json: true
 	};
+	
 	request(opt, (err, res, body) => { try {
 		if(err || res.statusCode !== 200) return;
 		if(!body || body === undefined) return;

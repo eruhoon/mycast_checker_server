@@ -47,11 +47,9 @@ exports.update = function() {
 		updateStream('local');
 
 		// Local
-		//let localStreams = [];
 		let localUsers = users.filter(e => e.broadcast_class === 'local');
 		Local.update(localUsers, (s) => {
 			addStream('local', s);
-			//localStreams.push(s);
 		});
 
 		// External
@@ -65,7 +63,6 @@ exports.update = function() {
 				if(!info.result) return;
 				info = patchFromExternalToLocalInfo(info, user);
 				addStream('local', info);
-				//localStreams.push(info);
 			};
 
 			let platform = user.broadcast_class;
@@ -82,8 +79,6 @@ exports.update = function() {
 			Module[platform].getInfo(user[keyid], getInfoCallback);
 			
 		});
-
-		//streams.local = localStreams;
 	});
 
 	// External Stream
