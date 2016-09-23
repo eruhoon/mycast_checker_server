@@ -1,5 +1,11 @@
 "use strict";
 
+/** @constant {string} */
+const USER_URL = 'https://api.twitch.tv/kraken/users/';
+const STREAM_URL = 'https://api.twitch.tv/kraken/streams/';
+const CLIENT_ID = 'sos9dle7u1v02i5glmv4pgm1ua83mcl';
+
+
 /**
  * @typedef twitchInfo
  * @type {object}
@@ -8,6 +14,7 @@
  * @property {string} keyid - 방송 유니크 키
  * @property {string} icon - 방송 대표 아이콘
  * @property {string} nickname - 방장
+ * @property {string} title - 방송 제목
  * @property {string} description - 방송 설명
  * @property {string} url - 방송 url
  * @property {string} thumbnail - 방송 썸네일
@@ -15,38 +22,80 @@
  * @property {value} viewer - 시청자 수
  * @property {string} err - 실패 시 에러메세지
  */
-
-
-/** @constant {string} */
-const USER_URL = 'https://api.twitch.tv/kraken/users/';
-const STREAM_URL = 'https://api.twitch.tv/kraken/streams/';
-const CLIENT_ID = 'sos9dle7u1v02i5glmv4pgm1ua83mcl';
+const DEFAULT_TWITCH_INFO = {
+	result: false,
+	platform: 'twitch',
+	keyid: null,
+	icon: null,
+	nickname: null,
+	title: null,
+	description: null,
+	url: null,
+	thumbnail: null,
+	onair: false,
+	viewer: 0,
+	err: null
+};
 
 // Load Module
 var request = require('request');
 
+let init = () => new Promise((resolve) => { resolve(DEFAULT_TWITCH_INFO); });
 
-/**
- * Exports.update
- * 방송목록 업데이트
- * @param {array<string>} ids - 트위치 아이디 목록
- * @param {updateCallback} callback
- */
-/**
- * @callback updateCallback
- * @param {twitchInfo} result - 트위치 방송정보
- */
-exports.update = (ids, callback) => {
+let fillUserToInfo = (id, info) => new Promise((resolve, reject) => {
+	let opt = {
+		url: USER_URL+id,
+		headers: { 'Client-ID': CLIENT_ID },
+		timeout: 5000,
+		json: true
+	};
+	request(opt, (err, res, body) => { try {
+		if(err || res.statusCode !== 200) return;
+		if(!body || body === undefined) return;
+		if(body.error) reject(body.message);
 
-	if(!callback) callback = () => {};
+		info.keyid = id;
+		info.icon = body.name;
+		info.nickname = body.display_name;
+		resolve(info);
 
-	ids.forEach((id) => {
-		this.getInfo(id, (info) => {
-			if(!info.onair) return;
-			callback(info);
-		});
-	});
-};
+	} catch(e) {
+		reject(e);
+	}});
+});
+
+let fillStreamToInfo = (id, info) => new Promise((resolve, reject) => {
+
+	let opt = {
+		url: STREAM_URL+id,
+		headers: { 'Client-ID': CLIENT_ID },
+		timeout: 5000,
+		json: true
+	};
+	
+	request(opt, (err, res, body) => { try {
+		if(err || res.statusCode !== 200) return;
+		if(!body || body === undefined) return;
+		
+		let result = body.stream;
+		if(!result) {
+			info.onair = false;
+			resolve(info);
+			return;
+		}
+
+		info.title = result.channel.display_name;
+		info.description = result.channel.status;
+		info.url = 'https://player.twitch.tv/?channel='+id;
+		info.thumbnail = result.preview.large+'?'+new Date().getTime();
+		info.onair = true;
+		info.viewer = parseInt(result.viewers);
+		resolve(info);
+
+	} catch(e) {
+		reject(e);
+	}});
+});
 
 
 /**
@@ -59,102 +108,17 @@ exports.update = (ids, callback) => {
  * @callback getInfoCallback
  * @param {twitchInfo} info - 방송정보
  */
-exports.getInfo = (id, callback) => { try {
-
+exports.getInfo = (id, callback) => {
 	if(!callback) callback = () => {};
 
-	let opt = {
-		url: USER_URL+id,
-		headers: { 'Client-ID': CLIENT_ID },
-		timeout: 5000
-	};
-	request(opt, (err, res, body) => {
-		if(err || res.statusCode !== 200) return;
-
-		let result = parseUserInfo(body);
-		if(!result.result) return;
-
-		getStreamInfo(id, (err, streamInfo) => {
-			if(err) return;
-			result.title = streamInfo.title;
-			result.description = streamInfo.description;
-			result.url = streamInfo.url;
-			result.thumbnail = streamInfo.thumbnail;
-			result.onair = streamInfo.onair;
-			result.viewer = streamInfo.viewer;
-			callback(result);
-		});
+	init().then(
+		(info) => fillUserToInfo(id, info),
+		(err) => { console.log('Error : '+err+' #stream_api/twitch'); }
+	).then(
+		(info) => fillStreamToInfo(id, info),
+		(err) => { console.log('Error : '+err+' #stream_api/twitch'); }
+	).then((info) => {
+		if(!info.onair) return;
+		callback(info);
 	});
-} catch (e) {
-	console.log('Error : '+e+'@getInfo() #stream_api/twitch');
-}};
-
-
-/**
- * getStreamInfo
- * 방송정보 RawData를 가공합니다.
- * @param {string} id - 트위치 ID
- * @param {geStreamInfoCallback} callback
- */
-/**
- * @callback getStreamInfoCallback
- * @param {null|string} err - 성공시 null, 에러시 메세지
- * @param {twitchInfo} info - 방송정보
- */
-var getStreamInfo = (id, callback) => { try {
-	if(!callback) callback = () => {};
-
-	let opt = {
-		url: STREAM_URL+id,
-		headers: { 'Client-ID': CLIENT_ID },
-		timeout: 5000
-	};
-	request(opt, (err, res, body) => {
-		if(err || res.statusCode !== 200) return;
-		
-		let info = JSON.parse(body).stream;
-		if(!info) return;
-		let result = {
-			title: info.channel.display_name,
-			description: info.channel.status,
-			url: 'https://player.twitch.tv/?channel='+id,
-			thumbnail: info.preview.large+'?'+new Date().getTime(),
-			onair: true,
-			viewer: parseInt(info.viewers)
-		};
-		callback(null, result);
-	});
-} catch (e) {
-	console.log('Error : '+e+'@getStreamInfo() #stream_api/twitch');
-}}; 
-
-
-/**
- * parseUserInfo
- * 방송유저정보 RawData를 가공합니다.
- * @param {string} body - RawData
- * @return {twitchInfo}
- */
-var parseUserInfo = (body) => { try {
-	
-	let info = JSON.parse(body);
-	if(!info) return { return: false, err: 'Parse Error' };
-	
-	return {
-		result: true,
-		platform: 'twitch',
-		keyid: info.name,
-		icon: info.logo,
-		nickname: info.display_name,
-		title: null,
-		description: null,
-		url: null,
-		thumbnail: null,
-		onair: null,
-		viewer: null
-	};
-
-} catch(e) {
-	console.log('Error : '+e+'@parseUserInfo() #stream_api/twitch');
-	return { result: false, err: e };
-}};
+};
