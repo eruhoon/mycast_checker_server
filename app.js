@@ -6,10 +6,14 @@ var SERVER_PORT = require('../port').STREAM_CHECKER_PORT;
 var app = require('express')();
 var http = require('http').Server(app);
 
-
 // Module
 var Checker = require('./checker');
 var Sockets = require('./sockets');
+
+app.use(function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', 'http://mycast.xyz');
+	next();
+});
 
 // Http
 app.get('/stream/', function (req, res) {

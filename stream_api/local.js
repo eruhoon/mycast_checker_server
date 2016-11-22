@@ -3,6 +3,7 @@
 // Load Module
 var request = require('request');
 var xmlParser = require('xml2js').parseString;
+var shop = require('../model/shop');
 
 // Constants
 var URL = 'http://mycast.xyz:8086/connectioncounts?';
@@ -24,13 +25,13 @@ exports.update = function(users, callback) {
 	}, function(err, res, body) {
 		if(err) return;
 		if(res.statusCode !== 200) return;
-		parseInfo(body, users, callback);
+		updateInfo(body, users, callback);
 	});
 	
 };
 
 
-var parseInfo = function(body, users, callback) { try {
+var updateInfo = function(body, users, callback) { try {
 	xmlParser(body, (err, result) => {
 		if(!result) return;
 		let wowzaServer = result.WowzaMediaServer || result.WowzaStreamingEngine;
@@ -41,7 +42,7 @@ var parseInfo = function(body, users, callback) { try {
 		streams.forEach(function(e) {
 			let stream = e.$;
 			let streamName = stream.streamName;
-			let viewer = stream.sessionsTotal;
+			let viewer = parseInt(stream.sessionsTotal);
 
 			let user = users.find((e) => { return e.id === streamName; });
 			if(!user) return;
@@ -57,8 +58,10 @@ var parseInfo = function(body, users, callback) { try {
 				url: VIEW_URL+user.idx,
 				thumbnail: user.broadcast_bgimg,
 				onair: true,
-				viewer: parseInt(viewer)
+				viewer: viewer
 			};
+
+			shop.rewardStream(user.hash, viewer, () => {});
 
 			if(callback) callback(ret);
 

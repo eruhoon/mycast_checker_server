@@ -65,7 +65,7 @@ exports.getInfo = (id, callback) => { try {
 	request({ url: uri, timeout: 5000 }, (err, res, body) => {
 		if(err || res.statusCode !== 200) return;
 		let result = parseInfo(body);
-		if(!result.result) return;
+		if(!result || !result.result) return;
 		getUrl(result.keyid, (url) => {
 			result.url = url;
 			callback(result);
@@ -97,6 +97,7 @@ var getUrl = (id, callback) => {
 		}
 		let reg = /AZUBU\.setVar\("firstVideoRefId", "(.*?)"\)/;
 		let result = reg.exec(body);
+		if(!result) return;
 		callback('http://embed.azubu.tv/'+result[1]+'?autoplay=true');
 	});
 };
