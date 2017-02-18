@@ -74,8 +74,8 @@ exports.update = function() {
 			};
 
 			let keyid = keyids[platform];
+
 			if(!keyid) return;
-			
 			Module[platform].getInfo(user[keyid], getInfoCallback);
 			
 		});
@@ -88,7 +88,7 @@ exports.update = function() {
 		updateStream('external');
 
 		result.forEach((stream) => {
-
+			
 			let getInfoCallback = (info) => {
 				if(!info || !info.result) return;
 				if(!info.onair) return;
@@ -97,6 +97,7 @@ exports.update = function() {
 			};
 
 			let platform = stream.platform;
+			if(platform === 'azubu') return;
 			Module[platform].getInfo(stream.keyid, getInfoCallback);
 
 		});

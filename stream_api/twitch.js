@@ -40,44 +40,46 @@ const DEFAULT_TWITCH_INFO = () => {
 };
 
 // Load Module
-var request = require('request');
+let request = require('request');
 
 let init = () => new Promise((resolve) => { resolve(DEFAULT_TWITCH_INFO()); });
 
-let fillUserToInfo = (id, info) => new Promise((resolve, reject) => {
+let fillUserToInfo = (id, info) => new Promise((resolve) => {
 
 	let opt = {
-		url: USER_URL+id,
-		headers: { 'Client-ID': CLIENT_ID },
-		timeout: 5000,
+		url: USER_URL+id+'?client_id='+CLIENT_ID,
+		//headers: { 'Client-ID': CLIENT_ID },
+		timeout: 3000,
 		json: true
 	};
 	
-	request(opt, (err, res, body) => { try {
+	request(opt, (err, res, body) => {
 		if(err || res.statusCode !== 200) return;
 		if(!body || body === undefined) return;
-		if(body.error) reject(body.message);
+		
+		if(body.error) {
+			console.log('Error : '+body.error+' #stream_api/twitch');
+			return;
+		}
 
 		info.keyid = id;
 		info.icon = body.logo;
 		info.nickname = body.display_name;
 		resolve(info);
 
-	} catch(e) {
-		reject(e);
-	}});
+	});
 });
 
-let fillStreamToInfo = (id, info) => new Promise((resolve, reject) => {
+let fillStreamToInfo = (id, info) => new Promise((resolve) => {
 
 	let opt = {
-		url: STREAM_URL+id,
-		headers: { 'Client-ID': CLIENT_ID },
-		timeout: 5000,
+		url: STREAM_URL+id+'?client_id='+CLIENT_ID,
+		//headers: { 'Client-ID': CLIENT_ID },
+		timeout: 3000,
 		json: true
 	};
 	
-	request(opt, (err, res, body) => { try {
+	request(opt, (err, res, body) => {
 		if(err || res.statusCode !== 200) return;
 		if(!body || body === undefined) return;
 		
@@ -96,9 +98,7 @@ let fillStreamToInfo = (id, info) => new Promise((resolve, reject) => {
 		info.viewer = parseInt(result.viewers);
 		resolve(info);
 
-	} catch(e) {
-		reject(e);
-	}});
+	});
 });
 
 
@@ -114,14 +114,12 @@ let fillStreamToInfo = (id, info) => new Promise((resolve, reject) => {
  */
 exports.getInfo = (id, callback) => {
 	if(!callback) callback = () => {};
-
-	init().then(
-		(info) => fillUserToInfo(id, info),
-		(err) => { console.log('Error : '+err+' #stream_api/twitch'); }
-	).then(
-		(info) => fillStreamToInfo(id, info),
-		(err) => { console.log('Error : '+err+' #stream_api/twitch'); }
-	).then((info) => {
+	if(!id) return;
+//	return;
+	init()
+	.then((info) => fillUserToInfo(id, info))
+	.then((info) => fillStreamToInfo(id, info))
+	.then((info) => {
 		info.result = true;
 		if(!info.onair) return;
 		callback(info);

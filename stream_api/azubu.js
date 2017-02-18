@@ -109,25 +109,27 @@ var getUrl = (id, callback) => {
  * @param {string} body - RawData
  */
 var parseInfo = (body) => {
-"use strict";
-try {
-	let info = JSON.parse(body).data;
-	if(!info) return { result: false, err: '방송이 없습니다' };
-	
-	return {
-		result: true,
-		platform: 'azubu',
-		keyid: info.user.username,
-		icon: info.user.profile.url_photo_large,
-		nickname: info.user.username,
-		title: info.title,
-		description: info.title,
-		url: null,
-		thumbnail: info.url_thumbnail,
-		onair: info.is_live,
-		viewer: parseInt(info.view_count)
-	};
-	
-} catch(e) {
-	console.log('Error : '+e+'@parseInfo().azubu.js');
-}};
+	"use strict";
+	try {
+		let info = JSON.parse(body).data;
+		if(!info) return { result: false, err: '방송이 없습니다' };
+		
+		return {
+			result: true,
+			platform: 'azubu',
+			keyid: info.user.username,
+			icon: info.user.profile.url_photo_large,
+			nickname: info.user.username,
+			title: info.title,
+			description: info.title,
+			url: null,
+			thumbnail: info.url_thumbnail,
+			onair: info.is_live,
+			viewer: parseInt(info.view_count)
+		};
+		
+	} catch(e) {
+		console.log('Error : '+e+'@parseInfo().azubu.js');
+
+	}
+};

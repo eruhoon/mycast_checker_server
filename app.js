@@ -53,11 +53,10 @@ http.listen(SERVER_PORT, function() {
 // Socket
 Sockets.init(http, Checker);
 
-
-
 Checker.update();
 Sockets.refreshStreams(Checker.getStreams());
 setInterval(function() {
 	Checker.update();
 	Sockets.refreshStreams(Checker.getStreams());
+	//console.log(Checker.getStreams());
 }, 20000);
