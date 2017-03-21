@@ -8,10 +8,15 @@ let Module = {
 	afreeca: require('./stream_api/afreeca'),
 	azubu: require('./stream_api/azubu'),
 	twitch: require('./stream_api/twitch'),
-	tvpot: require('./stream_api/tvpot')
+	tvpot: require('./stream_api/tvpot'),
+	youtube: require('./stream_api/youtube'),
+	kakaotv: require('./stream_api/kakaotv')
 };
 
-var streams = { local: [], external: [] };
+var streams = {
+	local: [],
+	external: []
+};
 
 const DEFAULT_SENSITIVITY = 5;
 
@@ -38,8 +43,8 @@ const streamWrapper = (stream) => {
 	};
 };
 
-exports.update = function() {
-	
+exports.update = function () {
+
 	// Local stream
 	db.query('SELECT * FROM user', (err, result) => {
 		let users = result;
@@ -58,15 +63,15 @@ exports.update = function() {
 		});
 
 		externalUsers.forEach((user) => {
-			
+
 			let getInfoCallback = (info) => {
-				if(!info.result) return;
+				if (!info.result) return;
 				info = patchFromExternalToLocalInfo(info, user);
 				addStream('local', info);
 			};
 
 			let platform = user.broadcast_class;
-			
+
 			let keyids = {
 				afreeca: 'afreeca_id',
 				twitch: 'twitch_id',
@@ -75,29 +80,28 @@ exports.update = function() {
 
 			let keyid = keyids[platform];
 
-			if(!keyid) return;
+			if (!keyid) return;
 			Module[platform].getInfo(user[keyid], getInfoCallback);
-			
+
 		});
 	});
 
 	// External Stream
 	let externalQuery = 'SELECT stream.*, (SELECT count(*) FROM stream_alarm WHERE stream.idx=stream_alarm.stream_idx) alarm_count FROM stream ';
-	db.query(externalQuery,	(err, result) => {
-		
+	db.query(externalQuery, (err, result) => {
+
 		updateStream('external');
 
 		result.forEach((stream) => {
-			
+
 			let getInfoCallback = (info) => {
-				if(!info || !info.result) return;
-				if(!info.onair) return;
+				if (!info || !info.result) return;
+				if (!info.onair) return;
 				info.alarm = stream.alarm_count;
 				addStream('external', info);
 			};
 
 			let platform = stream.platform;
-			if(platform === 'azubu') return;
 			Module[platform].getInfo(stream.keyid, getInfoCallback);
 
 		});
@@ -126,35 +130,38 @@ let addStream = (type, info) => {
 	let isUpdate = false;
 	streams[type] = streams[type].map(e => {
 		let s = e.stream;
-		if(s.keyid === info.keyid && s.platform === info.platform){
+		if (s.keyid === info.keyid && s.platform === info.platform) {
 			isUpdate = true;
 			return newStream;
 		}
 		return e;
 	});
 
-	if(!isUpdate) streams[type].push(newStream);
+	if (!isUpdate) streams[type].push(newStream);
 
 };
 
 
-exports.getStreams = function() {
-	
+exports.getStreams = function () {
+
 	let local = streams.local
-			.map(e => e.stream)
-			.sort((a, b) => {
-				return a.nickname < b.nickname ? -1 : 1;
-			});
-	
+		.map(e => e.stream)
+		.sort((a, b) => {
+			return a.nickname < b.nickname ? -1 : 1;
+		});
+
 	let external = streams.external
-			.map(e => e.stream)
-			.sort((a, b) => {
-				if(a.platform < b.platform) return -1;
-				if(a.platform > b.platform) return 1;
-				return a.keyid < b.keyid ? -1 : 1;
-			});
-	
-	return { local, external };
+		.map(e => e.stream)
+		.sort((a, b) => {
+			if (a.platform < b.platform) return -1;
+			if (a.platform > b.platform) return 1;
+			return a.keyid < b.keyid ? -1 : 1;
+		});
+
+	return {
+		local,
+		external
+	};
 };
 
 
@@ -162,6 +169,6 @@ var patchFromExternalToLocalInfo = (streamInfo, user) => {
 	streamInfo.keyid = user.id;
 	streamInfo.nickname = user.nickname;
 	streamInfo.icon = user.icon;
-	streamInfo.description += '@'+user.nickname+'의 외부방송';
+	streamInfo.description += '@' + user.nickname + '의 외부방송';
 	return streamInfo;
 };
