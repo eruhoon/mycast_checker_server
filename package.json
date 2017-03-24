@@ -1,0 +1,21 @@
+{
+  "name": "stream_checker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app/app.js",
+  "dependencies": {
+    "request": "^2.73.0",
+    "mysql": "^2.11.1",
+    "express": "^4.14.0",
+    "iconv-lite": "^0.4.13",
+    "sync-request": "^3.0.1",
+    "xml2js": "^0.4.17",
+    "socket.io": "^1.4.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "eruhoon@gmail.com",
+  "license": "ISC"
+}
