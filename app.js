@@ -1,62 +1,55 @@
 "use strict";
 
-var SERVER_PORT = require('../port').STREAM_CHECKER_PORT;
+//var SERVER_PORT = require('../port').STREAM_CHECKER_PORT;
+const SERVER_PORT = require('./config/default').port;
 
 // Global Module
-var app = require('express')();
-var http = require('http').Server(app);
+//var app = require('express')();
+//var http = require('http').Server(app);
 
 // Module
 var Checker = require('./checker');
 var Sockets = require('./sockets');
+const ServerManager = require('./manager/server');
 
-app.use(function(req, res, next) {
-	res.header('Access-Control-Allow-Origin', 'http://mycast.xyz');
-	next();
-});
-
-// Http
-app.get('/stream/', function (req, res) {
+ServerManager.init();
+ServerManager.get('/stream/', function (req, res) {
 	var streams = Checker.getStreams();
 	res.json(streams);
 });
 
-app.get('/local/', function (req, res) {
+ServerManager.get('/local/', function (req, res) {
 	var streams = Checker.getStreams().local;
 	res.json(streams);
 });
 
-app.get('/external/', function (req, res) {
+ServerManager.get('/external/', function (req, res) {
 	var streams = Checker.getStreams().external;
 	res.json(streams);
 });
 
-app.get('/azubu/', function (req, res) {
-	var streams = Checker.getStreams().external.filter(function(e){
+ServerManager.get('/azubu/', function (req, res) {
+	var streams = Checker.getStreams().external.filter(function (e) {
 		return e.platform === 'azubu';
 	});
 	res.json(streams);
 });
 
-app.get('/twitch/', function (req, res) {
-	var streams = Checker.getStreams().external.filter(function(e){
+ServerManager.get('/twitch/', function (req, res) {
+	var streams = Checker.getStreams().external.filter(function (e) {
 		return e.platform === 'twitch';
 	});
 	res.json(streams);
 });
 
-
-http.listen(SERVER_PORT, function() {
-	console.log('Stream Checker started..');
-});
+ServerManager.start(9000);
 
 // Socket
-Sockets.init(http, Checker);
+Sockets.init(ServerManager.getServer(), Checker);
 
 Checker.update();
 Sockets.refreshStreams(Checker.getStreams());
-setInterval(function() {
+setInterval(function () {
 	Checker.update();
 	Sockets.refreshStreams(Checker.getStreams());
-	//console.log(Checker.getStreams());
 }, 20000);
