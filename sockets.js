@@ -17,7 +17,6 @@ exports.init = (http, Checker) => {
 		User.searchUserByHash(keyHash, (userInfo) => {
 			if(!userInfo) { socket.disconnect(); }
 		});
-
 		// Init
 		socket.emit('refresh_streams', Checker.getStreams());
 	});
