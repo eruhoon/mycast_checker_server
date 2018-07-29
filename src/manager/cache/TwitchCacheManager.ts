@@ -5,6 +5,7 @@ import { DatabaseManager } from '../DatabaseManager';
 import { TwitchUtils, RawTwitchUser, RawTwitchStream } from '../../utils/TwitchUtils';
 import { TwitchStreamCache } from '../../model/TwtichStreamCache';
 import { StreamCacheManager } from './StreamCacheManager';
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 
 export class TwitchCacheManager extends StreamCacheManager {
 
@@ -31,8 +32,9 @@ export class TwitchCacheManager extends StreamCacheManager {
 		console.time('TwtichCacheManager#update');
 
 		let databaseManager = DatabaseManager.getInstance();
+		const userLoader: IUserAsyncLoader = databaseManager;
 
-		let keywordsFromUser: string[] = (await databaseManager.getUsers())
+		let keywordsFromUser: string[] = (await userLoader.getUsers())
 			.filter(u => u.getStreamPlatform() === StreamPlatform.TWITCH)
 			.map(u => u.getStreamKeyId());
 

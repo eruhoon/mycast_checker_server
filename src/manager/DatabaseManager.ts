@@ -3,8 +3,9 @@ import * as dotenv from 'dotenv';
 import { StreamRow, UserRow } from '../model/Database';
 import { User } from '../model/User';
 import { StreamPlatform } from '../model/Stream';
+import { IUserAsyncLoader } from '../controller/IUserAsyncLoader';
 
-export class DatabaseManager {
+export class DatabaseManager implements IUserAsyncLoader {
 
 	private static sInstance: DatabaseManager = null;
 	public static getInstance(): DatabaseManager {
@@ -76,7 +77,7 @@ export class DatabaseManager {
 					console.error(`DatabaseManager#getUsers: DB error ${err}`);
 					resolve([]);
 				}
-				let users: User[] = result.map(row => new User(row));
+				let users: User[] = result.map(row => User.createWithRow(row));
 				resolve(users);
 			});
 		});
@@ -92,7 +93,7 @@ export class DatabaseManager {
 					resolve(null);
 				}
 				console.log(result);
-				let user: User = new User(result[0]);
+				let user: User = User.createWithRow(result[0]);
 				resolve(user);
 			});
 		});
@@ -110,7 +111,7 @@ export class DatabaseManager {
 				callback(null);
 				return;
 			}
-			let user: User = new User(result[0]);
+			let user: User = User.createWithRow(result[0]);
 			callback(user);
 		});
 	}

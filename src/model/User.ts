@@ -1,27 +1,57 @@
 import { StreamPlatform } from "./Stream";
 import { UserRow } from "./Database";
 
+export type UserParam = {
+	idx?: number,
+	id?: string,
+	nickname?: string,
+	icon?: string,
+	platform?: StreamPlatform,
+	afreecaId?: string,
+	twitchId?: string,
+	mixerId?: string,
+	background?: string;
+}
+
 export class User {
+
+	public static IDX_NONE: number = -1;
+
 	private mIdx: number;
 	private mId: string;
 	private mNickname: string;
 	private mIcon: string;
-	private mStreamPlatform: StreamPlatform;
+	private mPlatform: StreamPlatform;
 	private mAfreecaId: string;
 	private mTwitchId: string;
 	private mMixerId: string;
 	private mBackground: string;
 
-	public constructor(row: UserRow) {
-		this.mIdx = row.idx;
-		this.mId = row.id;
-		this.mNickname = row.nickname;
-		this.mIcon = row.icon;
-		this.mStreamPlatform = row.broadcast_class;
-		this.mTwitchId = row.twitch_id;
-		this.mAfreecaId = row.afreeca_id;
-		this.mMixerId = row.mixer_id;
-		this.mBackground = row.broadcast_bgimg;
+	public constructor(param: UserParam) {
+		this.mIdx = param.idx ? param.idx : User.IDX_NONE;
+		this.mId = param.id ? param.id : '';
+		this.mNickname = param.nickname ? param.nickname : '';
+		this.mIcon = param.icon ? param.icon : '';
+		this.mPlatform = param.platform ? param.platform : StreamPlatform.LOCAL;
+		this.mAfreecaId = param.afreecaId ? param.afreecaId : '';
+		this.mTwitchId = param.twitchId ? param.twitchId : '';
+		this.mMixerId = param.mixerId ? param.mixerId : '';
+		this.mBackground = param.background ? param.background : '';
+	}
+
+	public static createWithRow(row: UserRow): User {
+
+		return new User({
+			idx: row.idx,
+			id: row.id,
+			nickname: row.nickname,
+			icon: row.icon,
+			platform: row.broadcast_class,
+			twitchId: row.twitch_id,
+			afreecaId: row.afreeca_id,
+			mixerId: row.mixer_id,
+			background: row.broadcast_bgimg
+		});
 	}
 
 	public getIdx(): number { return this.mIdx; }
@@ -32,10 +62,10 @@ export class User {
 
 	public getIcon(): string { return this.mIcon; }
 
-	public getStreamPlatform(): StreamPlatform { return this.mStreamPlatform; }
+	public getStreamPlatform(): StreamPlatform { return this.mPlatform; }
 
 	public getStreamKeyId(): string {
-		switch (this.mStreamPlatform) {
+		switch (this.mPlatform) {
 			case StreamPlatform.AFREECA: return this.mAfreecaId;
 			case StreamPlatform.TWITCH: return this.mTwitchId;
 			case StreamPlatform.MIXER: return this.mMixerId;
