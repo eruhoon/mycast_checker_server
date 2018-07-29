@@ -83,3 +83,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Typescript Compiled folder
+dist
+
+# DotEnv config
+.env
