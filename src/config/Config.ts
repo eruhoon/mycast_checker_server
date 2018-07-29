@@ -1,4 +1,8 @@
+import * as dotenv from 'dotenv';
+
 export class Config {
+
+	// DEFAULT PORT
 	public static DEFAULT_PORT: number = 9000;
 
 	public static NEED_EXP = [
@@ -29,5 +33,22 @@ export class Config {
 	public static getNeedExp(level: number) {
 		if (level > this.MAX_LEVEL) return -1;
 		return this.NEED_EXP[level];
+	}
+
+	public static isDebugMode(): boolean {
+		return process.env.DEBUG_MODE === 'true';
+	}
+
+	public static isHttpsEnabled(): boolean {
+		return process.env.ENABLE_HTTPS === 'true';
+	}
+
+	public static getDefaultPort(): number {
+		const customPort = parseInt(process.env.SERVER_PORT);
+		if (!customPort) {
+			return this.DEFAULT_PORT;
+		} else {
+			return customPort;
+		}
 	}
 }

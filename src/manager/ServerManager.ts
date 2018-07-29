@@ -7,8 +7,6 @@ import { readFileSync } from 'fs';
 
 export class ServerManager {
 
-	private static ENABLE_HTTPS: boolean = true;
-
 	private static sInstance: ServerManager = null;
 
 	public static getInstance(): ServerManager {
@@ -27,7 +25,7 @@ export class ServerManager {
 		const key: string = process.env.SSL_PRIVKEY;
 		const cert: string = process.env.SSL_CERT;
 
-		if (ServerManager.ENABLE_HTTPS) {
+		if (Config.isHttpsEnabled()) {
 			this.mServer = https.createServer({
 				key: readFileSync(key),
 				cert: readFileSync(cert)
@@ -47,7 +45,6 @@ export class ServerManager {
 
 	public start(port: number = Config.DEFAULT_PORT) {
 		if (!this.mServer) return;
-
 		this.mServer.listen(port, () => {
 			console.log('Stream Checker started..');
 		});
