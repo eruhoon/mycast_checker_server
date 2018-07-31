@@ -51,4 +51,8 @@ export class Config {
 			return customPort;
 		}
 	}
+
+	public static getYoutubeApiKey(): string {
+		return process.env.YOUTUBE_API_KEY;
+	}
 }

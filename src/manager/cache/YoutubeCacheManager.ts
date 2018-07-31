@@ -4,6 +4,7 @@ import { StreamCacheManager } from "./StreamCacheManager";
 import { StreamInfo, StreamPlatform } from "../../model/Stream";
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
+import { Config } from '../../config/Config';
 
 export class YoutubeCacheManager extends StreamCacheManager {
 
@@ -146,16 +147,14 @@ type RawStream = {
 
 class YoutubeCacheUtils {
 
-	private static readonly API_KEY: string =
-		'AIzaSyCCwGCnYrk4uAV3JTiETW3jCxzxFhG0_8Q';
-
 	public static async getChannel(keywords: string[]): Promise<RawChannel[]> {
 		let id = keywords.join(',');
+		let key = Config.getYoutubeApiKey();
 		let opt = {
 			url: 'https://www.googleapis.com/youtube/v3/channels',
 			timeout: 3000,
 			headers: { referer: 'http://mycast.xyz' },
-			qs: { part: 'snippet,brandingSettings', id, key: this.API_KEY },
+			qs: { part: 'snippet,brandingSettings', id, key },
 			json: true
 		};
 
@@ -174,6 +173,7 @@ class YoutubeCacheUtils {
 	}
 
 	public static getStream(channelId: string): Promise<RawStream | null> {
+		let key = Config.getYoutubeApiKey();
 		let opt = {
 			url: 'https://www.googleapis.com/youtube/v3/search',
 			timeout: 3000,
@@ -183,7 +183,7 @@ class YoutubeCacheUtils {
 				channelId,
 				eventType: 'live',
 				type: 'video',
-				key: this.API_KEY,
+				key,
 				fields: 'items(id(channelId,videoId),snippet(description,thumbnails/high,title))'
 			},
 			json: true
