@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { StreamPlatform } from '../../model/Stream';
 import { DatabaseManager } from '../DatabaseManager';
 import { TwitchUtils, RawTwitchUser, RawTwitchStream } from '../../utils/TwitchUtils';
-import { TwitchStreamCache } from '../../model/TwtichStreamCache';
+import { TwitchStreamCache } from '../../model/TwitchStreamCache';
 import { StreamCacheManager } from './StreamCacheManager';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';

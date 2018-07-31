@@ -45,7 +45,7 @@ export class TwitchUtils {
 
 			request.get(url, option, (err, res, body) => {
 				if (err || res.statusCode !== 200 || !body) {
-					console.error(`TwtichLoader#load: Request Error: ${err}`);
+					console.error(`TwitchUtils#loadUser: Request Error: ${err}`);
 					return;
 				}
 				let users: RawTwitchUser[] = body.data;
@@ -65,7 +65,7 @@ export class TwitchUtils {
 			}
 			request.get(url, option, (err, res, body) => {
 				if (err || res.statusCode !== 200 || !body) {
-					console.error(`TwtichLoader#load: Request Error: ${err}`);
+					console.error(`TwitchUtils#loadStream: Request Error: ${err}`);
 					return;
 				}
 
