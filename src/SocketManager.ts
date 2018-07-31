@@ -2,28 +2,42 @@ import { DatabaseManager } from "./manager/DatabaseManager";
 
 import * as Socketio from 'socket.io';
 import { StreamSet } from "./model/Stream";
-import { Checker } from "./Checker";
 import * as https from "https";
 import * as http from "http";
+import { IUserAsyncLoader } from "./controller/IUserAsyncLoader";
 
+type SocketCallback = (socket: Socketio.Socket) => void;
 
+export enum SocketTag {
+	REFRESH_STREAMS = 'refresh_streams'
+}
 
 export class SocketManager {
 
+	private mUserLoader: IUserAsyncLoader;
+
 	private mSocketio: Socketio.Server;
 
-	public constructor(http: http.Server | https.Server) {
+	public constructor(
+		http: http.Server | https.Server, userLoader: IUserAsyncLoader) {
+
 		this.mSocketio = Socketio(http);
-		this.mSocketio.on('connection', (socket) => {
+		this.mUserLoader = userLoader;
+	}
+
+	public init(initCallback: SocketCallback) {
+		this.mSocketio.on('connection', async socket => {
 			let keyHash = socket.handshake.query.keyhash;
 
 			// Abnormal Connection
 			if (!keyHash) socket.disconnect();
-			DatabaseManager.getInstance().searchUserByHash(keyHash, (userInfo) => {
-				if (!userInfo) { socket.disconnect(); }
-			});
-			// Init
-			socket.emit(SocketTag.REFRESH_STREAMS, Checker.getStreams());
+			const users = await this.mUserLoader.getUsers();
+			const user = users.find(user => user.getHash() === keyHash);
+			if (!user) {
+				socket.disconnect();
+			} else {
+				initCallback(socket);
+			}
 		});
 	}
 
@@ -31,8 +45,4 @@ export class SocketManager {
 		this.mSocketio.emit(SocketTag.REFRESH_STREAMS, streams);
 	}
 
-}
-
-enum SocketTag {
-	REFRESH_STREAMS = 'refresh_streams'
 }

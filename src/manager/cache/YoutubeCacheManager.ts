@@ -2,13 +2,16 @@ import * as request from 'request';
 
 import { StreamCacheManager } from "./StreamCacheManager";
 import { StreamInfo, StreamPlatform } from "../../model/Stream";
-import { DatabaseManager } from "../DatabaseManager";
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 
 export class YoutubeCacheManager extends StreamCacheManager {
 
-	private mCaches: StreamInfo[];
-
 	private static sInstance: YoutubeCacheManager | null = null;
+
+	private mUserLoader: IUserAsyncLoader | null = null;
+	private mStreamLoader: IStreamAsyncLoader | null = null;
+	private mCaches: StreamInfo[];
 
 	public static getInstance(): YoutubeCacheManager {
 		if (this.sInstance === null) {
@@ -17,10 +20,17 @@ export class YoutubeCacheManager extends StreamCacheManager {
 		return this.sInstance;
 	}
 
+	public setUserLoader(loader: IUserAsyncLoader): void {
+		this.mUserLoader = loader;
+	}
+
+	public setStreamLoader(loader: IStreamAsyncLoader): void {
+		this.mStreamLoader = loader;
+	}
+
 	public async update() {
 		console.time('YoutubeCacheManager#update');
-		let databaseManager = DatabaseManager.getInstance();
-		let keywords = await databaseManager.getStreamIds(StreamPlatform.YOUTUBE);
+		let keywords = await this.getStreamIds();
 		let channels = await YoutubeCacheUtils.getChannel(keywords);
 
 		let streams: StreamInfo[] = [];
@@ -58,6 +68,33 @@ export class YoutubeCacheManager extends StreamCacheManager {
 			return null;
 		}
 		return cache;
+	}
+
+	private async getStreamIds(): Promise<string[]> {
+
+		if (this.mUserLoader === null || this.mStreamLoader === null) {
+			console.error('YoutubeCacheManager#getStreamIds: no loader');
+			return [];
+		}
+
+		let keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
+			.filter(u => u.getStreamPlatform() === StreamPlatform.YOUTUBE)
+			.map(u => u.getStreamKeyId());
+
+		let keywordsFromStream: string[] = (await this.mStreamLoader.getStreams())
+			.filter(stream => stream.platform === StreamPlatform.YOUTUBE)
+			.map(stream => stream.keyword);
+
+		let keywords: string[] = [];
+		let addWithoutDuplicated = (keyword: string) => {
+			if (!keyword) return;
+			if (keywords.findIndex(k => k === keyword) !== -1) return;
+			keywords.push(keyword);
+		};
+		keywordsFromUser.forEach(keyword => addWithoutDuplicated(keyword));
+		keywordsFromStream.forEach(keyword => addWithoutDuplicated(keyword));
+
+		return keywords;
 	}
 }
 

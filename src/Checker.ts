@@ -1,4 +1,3 @@
-import { DatabaseManager } from './manager/DatabaseManager';
 import { StreamPlatform, StreamInfo, StreamSet } from './model/Stream';
 import { TwtichLoader } from './streamloader/TwitchLoader';
 import { UserExternalDecorator } from './streamloader/UserExternalDecorator';
@@ -8,20 +7,21 @@ import { KakaoTvLoader } from './streamloader/KakaoTvLoader';
 import { MixerLoader } from './streamloader/MixerLoader';
 import { LocalStreamLoader } from './streamloader/LocalStreamLoader';
 import { YoutubeLoader } from './streamloader/YoutubeLoader';
+import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
+import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
 
 export class Checker {
 
 	private static DEFAULT_SENSITIVITY: number = 3;
 
-	private static mStreams: CheckerEntry[] = [];
+	private mStreams: CheckerEntry[] = [];
 
-	public static async update() {
+	public async update(
+		userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
 
 		this.updateStream();
 
-		let databaseManager = DatabaseManager.getInstance();
-
-		let users = await databaseManager.getUsers();
+		let users = await userLoader.getUsers();
 		users.forEach(user => {
 			let loader: StreamLoader = null;
 			let platform = user.getStreamPlatform();
@@ -50,7 +50,7 @@ export class Checker {
 			}
 		});
 
-		let streamRows = await databaseManager.getStreams();
+		let streamRows = await streamloader.getStreams();
 		streamRows.push({
 			keyword: 'UCAtFkapSeoEGPxm5bC3tvaw',
 			platform: StreamPlatform.YOUTUBE
@@ -90,7 +90,7 @@ export class Checker {
 		});
 	}
 
-	private static updateStream() {
+	private updateStream() {
 
 		this.mStreams = this.mStreams.filter((info: CheckerEntry) => {
 			info.sensitivity--;
@@ -98,7 +98,7 @@ export class Checker {
 		});
 	}
 
-	private static addStream(type: CheckerType, info: StreamInfo) {
+	private addStream(type: CheckerType, info: StreamInfo) {
 		let checkerEntry: CheckerEntry = {
 			type: type,
 			stream: info,
@@ -122,7 +122,7 @@ export class Checker {
 	}
 
 
-	public static getStreams(): StreamSet {
+	public getStreams(): StreamSet {
 
 		let local = this.mStreams
 			.filter(e => e.type === CheckerType.LOCAL)

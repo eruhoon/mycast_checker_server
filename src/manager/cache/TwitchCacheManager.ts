@@ -6,9 +6,9 @@ import { TwitchUtils, RawTwitchUser, RawTwitchStream } from '../../utils/TwitchU
 import { TwitchStreamCache } from '../../model/TwtichStreamCache';
 import { StreamCacheManager } from './StreamCacheManager';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 
 export class TwitchCacheManager extends StreamCacheManager {
-
 
 	private static sInstance: TwitchCacheManager | null = null;
 
@@ -21,6 +21,8 @@ export class TwitchCacheManager extends StreamCacheManager {
 
 	private mCaches: TwitchStreamCache[];
 	private mNewCaches: TwitchStreamCache[];
+	private mUserLoader: IUserAsyncLoader | null = null;
+	private mStreamLoader: IStreamAsyncLoader | null = null;
 
 	public constructor() {
 		super();
@@ -28,40 +30,51 @@ export class TwitchCacheManager extends StreamCacheManager {
 		this.mCaches = [];
 	}
 
+	public setUserLoader(loader: IUserAsyncLoader) {
+		this.mUserLoader = loader;
+	}
+
+	public setStreamLoader(loader: IStreamAsyncLoader) {
+		this.mStreamLoader = loader;
+	}
+
 	public async update() {
-		console.time('TwtichCacheManager#update');
+		console.time('TwitchCacheManager#update');
 
-		let databaseManager = DatabaseManager.getInstance();
-		const userLoader: IUserAsyncLoader = databaseManager;
+		if (this.mUserLoader === null || this.mStreamLoader === null) {
+			console.error('TwitchCacheManager#update: no loader');
+		} else {
+			let databaseManager = DatabaseManager.getInstance();
+			let keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
+				.filter(u => u.getStreamPlatform() === StreamPlatform.TWITCH)
+				.map(u => u.getStreamKeyId());
 
-		let keywordsFromUser: string[] = (await userLoader.getUsers())
-			.filter(u => u.getStreamPlatform() === StreamPlatform.TWITCH)
-			.map(u => u.getStreamKeyId());
+			let keywordsFromStream: string[] = (await this.mStreamLoader.getStreams())
+				.filter(stream => stream.platform === StreamPlatform.TWITCH)
+				.map(stream => stream.keyword);
 
-		let keywordsFromStream: string[] = (await databaseManager.getStreams())
-			.filter(stream => stream.platform === StreamPlatform.TWITCH)
-			.map(stream => stream.keyword);
+			let keywords: string[] = [];
+			let addWithoutDuplicated = (keyword: string) => {
+				if (!keyword) return;
+				if (keywords.findIndex(k => k === keyword) !== -1) return;
+				keywords.push(keyword);
+			};
+			keywordsFromUser.forEach(keyword => addWithoutDuplicated(keyword));
+			keywordsFromStream.forEach(keyword => addWithoutDuplicated(keyword));
 
-		let keywords: string[] = [];
-		let addWithoutDuplicated = (keyword: string) => {
-			if (!keyword) return;
-			if (keywords.findIndex(k => k === keyword) !== -1) return;
-			keywords.push(keyword);
-		};
-		keywordsFromUser.forEach(keyword => addWithoutDuplicated(keyword));
-		keywordsFromStream.forEach(keyword => addWithoutDuplicated(keyword));
+			this.applyKeywords(keywords);
+			let userData = await TwitchUtils.loadUser(keywords);
+			this.applyUserInfos(userData);
+			let streams = await TwitchUtils.loadStream(userData.map(u => u.login));
+			this.applyStreamInfos(streams);
+			this.mCaches = this.mNewCaches;
 
-		this.applyKeywords(keywords);
-		let userData = await TwitchUtils.loadUser(keywords);
-		this.applyUserInfos(userData);
-		let streams = await TwitchUtils.loadStream(userData.map(u => u.login));
-		this.applyStreamInfos(streams);
-		this.mCaches = this.mNewCaches;
+			let total = this.mCaches.length;
+			let onair = this.mCaches.filter(cache => cache.stream != null).length;
+			console.log(`TwitchCacheManager#update: onair: ${onair}/${total}`);
 
-		let total = this.mCaches.length;
-		let onair = this.mCaches.filter(cache => cache.stream != null).length;
-		console.log(`TwtichCacheManager#update: onair: ${onair}/${total}`);
-		console.timeEnd('TwtichCacheManager#update');
+		}
+		console.timeEnd('TwitchCacheManager#update');
 	}
 
 	public getCache(keyword: string): TwitchStreamCache | null {

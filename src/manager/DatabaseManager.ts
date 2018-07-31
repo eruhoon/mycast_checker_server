@@ -7,7 +7,8 @@ import { IUserAsyncLoader } from '../controller/IUserAsyncLoader';
 
 export class DatabaseManager implements IUserAsyncLoader {
 
-	private static sInstance: DatabaseManager = null;
+	private static sInstance: DatabaseManager | null = null;
+
 	public static getInstance(): DatabaseManager {
 		if (this.sInstance === null) {
 			this.sInstance = new DatabaseManager();
@@ -69,9 +70,8 @@ export class DatabaseManager implements IUserAsyncLoader {
 	}
 
 	public getUsers(): Promise<User[]> {
-
 		const query = `SELECT * FROM user WHERE confirm = 1`;
-		return new Promise<User[]>((resolve, reject) => {
+		return new Promise<User[]>(resolve => {
 			this.mDb.query(query, (err, result: UserRow[]) => {
 				if (err) {
 					console.error(`DatabaseManager#getUsers: DB error ${err}`);

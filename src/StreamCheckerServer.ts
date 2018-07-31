@@ -4,7 +4,13 @@ import { WowzaCacheManager } from './manager/cache/WowzaCacheManager';
 import { TwitchCacheManager } from './manager/cache/TwitchCacheManager';
 import { StreamPlatform } from './model/Stream';
 import { YoutubeCacheManager } from './manager/cache/YoutubeCacheManager';
-import { SocketManager } from './SocketManager';
+import { SocketManager, SocketTag } from './SocketManager';
+import { DatabaseManager } from './manager/DatabaseManager';
+import { Config } from './config/Config';
+import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
+import { DummyUserAsyncLoader } from './controller/DummyUserAsyncLoader';
+import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
+import { DummyStreamAsyncLoader } from './controller/DummyStreamAsyncLoader';
 
 export class StreamCheckerServer {
 
@@ -12,27 +18,41 @@ export class StreamCheckerServer {
 
 		const serverManager: ServerManager = ServerManager.getInstance();
 
+		let userLoader: IUserAsyncLoader;
+		let streamLoader: IStreamAsyncLoader;
+		if (Config.isDebugMode()) {
+			userLoader = new DummyUserAsyncLoader();
+			streamLoader = new DummyStreamAsyncLoader();
+		} else {
+			userLoader = DatabaseManager.getInstance();
+			streamLoader = DatabaseManager.getInstance();
+		}
+
 		WowzaCacheManager.getInstance().start();
+		TwitchCacheManager.getInstance().setUserLoader(userLoader);
+		TwitchCacheManager.getInstance().setStreamLoader(streamLoader);
 		TwitchCacheManager.getInstance().start();
 		YoutubeCacheManager.getInstance().start(60000);
 
+		const checker = new Checker();
+
 		serverManager.get('/stream/', (req, res) => {
-			let streams = Checker.getStreams();
+			let streams = checker.getStreams();
 			res.json(streams);
 		});
 
 		serverManager.get('/local/', (req, res) => {
-			let streams = Checker.getStreams().local;
+			let streams = checker.getStreams().local;
 			res.json(streams);
 		});
 
 		serverManager.get('/external/', (req, res) => {
-			let streams = Checker.getStreams().external;
+			let streams = checker.getStreams().external;
 			res.json(streams);
 		});
 
 		serverManager.get('/twitch/', (req, res) => {
-			let streams = Checker.getStreams().external.filter((e) => {
+			let streams = checker.getStreams().external.filter((e) => {
 				return e.platform === StreamPlatform.TWITCH;
 			});
 			res.json(streams);
@@ -40,16 +60,18 @@ export class StreamCheckerServer {
 
 		serverManager.start();
 
-
 		let server = serverManager.getServer();
 
-		let socketManager = new SocketManager(server);
+		let socketManager = new SocketManager(server, userLoader);
+		socketManager.init(socket => {
+			socket.emit(SocketTag.REFRESH_STREAMS, checker.getStreams());
+		});
 
-		Checker.update();
-		socketManager.refreshStreams(Checker.getStreams());
-		setInterval(function () {
-			Checker.update();
-			socketManager.refreshStreams(Checker.getStreams());
+		checker.update(userLoader, streamLoader);
+		socketManager.refreshStreams(checker.getStreams());
+		setInterval(() => {
+			checker.update(userLoader, streamLoader);
+			socketManager.refreshStreams(checker.getStreams());
 		}, 20000);
 
 	}

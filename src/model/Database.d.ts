@@ -2,6 +2,7 @@ import { StreamPlatform } from "./Stream";
 
 export type UserRow = {
 	idx: number,
+	hash: string,
 	id: string,
 	nickname: string,
 	icon: string,

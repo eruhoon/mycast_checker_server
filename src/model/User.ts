@@ -4,6 +4,7 @@ import { UserRow } from "./Database";
 export type UserParam = {
 	idx?: number,
 	id?: string,
+	hash?: string,
 	nickname?: string,
 	icon?: string,
 	platform?: StreamPlatform,
@@ -19,6 +20,7 @@ export class User {
 
 	private mIdx: number;
 	private mId: string;
+	private mHash: string;
 	private mNickname: string;
 	private mIcon: string;
 	private mPlatform: StreamPlatform;
@@ -30,6 +32,7 @@ export class User {
 	public constructor(param: UserParam) {
 		this.mIdx = param.idx ? param.idx : User.IDX_NONE;
 		this.mId = param.id ? param.id : '';
+		this.mHash = param.hash ? param.hash : '';
 		this.mNickname = param.nickname ? param.nickname : '';
 		this.mIcon = param.icon ? param.icon : '';
 		this.mPlatform = param.platform ? param.platform : StreamPlatform.LOCAL;
@@ -44,6 +47,7 @@ export class User {
 		return new User({
 			idx: row.idx,
 			id: row.id,
+			hash: row.hash,
 			nickname: row.nickname,
 			icon: row.icon,
 			platform: row.broadcast_class,
@@ -57,6 +61,8 @@ export class User {
 	public getIdx(): number { return this.mIdx; }
 
 	public getId(): string { return this.mId; }
+
+	public getHash(): string { return this.mHash; }
 
 	public getNickname(): string { return this.mNickname }
 
