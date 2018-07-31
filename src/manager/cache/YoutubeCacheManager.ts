@@ -13,6 +13,12 @@ export class YoutubeCacheManager extends StreamCacheManager {
 	private mStreamLoader: IStreamAsyncLoader | null = null;
 	private mCaches: StreamInfo[];
 
+	private constructor() {
+		super();
+
+		this.mCaches = [];
+	}
+
 	public static getInstance(): YoutubeCacheManager {
 		if (this.sInstance === null) {
 			this.sInstance = new YoutubeCacheManager();

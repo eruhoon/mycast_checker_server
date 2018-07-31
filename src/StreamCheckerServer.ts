@@ -32,6 +32,8 @@ export class StreamCheckerServer {
 		TwitchCacheManager.getInstance().setUserLoader(userLoader);
 		TwitchCacheManager.getInstance().setStreamLoader(streamLoader);
 		TwitchCacheManager.getInstance().start();
+		YoutubeCacheManager.getInstance().setUserLoader(userLoader);
+		YoutubeCacheManager.getInstance().setStreamLoader(streamLoader);
 		YoutubeCacheManager.getInstance().start(60000);
 
 		const checker = new Checker();
@@ -64,6 +66,7 @@ export class StreamCheckerServer {
 
 		let socketManager = new SocketManager(server, userLoader);
 		socketManager.init(socket => {
+			console.log('REFRESH_STREAMS');
 			socket.emit(SocketTag.REFRESH_STREAMS, checker.getStreams());
 		});
 
