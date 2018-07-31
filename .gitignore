@@ -84,6 +84,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Visual Code
+.vscode
+
 # Typescript Compiled folder
 dist
 
