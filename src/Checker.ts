@@ -51,14 +51,6 @@ export class Checker {
 		});
 
 		let streamRows = await streamloader.getStreams();
-		streamRows.push({
-			keyword: 'UCAtFkapSeoEGPxm5bC3tvaw',
-			platform: StreamPlatform.YOUTUBE
-		});
-		streamRows.push({
-			keyword: 'UChlgI3UHCOnwUGzWzbJ3H5w',
-			platform: StreamPlatform.YOUTUBE
-		});
 		streamRows.forEach(row => {
 			let loader: StreamLoader = null;
 			let platform = row.platform;
