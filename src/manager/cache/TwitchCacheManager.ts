@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv';
 
 import { StreamPlatform } from '../../model/Stream';
-import { DatabaseManager } from '../DatabaseManager';
 import { TwitchUtils, RawTwitchUser, RawTwitchStream } from '../../utils/TwitchUtils';
 import { TwitchStreamCache } from '../../model/TwitchStreamCache';
 import { StreamCacheManager } from './StreamCacheManager';
@@ -44,7 +43,6 @@ export class TwitchCacheManager extends StreamCacheManager {
 		if (this.mUserLoader === null || this.mStreamLoader === null) {
 			console.error('TwitchCacheManager#update: no loader');
 		} else {
-			let databaseManager = DatabaseManager.getInstance();
 			let keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
 				.filter(u => u.getStreamPlatform() === StreamPlatform.TWITCH)
 				.map(u => u.getStreamKeyId());
