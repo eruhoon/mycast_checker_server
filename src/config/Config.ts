@@ -1,5 +1,3 @@
-import * as dotenv from 'dotenv';
-
 export class Config {
 
 	// DEFAULT PORT
