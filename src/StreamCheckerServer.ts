@@ -18,13 +18,13 @@ export class StreamCheckerServer {
 
 		const serverManager: ServerManager = ServerManager.getInstance();
 
-		const databaseLoader = new DatabaseLoader();
 		let userLoader: IUserAsyncLoader;
 		let streamLoader: IStreamAsyncLoader;
 		if (Config.isDebugMode()) {
 			userLoader = new DummyUserAsyncLoader();
 			streamLoader = new DummyStreamAsyncLoader();
 		} else {
+			const databaseLoader = new DatabaseLoader();
 			userLoader = databaseLoader;
 			streamLoader = databaseLoader;
 		}
