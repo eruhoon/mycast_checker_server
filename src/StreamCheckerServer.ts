@@ -67,7 +67,6 @@ export class StreamCheckerServer {
 
 		let socketManager = new SocketManager(server, userLoader);
 		socketManager.init(socket => {
-			console.log('REFRESH_STREAMS');
 			socket.emit(SocketTag.REFRESH_STREAMS, checker.getStreams());
 		});
 
