@@ -2,21 +2,12 @@ import * as dotenv from 'dotenv';
 import * as request from 'request';
 import * as xml2js from 'xml2js';
 import { RawWowzaModel, RawWowzaStream } from '../../Model/RawWowzaModel';
-import { StreamCacheManager } from './StreamCacheManager';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
-export class WowzaCacheManager extends StreamCacheManager {
+export class WowzaCacheContainer extends StreamCacheContainer {
 
 	private static readonly URL: string =
 		'http://mycast.xyz:8086/connectioncounts?';
-
-	private static sInstance: WowzaCacheManager = null;
-
-	public static getInstance(): WowzaCacheManager {
-		if (this.sInstance === null) {
-			this.sInstance = new WowzaCacheManager();
-		}
-		return this.sInstance;
-	}
 
 	private static getRawWowzaXml(): Promise<string> {
 
@@ -31,7 +22,7 @@ export class WowzaCacheManager extends StreamCacheManager {
 		};
 
 		return new Promise<string>(resolve => {
-			request.get(WowzaCacheManager.URL, opt, (err, res, body) => {
+			request.get(WowzaCacheContainer.URL, opt, (err, res, body) => {
 				if (err || res.statusCode !== 200 || !body) {
 					console.error('WowzaCacheManager#update: Request Error', err);
 					return;
@@ -75,7 +66,7 @@ export class WowzaCacheManager extends StreamCacheManager {
 
 	private mCaches: RawWowzaStream[];
 
-	private constructor() {
+	public constructor() {
 		super();
 		dotenv.config();
 		this.mCaches = [];
@@ -87,9 +78,9 @@ export class WowzaCacheManager extends StreamCacheManager {
 
 	public async update() {
 
-		let xml = await WowzaCacheManager.getRawWowzaXml();
-		let model = await WowzaCacheManager.parseXml(xml);
-		let newCaches = WowzaCacheManager.parseModel(model);
+		let xml = await WowzaCacheContainer.getRawWowzaXml();
+		let model = await WowzaCacheContainer.parseXml(xml);
+		let newCaches = WowzaCacheContainer.parseModel(model);
 		this.mCaches = newCaches;
 	}
 

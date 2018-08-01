@@ -1,38 +1,24 @@
 import * as request from 'request';
 
-import { StreamCacheManager } from "./StreamCacheManager";
+import { StreamCacheContainer } from "./StreamCacheContainer";
 import { StreamInfo, StreamPlatform } from "../../model/Stream";
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 import { Config } from '../../config/Config';
 
-export class YoutubeCacheManager extends StreamCacheManager {
-
-	private static sInstance: YoutubeCacheManager | null = null;
+export class YoutubeCacheContainer extends StreamCacheContainer {
 
 	private mUserLoader: IUserAsyncLoader | null = null;
 	private mStreamLoader: IStreamAsyncLoader | null = null;
 	private mCaches: StreamInfo[];
 
-	private constructor() {
+	public constructor(
+		userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
 		super();
 
 		this.mCaches = [];
-	}
-
-	public static getInstance(): YoutubeCacheManager {
-		if (this.sInstance === null) {
-			this.sInstance = new YoutubeCacheManager();
-		}
-		return this.sInstance;
-	}
-
-	public setUserLoader(loader: IUserAsyncLoader): void {
-		this.mUserLoader = loader;
-	}
-
-	public setStreamLoader(loader: IStreamAsyncLoader): void {
-		this.mStreamLoader = loader;
+		this.mUserLoader = userLoader;
+		this.mStreamLoader = streamloader;
 	}
 
 	public async update() {

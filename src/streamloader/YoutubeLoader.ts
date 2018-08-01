@@ -1,20 +1,20 @@
-import * as request from 'request';
 import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
-import { StreamInfo } from '../model/Stream';
-import { YoutubeCacheManager } from '../manager/cache/YoutubeCacheManager';
+import { YoutubeCacheContainer } from "../model/cache/YoutubeCacheContainer";
+
 
 export class YoutubeLoader extends StreamLoader {
 
+	private mManager: YoutubeCacheContainer;
+	private mChannelId: string;
 
-	public mChannelId: string;
-
-	public constructor(channelId: string) {
+	public constructor(manager: YoutubeCacheContainer, channelId: string) {
 		super();
+		this.mManager = manager;
 		this.mChannelId = channelId;
 	}
 
 	public requestInfo(callback: StreamLoaderCallback): void {
-		let cache = YoutubeCacheManager.getInstance().getCache(this.mChannelId);
+		let cache = this.mManager.getCache(this.mChannelId);
 		if (cache === null) {
 			return;
 		}

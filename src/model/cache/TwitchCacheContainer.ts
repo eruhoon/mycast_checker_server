@@ -3,38 +3,26 @@ import * as dotenv from 'dotenv';
 import { StreamPlatform } from '../../model/Stream';
 import { TwitchUtils, RawTwitchUser, RawTwitchStream } from '../../utils/TwitchUtils';
 import { TwitchStreamCache } from '../../model/TwitchStreamCache';
-import { StreamCacheManager } from './StreamCacheManager';
+import { StreamCacheContainer } from './StreamCacheContainer';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 
-export class TwitchCacheManager extends StreamCacheManager {
-
-	private static sInstance: TwitchCacheManager | null = null;
-
-	public static getInstance(): TwitchCacheManager {
-		if (this.sInstance === null) {
-			this.sInstance = new TwitchCacheManager();
-		}
-		return this.sInstance;
-	}
+export class TwitchCacheContainer extends StreamCacheContainer {
 
 	private mCaches: TwitchStreamCache[];
 	private mNewCaches: TwitchStreamCache[];
-	private mUserLoader: IUserAsyncLoader | null = null;
-	private mStreamLoader: IStreamAsyncLoader | null = null;
+	private mUserLoader: IUserAsyncLoader;
+	private mStreamLoader: IStreamAsyncLoader;
 
-	public constructor() {
+	public constructor(
+		userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
+
 		super();
 		dotenv.config();
 		this.mCaches = [];
-	}
 
-	public setUserLoader(loader: IUserAsyncLoader) {
-		this.mUserLoader = loader;
-	}
-
-	public setStreamLoader(loader: IStreamAsyncLoader) {
-		this.mStreamLoader = loader;
+		this.mUserLoader = userLoader;
+		this.mStreamLoader = streamloader;
 	}
 
 	public async update() {

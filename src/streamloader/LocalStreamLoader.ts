@@ -1,20 +1,22 @@
 import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 import { User } from "../model/User";
-import { WowzaCacheManager } from "../manager/cache/WowzaCacheManager";
+import { WowzaCacheContainer } from "../model/cache/WowzaCacheContainer";
 import { StreamInfo, StreamPlatform } from "../model/Stream";
 
 export class LocalStreamLoader extends StreamLoader {
 
+	public mManager: WowzaCacheContainer;
 	public mUser: User;
 
-	public constructor(user: User) {
+	public constructor(manager: WowzaCacheContainer, user: User) {
 		super();
+		this.mManager = manager;
 		this.mUser = user;
 	}
 
 	public requestInfo(callback: StreamLoaderCallback): void {
-		let manager: WowzaCacheManager = WowzaCacheManager.getInstance();
-		let caches = manager.getCaches();
+
+		let caches = this.mManager.getCaches();
 		let userId = this.mUser.getId();
 
 		let cache = caches.find(cache => cache.streamName === userId);

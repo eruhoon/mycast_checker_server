@@ -9,32 +9,64 @@ import { LocalStreamLoader } from './streamloader/LocalStreamLoader';
 import { YoutubeLoader } from './streamloader/YoutubeLoader';
 import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
 import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
+import { WowzaCacheContainer } from './model/cache/WowzaCacheContainer';
+import { TwitchCacheContainer } from './model/cache/TwitchCacheContainer';
+import { YoutubeCacheContainer } from './model/cache/YoutubeCacheContainer';
 
 export class Checker {
 
 	private static DEFAULT_SENSITIVITY: number = 3;
 
+	private mUserLoader: IUserAsyncLoader;
+	private mStreamLoader: IStreamAsyncLoader;
+
+	private mWowzaCacheManager: WowzaCacheContainer;
+	private mTwitchCacheManager: TwitchCacheContainer;
+	private mYoutubeCacheManager: YoutubeCacheContainer;
+
 	private mStreams: CheckerEntry[] = [];
 
-	public async update(
+	public constructor(
 		userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
+
+		this.mUserLoader = userLoader;
+		this.mStreamLoader = streamloader;
+
+		this.mWowzaCacheManager = new WowzaCacheContainer();
+		this.mTwitchCacheManager =
+			new TwitchCacheContainer(userLoader, streamloader);
+		this.mYoutubeCacheManager =
+			new YoutubeCacheContainer(userLoader, streamloader);
+
+		this.initCacheManager();
+	}
+
+	public initCacheManager() {
+		this.mWowzaCacheManager.start();
+		this.mTwitchCacheManager.start();
+		this.mYoutubeCacheManager.start(60000);
+	}
+
+	public async update() {
 
 		this.updateStream();
 
-		let users = await userLoader.getUsers();
+		let users = await this.mUserLoader.getUsers();
 		users.forEach(user => {
 			let loader: StreamLoader = null;
 			let platform = user.getStreamPlatform();
 			switch (platform) {
 				case StreamPlatform.LOCAL:
-					loader = new LocalStreamLoader(user);
+					loader = new LocalStreamLoader(
+						this.mWowzaCacheManager, user);
 					break;
 				case StreamPlatform.AFREECA:
 					loader = new AfreecaLoader(user.getStreamKeyId());
 					loader = new UserExternalDecorator(user, loader);
 					break;
 				case StreamPlatform.TWITCH:
-					loader = new TwtichLoader(user.getStreamKeyId());
+					loader = new TwtichLoader(
+						this.mTwitchCacheManager, user.getStreamKeyId());
 					loader = new UserExternalDecorator(user, loader);
 					break;
 				case StreamPlatform.MIXER:
@@ -50,7 +82,7 @@ export class Checker {
 			}
 		});
 
-		let streamRows = await streamloader.getStreams();
+		let streamRows = await this.mStreamLoader.getStreams();
 		streamRows.forEach(row => {
 			let loader: StreamLoader = null;
 			let platform = row.platform;
@@ -59,7 +91,8 @@ export class Checker {
 					loader = new AfreecaLoader(row.keyword);
 					break;
 				case StreamPlatform.TWITCH:
-					loader = new TwtichLoader(row.keyword);
+					loader = new TwtichLoader(
+						this.mTwitchCacheManager, row.keyword);
 					break;
 				case StreamPlatform.KAKAOTV:
 					loader = new KakaoTvLoader(row.keyword);
@@ -68,7 +101,8 @@ export class Checker {
 					loader = new MixerLoader(row.keyword);
 					break;
 				case StreamPlatform.YOUTUBE:
-					loader = new YoutubeLoader(row.keyword);
+					loader = new YoutubeLoader(
+						this.mYoutubeCacheManager, row.keyword);
 					break;
 			}
 

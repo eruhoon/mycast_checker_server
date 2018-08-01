@@ -1,18 +1,20 @@
-import { TwitchCacheManager } from "../manager/cache/TwitchCacheManager";
+import { TwitchCacheContainer } from "../model/cache/TwitchCacheContainer";
 import { StreamInfo, StreamPlatform } from "../model/Stream";
 import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 
 export class TwtichLoader extends StreamLoader {
 
+	private mManager: TwitchCacheContainer;
 	private mKeyword: string;
 
-	public constructor(keyword: string) {
+	public constructor(manager: TwitchCacheContainer, keyword: string) {
 		super();
+		this.mManager = manager;
 		this.mKeyword = keyword;
 	}
 
 	public requestInfo(callback: StreamLoaderCallback) {
-		let cache = TwitchCacheManager.getInstance().getCache(this.mKeyword);
+		let cache = this.mManager.getCache(this.mKeyword);
 		if (cache === null) {
 			return;
 		}

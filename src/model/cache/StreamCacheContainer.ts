@@ -1,6 +1,6 @@
-import { IStreamCacheManager } from "./IStreamCacheManager";
+import { IStreamCacheContainer } from "./IStreamCacheContainer";
 
-export abstract class StreamCacheManager implements IStreamCacheManager {
+export abstract class StreamCacheContainer implements IStreamCacheContainer {
 
 	private mScheduler: NodeJS.Timer | null;
 
