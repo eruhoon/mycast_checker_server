@@ -16,7 +16,7 @@ export class AfreecaLoader extends StreamLoader {
 		const url = 'http://sch.afreeca.com/api.php';
 
 		const opt = {
-			timeout: 1000,
+			timeout: 3000,
 			json: true,
 			qs: {
 				m: 'liveSearch',
