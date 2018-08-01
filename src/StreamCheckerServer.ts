@@ -5,7 +5,7 @@ import { TwitchCacheManager } from './manager/cache/TwitchCacheManager';
 import { StreamPlatform } from './model/Stream';
 import { YoutubeCacheManager } from './manager/cache/YoutubeCacheManager';
 import { SocketManager, SocketTag } from './SocketManager';
-import { DatabaseManager } from './manager/DatabaseManager';
+import { DatabaseLoader } from './controller/DatabaseLoader';
 import { Config } from './config/Config';
 import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
 import { DummyUserAsyncLoader } from './controller/DummyUserAsyncLoader';
@@ -18,14 +18,15 @@ export class StreamCheckerServer {
 
 		const serverManager: ServerManager = ServerManager.getInstance();
 
+		const databaseLoader = new DatabaseLoader();
 		let userLoader: IUserAsyncLoader;
 		let streamLoader: IStreamAsyncLoader;
 		if (Config.isDebugMode()) {
 			userLoader = new DummyUserAsyncLoader();
 			streamLoader = new DummyStreamAsyncLoader();
 		} else {
-			userLoader = DatabaseManager.getInstance();
-			streamLoader = DatabaseManager.getInstance();
+			userLoader = databaseLoader;
+			streamLoader = databaseLoader;
 		}
 
 		WowzaCacheManager.getInstance().start();

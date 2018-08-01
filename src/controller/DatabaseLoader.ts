@@ -3,22 +3,13 @@ import * as dotenv from 'dotenv';
 import { StreamRow, UserRow } from '../model/Database';
 import { User } from '../model/User';
 import { StreamPlatform } from '../model/Stream';
-import { IUserAsyncLoader } from '../controller/IUserAsyncLoader';
+import { IUserAsyncLoader } from './IUserAsyncLoader';
 
-export class DatabaseManager implements IUserAsyncLoader {
-
-	private static sInstance: DatabaseManager | null = null;
-
-	public static getInstance(): DatabaseManager {
-		if (this.sInstance === null) {
-			this.sInstance = new DatabaseManager();
-		}
-		return this.sInstance;
-	}
+export class DatabaseLoader implements IUserAsyncLoader {
 
 	private mDb: Mysql.Connection;
 
-	private constructor() {
+	public constructor() {
 		dotenv.config();
 
 		const user: string = process.env.DB_USER;
@@ -28,10 +19,6 @@ export class DatabaseManager implements IUserAsyncLoader {
 		this.mDb = Mysql.createConnection({
 			user, password, database
 		});
-	}
-
-	public getDb(): Mysql.Connection {
-		return this.mDb;
 	}
 
 	public async getStreamIds(platform: StreamPlatform): Promise<string[]> {

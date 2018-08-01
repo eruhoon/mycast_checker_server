@@ -1,5 +1,3 @@
-import { DatabaseManager } from "./manager/DatabaseManager";
-
 import * as Socketio from 'socket.io';
 import { StreamSet } from "./model/Stream";
 import * as https from "https";
