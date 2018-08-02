@@ -64,7 +64,7 @@ export class StreamCheckerServer {
 		setInterval(() => {
 			checker.update();
 			socketManager.refreshStreams(checker.getStreams());
-		}, 5000);
+		}, 10000);
 
 	}
 }

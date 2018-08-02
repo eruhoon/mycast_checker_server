@@ -12,6 +12,7 @@ import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
 import { WowzaCacheContainer } from './model/cache/WowzaCacheContainer';
 import { TwitchCacheContainer } from './model/cache/TwitchCacheContainer';
 import { YoutubeCacheContainer } from './model/cache/YoutubeCacheContainer';
+import { StreamRewardProvider } from './controller/StreamRewardProvider';
 
 export class Checker {
 
@@ -77,6 +78,10 @@ export class Checker {
 
 			if (loader !== null) {
 				loader.requestInfo(info => {
+					if (info.platform === StreamPlatform.LOCAL) {
+						let provider = new StreamRewardProvider();
+						provider.requestStreamReward(user.getHash(), info.viewer);
+					}
 					this.addStream(CheckerType.LOCAL, info);
 				});
 			}
