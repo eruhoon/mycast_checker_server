@@ -22,7 +22,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 	}
 
 	public async update() {
-		console.time('YoutubeCacheManager#update');
+		console.time('YoutubeCacheContainer#update');
 		let keywords = await this.getStreamIds();
 		let channels = await YoutubeCacheUtils.getChannel(keywords);
 
@@ -51,8 +51,8 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 		this.mCaches = streams;
 
 		let onair = streams.length;
-		console.log(`YoutubeCacheManager#update: ${onair}/${keywords.length}`);
-		console.timeEnd('YoutubeCacheManager#update');
+		console.log(`YoutubeCacheContainer#update: ${onair}/${keywords.length}`);
+		console.timeEnd('YoutubeCacheContainer#update');
 	}
 
 	public getCache(keyword: string): StreamInfo | null {
@@ -66,7 +66,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 	private async getStreamIds(): Promise<string[]> {
 
 		if (this.mUserLoader === null || this.mStreamLoader === null) {
-			console.error('YoutubeCacheManager#getStreamIds: no loader');
+			console.error('YoutubeCacheContainer#getStreamIds: no loader');
 			return [];
 		}
 

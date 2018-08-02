@@ -48,7 +48,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
 		return new Promise((resolve, reject) => {
 			this.mDb.query(query, (err, result) => {
 				if (err) {
-					console.error(`DatabaseManager#getStreams: DB error ${err}`);
+					console.error(`DatabaseLoader#getStreams: DB error ${err}`);
 					resolve([]);
 				}
 				resolve(result);
@@ -61,7 +61,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
 		return new Promise<User[]>(resolve => {
 			this.mDb.query(query, (err, result: UserRow[]) => {
 				if (err) {
-					console.error(`DatabaseManager#getUsers: DB error ${err}`);
+					console.error(`DatabaseLoader#getUsers: DB error ${err}`);
 					resolve([]);
 				}
 				let users: User[] = result.map(row => User.createWithRow(row));
@@ -76,7 +76,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
 		return new Promise((resolve, reject) => {
 			this.mDb.query(query, ['hash'], (err, result: UserRow[]) => {
 				if (err) {
-					console.error(`DatabaseManager#getUsers: DB error ${err}`);
+					console.error(`DatabaseLoader#getUsers: DB error ${err}`);
 					resolve(null);
 				}
 				console.log(result);
@@ -90,7 +90,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
 		const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
 		this.mDb.query(query, [hash], (err, result: UserRow[]) => {
 			if (err) {
-				console.error(`DatabaseManager#getUsers: DB error ${err}`);
+				console.error(`DatabaseLoader#getUsers: DB error ${err}`);
 				callback(null);
 				return;
 			}

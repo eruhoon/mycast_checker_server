@@ -26,10 +26,10 @@ export class TwitchCacheContainer extends StreamCacheContainer {
 	}
 
 	public async update() {
-		console.time('TwitchCacheManager#update');
+		console.time('TwitchCacheContainer#update');
 
 		if (this.mUserLoader === null || this.mStreamLoader === null) {
-			console.error('TwitchCacheManager#update: no loader');
+			console.error('TwitchCacheContainer#update: no loader');
 		} else {
 			let keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
 				.filter(u => u.getStreamPlatform() === StreamPlatform.TWITCH)
@@ -57,10 +57,10 @@ export class TwitchCacheContainer extends StreamCacheContainer {
 
 			let total = this.mCaches.length;
 			let onair = this.mCaches.filter(cache => cache.stream != null).length;
-			console.log(`TwitchCacheManager#update: onair: ${onair}/${total}`);
+			console.log(`TwitchCacheContainer#update: ${onair}/${total}`);
 
 		}
-		console.timeEnd('TwitchCacheManager#update');
+		console.timeEnd('TwitchCacheContainer#update');
 	}
 
 	public getCache(keyword: string): TwitchStreamCache | null {

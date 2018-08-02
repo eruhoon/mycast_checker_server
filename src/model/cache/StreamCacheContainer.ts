@@ -10,7 +10,7 @@ export abstract class StreamCacheContainer implements IStreamCacheContainer {
 
 	public start(interval: number = 10000): void {
 		if (this.mScheduler !== null) {
-			console.error('WowzaCacheManager#start: Already Start');
+			console.error('StreamCacheContainer#start: Already Start');
 			return;
 		}
 		this.update();

@@ -24,7 +24,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
 		return new Promise<string>(resolve => {
 			request.get(WowzaCacheContainer.URL, opt, (err, res, body) => {
 				if (err || res.statusCode !== 200 || !body) {
-					console.error('WowzaCacheManager#update: Request Error', err);
+					console.error('WowzaCacheContainer#update: Request Error', err);
 					return;
 				}
 
@@ -38,12 +38,12 @@ export class WowzaCacheContainer extends StreamCacheContainer {
 			try {
 				xml2js.parseString(xml, (err, result: RawWowzaModel | null) => {
 					if (err) {
-						console.error('WowzaCacheManager#parseRaw: Parse Error', err);
+						console.error('WowzaCacheContainer#parseRaw: Parse Error', err);
 						return;
 					}
 
 					if (!result) {
-						console.error('WowzaCacheManager#parseRaw: Null Result');
+						console.error('WowzaCacheContainer#parseRaw: Null Result');
 						return;
 					}
 
@@ -51,7 +51,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
 
 				})
 			} catch (exception) {
-				console.error(`WowzaCacheManager#parseRaw: Exception: ${exception}`);
+				console.error(`WowzaCacheContainer#parseRaw: Exception: ${exception}`);
 			}
 		});
 	}
