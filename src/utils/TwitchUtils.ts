@@ -56,7 +56,8 @@ export class TwitchUtils {
 
 	public static loadStream(keywords: string[]): Promise<RawTwitchStream[]> {
 		return new Promise((resolve, reject) => {
-			const querystring = keywords.map(k => `user_login=${k}`).join('&');
+			let querystring = keywords.map(k => `user_login=${k}`).join('&');
+			querystring += '&first=100';
 			const url = `https://api.twitch.tv/helix/streams?${querystring}`;
 			const option = {
 				timeout: 5000,
