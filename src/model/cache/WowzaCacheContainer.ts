@@ -1,7 +1,8 @@
 import * as dotenv from 'dotenv';
 import * as request from 'request';
 import * as xml2js from 'xml2js';
-import { RawWowzaModel, RawWowzaStream } from '../../Model/RawWowzaModel';
+
+import { RawWowzaModel, RawWowzaStream } from '../../model/RawWowzaModel';
 import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class WowzaCacheContainer extends StreamCacheContainer {
