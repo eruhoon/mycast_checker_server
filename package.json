@@ -22,9 +22,11 @@
     "@types/request": "^2.48.3",
     "@types/socket.io": "^1.4.40",
     "@types/xml-parser": "^1.2.29",
-    "@types/xml2js": "^0.4.5"
+    "@types/xml2js": "^0.4.5",
+    "typescript": "^3.6.3"
   },
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "eruhoon@gmail.com",
