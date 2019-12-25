@@ -1,9 +1,10 @@
-import { Config } from '../config/Config';
+import * as dotenv from 'dotenv';
 import * as Express from 'express';
+import { readFileSync } from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import * as dotenv from 'dotenv';
-import { readFileSync } from 'fs';
+
+import { Config } from '../config/Config';
 
 export class ServerManager {
 
@@ -36,7 +37,10 @@ export class ServerManager {
 
 
 		this.mApp.use((req, res, next) => {
-			res.header('Access-Control-Allow-Origin', 'http://mycast.xyz');
+			const origin = req.headers.origin;
+			if (typeof origin === 'string' && this.isWhiteList(origin)) {
+				res.header('Access-Control-Allow-Origin', origin);
+			}
 			res.header('Access-Control-Allow-Credentials', 'true');
 			next();
 		});
@@ -62,4 +66,11 @@ export class ServerManager {
 		return this.mServer
 	}
 
+	private isWhiteList(host: string): boolean {
+		const whiteList = [
+			'http://localhost:4200',
+			'http://mycast.xyz',
+		];
+		return whiteList.indexOf(host) > -1;
+	}
 }
