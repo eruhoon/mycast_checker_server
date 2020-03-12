@@ -4,6 +4,7 @@
   "description": "",
   "main": "app/app.js",
   "dependencies": {
+    "axios": "^0.19.2",
     "beam-client-node": "^2.0.0",
     "dotenv": "^6.2.0",
     "express": "^4.17.1",
@@ -16,6 +17,7 @@
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/dotenv": "^4.0.3",
     "@types/express": "^4.17.1",
     "@types/mysql": "^2.15.7",

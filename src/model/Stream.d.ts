@@ -23,5 +23,6 @@ export declare const enum StreamPlatform {
 	AFREECA = 'afreeca',
 	KAKAOTV = 'kakaotv',
 	YOUTUBE = 'youtube',
+	TOTORO = 'totoro',
 	MIXER = 'mixer',
 }

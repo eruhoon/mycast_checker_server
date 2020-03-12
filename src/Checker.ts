@@ -1,18 +1,20 @@
-import { StreamPlatform, StreamInfo, StreamSet } from './model/Stream';
-import { TwtichLoader } from './streamloader/TwitchLoader';
-import { UserExternalDecorator } from './streamloader/UserExternalDecorator';
-import { StreamLoader } from './streamloader/StreamLoader';
+import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
+import { StreamRewardProvider } from './controller/StreamRewardProvider';
+import { TotoroCacheContainer } from './model/cache/TotoroCacheContainer';
+import { TwitchCacheContainer } from './model/cache/TwitchCacheContainer';
+import { WowzaCacheContainer } from './model/cache/WowzaCacheContainer';
+import { YoutubeCacheContainer } from './model/cache/YoutubeCacheContainer';
+import { StreamInfo, StreamPlatform, StreamSet } from './model/Stream';
 import { AfreecaLoader } from './streamloader/AfreecaLoader';
 import { KakaoTvLoader } from './streamloader/KakaoTvLoader';
-import { MixerLoader } from './streamloader/MixerLoader';
 import { LocalStreamLoader } from './streamloader/LocalStreamLoader';
+import { MixerLoader } from './streamloader/MixerLoader';
+import { StreamLoader } from './streamloader/StreamLoader';
+import { TotoroStreamLoader } from './streamloader/TotoroStreamLoader';
+import { TwtichLoader } from './streamloader/TwitchLoader';
+import { UserExternalDecorator } from './streamloader/UserExternalDecorator';
 import { YoutubeLoader } from './streamloader/YoutubeLoader';
-import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
-import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
-import { WowzaCacheContainer } from './model/cache/WowzaCacheContainer';
-import { TwitchCacheContainer } from './model/cache/TwitchCacheContainer';
-import { YoutubeCacheContainer } from './model/cache/YoutubeCacheContainer';
-import { StreamRewardProvider } from './controller/StreamRewardProvider';
 
 export class Checker {
 
@@ -22,6 +24,7 @@ export class Checker {
 	private mStreamLoader: IStreamAsyncLoader;
 
 	private mWowzaCacheManager: WowzaCacheContainer;
+	private mTotoroCacheManager: TotoroCacheContainer;
 	private mTwitchCacheManager: TwitchCacheContainer;
 	private mYoutubeCacheManager: YoutubeCacheContainer;
 
@@ -34,6 +37,7 @@ export class Checker {
 		this.mStreamLoader = streamloader;
 
 		this.mWowzaCacheManager = new WowzaCacheContainer();
+		this.mTotoroCacheManager = new TotoroCacheContainer();
 		this.mTwitchCacheManager =
 			new TwitchCacheContainer(userLoader, streamloader);
 		this.mYoutubeCacheManager =
@@ -44,6 +48,7 @@ export class Checker {
 
 	public initCacheManager() {
 		this.mWowzaCacheManager.start();
+		this.mTotoroCacheManager.start();
 		this.mTwitchCacheManager.start();
 		this.mYoutubeCacheManager.start(60000);
 	}
@@ -60,6 +65,10 @@ export class Checker {
 				case StreamPlatform.LOCAL:
 					loader = new LocalStreamLoader(
 						this.mWowzaCacheManager, user);
+					break;
+				case StreamPlatform.TOTORO:
+					loader = new TotoroStreamLoader(
+						this.mTotoroCacheManager, user);
 					break;
 				case StreamPlatform.AFREECA:
 					loader = new AfreecaLoader(user.getStreamKeyId());
@@ -78,7 +87,8 @@ export class Checker {
 
 			if (loader !== null) {
 				loader.requestInfo(info => {
-					if (info.platform === StreamPlatform.LOCAL) {
+					if (info.platform === StreamPlatform.LOCAL ||
+						info.platform === StreamPlatform.TOTORO) {
 						let provider = new StreamRewardProvider();
 						provider.requestStreamReward(user.getHash(), info.viewer);
 					}
