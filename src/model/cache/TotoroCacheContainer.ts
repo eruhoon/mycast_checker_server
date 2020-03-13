@@ -20,7 +20,6 @@ export class TotoroCacheContainer extends StreamCacheContainer {
         rawJson: { streams: RawTotoroStream[] }): RawTotoroStream[] {
         try {
             const rawClients: RawTotoroStream[] = rawJson.streams.filter(c => {
-                console.log(c.publish.active, c.app);
                 return c.publish.active === true && c.app === 'live';
             });
             const clients: RawTotoroStream[] = [];
