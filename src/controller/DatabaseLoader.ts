@@ -1,8 +1,9 @@
-import * as Mysql from 'mysql';
 import * as dotenv from 'dotenv';
+import * as Mysql from 'mysql';
+
 import { StreamRow, UserRow } from '../model/Database';
-import { User } from '../model/User';
 import { StreamPlatform } from '../model/Stream';
+import { User } from '../model/User';
 import { IUserAsyncLoader } from './IUserAsyncLoader';
 
 export class DatabaseLoader implements IUserAsyncLoader {
@@ -79,7 +80,6 @@ export class DatabaseLoader implements IUserAsyncLoader {
 					console.error(`DatabaseLoader#getUsers: DB error ${err}`);
 					resolve(null);
 				}
-				console.log(result);
 				let user: User = User.createWithRow(result[0]);
 				resolve(user);
 			});
