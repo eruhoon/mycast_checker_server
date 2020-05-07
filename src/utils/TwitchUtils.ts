@@ -1,3 +1,5 @@
+import Axios from 'axios';
+import * as qs from 'querystring';
 import * as request from 'request';
 
 export type RawTwitchUser = {
@@ -33,51 +35,79 @@ type RawTwitchUserType = 'staff' | 'admin' | 'global_mod' | '';
 
 export class TwitchUtils {
 
-	public static loadUser(keywords: string[]): Promise<RawTwitchUser[]> {
-		return new Promise((resolve, reject) => {
-			const querystring = keywords.map(k => `login=${k}`).join('&');
-			const url = `https://api.twitch.tv/helix/users?${querystring}`;
-			const option = {
+	public static async loadUser(loginIds: string[]): Promise<RawTwitchUser[]> {
+		const accessToken = await this.getAccessToken();
+		if (!accessToken) {
+			console.error('Invalid accessToken');
+			return [];
+		}
+		const host = 'https://api.twitch.tv/helix/users';
+		const query = loginIds.map(k => `login=${k}`).join('&');
+		const url = `${host}?${query}`;
+		try {
+			const res = await Axios.get(url, {
 				timeout: 5000,
-				json: true,
-				headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID }
-			}
-
-			request.get(url, option, (err, res, body) => {
-				if (err || res.statusCode !== 200 || !body) {
-					console.error(`TwitchUtils#loadUser: Request Error: ${err}`);
-					return;
-				}
-				let users: RawTwitchUser[] = body.data;
-				resolve(users);
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Client-ID': process.env.TWITCH_CLIENT_ID
+				},
 			});
-		});
+			const users: RawTwitchUser[] = res.data.data;
+			return users;
+		} catch (e) {
+			console.error(`TwitchUtils#loadUser: Request Error: ${e}`);
+			return [];
+		}
 	}
 
-	public static loadStream(keywords: string[]): Promise<RawTwitchStream[]> {
-		return new Promise((resolve, reject) => {
-			let querystring = keywords.map(k => `user_login=${k}`).join('&');
-			querystring += '&first=100';
-			const url = `https://api.twitch.tv/helix/streams?${querystring}`;
-			const option = {
-				timeout: 5000,
-				json: true,
-				headers: { 'Client-ID': process.env.TWITCH_CLIENT_ID }
-			}
-			request.get(url, option, (err, res, body) => {
-				if (err || res.statusCode !== 200 || !body) {
-					console.error(`TwitchUtils#loadStream: Request Error: ${err}`);
-					return;
-				}
+	public static async loadStream(keywords: string[]): Promise<RawTwitchStream[]> {
+		const accessToken = await this.getAccessToken();
+		if (!accessToken) {
+			console.error('Invalid accessToken');
+			return [];
+		}
+		const userQuery = keywords.map(k => `user_login=${k}`).join('&');
+		const query = `${userQuery}&first=100`;
+		const host = 'https://api.twitch.tv/helix/streams';
+		const url = `${host}?${query}`;
 
-				let streams: RawTwitchStream[] = body.data;
-				streams.forEach(s => {
-					let format = s.thumbnail_url;
-					s.thumbnail_url = this.decorateThumbnail(format, 200, 150);
-				});
-				resolve(streams);
+		try {
+			const res = await Axios.get(url, {
+				timeout: 5000,
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Client-ID': process.env.TWITCH_CLIENT_ID
+				}
 			});
+			const streams: RawTwitchStream[] = res.data.data;
+			streams.forEach(s => {
+				const format = s.thumbnail_url;
+				s.thumbnail_url = this.decorateThumbnail(format, 200, 150);
+			});
+			return streams;
+		} catch (e) {
+			console.error(`TwitchUtils#loadStream: Request Error: ${e}`);
+			return [];
+		}
+
+	}
+
+	private static async getAccessToken(): Promise<string | null> {
+		const host = 'https://id.twitch.tv/oauth2/token';
+		const query = qs.stringify({
+			client_id: process.env.TWITCH_CLIENT_ID,
+			client_secret: process.env.TWITCH_SECRET,
+			grant_type: 'client_credentials',
+			scope: 'user:read:email'
 		});
+		const url = `${host}?${query}`;
+		try {
+			const res = await Axios.post(url);
+			return res.data.access_token;
+		} catch (e) {
+			console.error(`getAccessToken: error: ${e}`);
+			return null;
+		}
 	}
 
 	private static decorateThumbnail(
