@@ -71,6 +71,20 @@ export class DatabaseLoader implements IUserAsyncLoader {
 		});
 	}
 
+	public getUserByPrivKey(privKey: string): Promise<User | null> {
+		const query = 'SELECT * FROM user WHERE private_key = ? AND confirm = 1';
+		return new Promise((resolve, reject) => {
+			this.mDb.query(query, [privKey], (err, result: UserRow[]) => {
+				if (err) {
+					console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+					resolve(null);
+				}
+				const user: User = User.createWithRow(result[0]);
+				resolve(user);
+			});
+		});
+	}
+
 	public getUserByHash(hash: string): Promise<User | null> {
 		const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
 

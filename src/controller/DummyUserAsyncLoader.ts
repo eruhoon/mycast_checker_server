@@ -1,5 +1,5 @@
-import { IUserAsyncLoader } from "./IUserAsyncLoader";
-import { User } from "../model/User";
+import { User } from '../model/User';
+import { IUserAsyncLoader } from './IUserAsyncLoader';
 
 export class DummyUserAsyncLoader implements IUserAsyncLoader {
 
@@ -15,6 +15,18 @@ export class DummyUserAsyncLoader implements IUserAsyncLoader {
 
         return new Promise<User[]>(resolve => {
             resolve(dummyUsers);
+        });
+    }
+
+    public getUserByPrivKey(privKey: string): Promise<User | null> {
+        const dummyUser1 = new User({
+            idx: 1,
+            id: 'eruhoon',
+            nickname: 'shiguruna'
+        });
+
+        return new Promise<User>(resolve => {
+            resolve(dummyUser1);
         });
     }
 }

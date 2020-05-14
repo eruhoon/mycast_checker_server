@@ -1,8 +1,9 @@
+import * as http from 'http';
+import * as https from 'https';
 import * as Socketio from 'socket.io';
-import { StreamSet } from "./model/Stream";
-import * as https from "https";
-import * as http from "http";
-import { IUserAsyncLoader } from "./controller/IUserAsyncLoader";
+
+import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
+import { StreamSet } from './model/Stream';
 
 type SocketCallback = (socket: Socketio.Socket) => void;
 
@@ -25,16 +26,27 @@ export class SocketManager {
 
 	public init(initCallback: SocketCallback) {
 		this.mSocketio.on('connection', async socket => {
-			let keyHash = socket.handshake.query.keyhash;
+			const keyHash = socket.handshake.query.keyhash;
+			const privateKey = socket.handshake.query.key;
 
 			// Abnormal Connection
-			if (!keyHash) socket.disconnect();
-			const users = await this.mUserLoader.getUsers();
-			const user = users.find(user => user.getHash() === keyHash);
-			if (!user) {
-				socket.disconnect();
-			} else {
-				initCallback(socket);
+			if (!keyHash && !privateKey) socket.disconnect();
+
+			if (privateKey) {
+				const user = await this.mUserLoader.getUserByPrivKey(privateKey);
+				if (!user) {
+					socket.disconnect();
+				} else {
+					initCallback(socket);
+				}
+			} else { // DEPRECATED MODULE
+				const users = await this.mUserLoader.getUsers();
+				const user = users.find(user => user.getHash() === keyHash);
+				if (!user) {
+					socket.disconnect();
+				} else {
+					initCallback(socket);
+				}
 			}
 		});
 	}
