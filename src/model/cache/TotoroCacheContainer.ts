@@ -7,7 +7,7 @@ import { StreamCacheContainer } from './StreamCacheContainer';
 export class TotoroCacheContainer extends StreamCacheContainer {
 
     private static readonly URL: string =
-        'http://parasite.banjai.tv:1985/api/v1/streams/'
+        'http://52.79.252.217:1985/api/v1/streams/'
 
     private mCaches: RawTotoroStream[];
 
