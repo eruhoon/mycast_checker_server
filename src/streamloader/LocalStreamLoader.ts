@@ -32,7 +32,7 @@ export class LocalStreamLoader extends StreamLoader {
 				onair: true,
 				title: nickname,
 				description: `${nickname}의 방송 [공용채널]`,
-				url: `https://mycast.xyz/player/${this.mUser.getIdx()}`,
+				url: `https://mycast.xyz/player/${streamKey}`,
 				viewer: parseInt(cache.sessionsTotal)
 			}
 			callback(info);
