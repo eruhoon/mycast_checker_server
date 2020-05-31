@@ -1,5 +1,5 @@
-import { StreamPlatform } from "./Stream";
-import { UserRow } from "./Database";
+import { UserRow } from './Database';
+import { StreamPlatform } from './Stream';
 
 export type UserParam = {
 	idx?: number,
@@ -61,6 +61,10 @@ export class User {
 	public getIdx(): number { return this.mIdx; }
 
 	public getId(): string { return this.mId; }
+
+	public getStreamKey(): string {
+		return this.mHash.substring(0, 5);
+	}
 
 	public getHash(): string { return this.mHash; }
 
