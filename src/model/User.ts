@@ -62,10 +62,6 @@ export class User {
 
 	public getId(): string { return this.mId; }
 
-	public getStreamKey(): string {
-		return this.mHash.substring(0, 5);
-	}
-
 	public getHash(): string { return this.mHash; }
 
 	public getNickname(): string { return this.mNickname }
@@ -76,6 +72,8 @@ export class User {
 
 	public getStreamKeyId(): string {
 		switch (this.mPlatform) {
+			case StreamPlatform.LOCAL: return this.mHash.substring(0, 5);
+			case StreamPlatform.TOTORO: return this.mHash.substring(0, 5);
 			case StreamPlatform.AFREECA: return this.mAfreecaId;
 			case StreamPlatform.TWITCH: return this.mTwitchId;
 			case StreamPlatform.MIXER: return this.mMixerId;

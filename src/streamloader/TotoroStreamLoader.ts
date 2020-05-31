@@ -17,7 +17,7 @@ export class TotoroStreamLoader extends StreamLoader {
     public requestInfo(callback: StreamLoaderCallback): void {
 
         let caches = this.mManager.getCaches();
-        let streamKey = this.mUser.getStreamKey();
+        let streamKey = this.mUser.getStreamKeyId();
 
         let cache = caches.find(cache => cache.name === streamKey);
         if (cache) {
