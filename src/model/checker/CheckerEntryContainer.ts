@@ -6,11 +6,15 @@ export class CheckerEntryContainer {
     private readonly DEFAULT_SENSITIVITY: number = 3;
 
     private mEntries: CheckerEntry2[];
-    private mOnStreamAddCallback: OnStreamAddListener;
+    private mOnStreamAddCallback: OnStreamAddCallback;
 
     public constructor() {
         this.mEntries = [];
         this.mOnStreamAddCallback = _ => { };
+    }
+
+    public setOnStreamAddCallback(callback: OnStreamAddCallback): void {
+        this.mOnStreamAddCallback = callback;
     }
 
     public getEntries(): CheckerEntry2[] {
@@ -42,4 +46,4 @@ export class CheckerEntryContainer {
 
 }
 
-export type OnStreamAddListener = (stream: StreamInfo) => void;
+export type OnStreamAddCallback = (stream: StreamInfo) => void;
