@@ -4,6 +4,11 @@
 		"no-var-keyword": true,
 		"quotemark": false,
 		"no-shadowed-variable": false,
+		"object-literal-sort-keys": false,
+		"radix": false,
+		"interface-over-type-literal": false,
+		"interface-name": false,
+		"arrow-parens": false
 	},
 	"rulesDirectory": "./src"
 }

@@ -2,7 +2,7 @@ import { StreamInfo } from '../model/Stream';
 
 export abstract class StreamLoader {
 
-	public abstract requestInfo(callback: StreamLoaderCallback): void;
+    public abstract requestInfo(callback: StreamLoaderCallback): void;
 
 }
 
