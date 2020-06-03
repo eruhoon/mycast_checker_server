@@ -15,10 +15,10 @@ import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
 import { WowzaCacheContainer } from '../cache/WowzaCacheContainer';
 import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';
 import { StreamInfo, StreamPlatform, StreamSet } from '../Stream';
+import { CheckerType } from './CheckerEntry';
+import { CheckerEntryContainer } from './CheckerEntryContainer';
 
 export class Checker {
-
-    private static DEFAULT_SENSITIVITY: number = 3;
 
     private mUserLoader: IUserAsyncLoader;
     private mStreamLoader: IStreamAsyncLoader;
@@ -28,7 +28,7 @@ export class Checker {
     private mTwitchCacheManager: TwitchCacheContainer;
     private mYoutubeCacheManager: YoutubeCacheContainer;
 
-    private mStreams: CheckerEntry[] = [];
+    private mStreams2: CheckerEntryContainer;
 
     public constructor(
         userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
@@ -42,6 +42,8 @@ export class Checker {
             new TwitchCacheContainer(userLoader, streamloader);
         this.mYoutubeCacheManager =
             new YoutubeCacheContainer(userLoader, streamloader);
+
+        this.mStreams2 = new CheckerEntryContainer();
 
         this.initCacheManager();
     }
@@ -132,17 +134,17 @@ export class Checker {
     }
 
     public getStreams(): StreamSet {
-
-        const local = this.mStreams
-            .filter(e => e.type === CheckerType.LOCAL)
-            .map(e => e.stream)
+        const entries = this.mStreams2.getEntries();
+        const local = entries
+            .filter(e => e.getType() === CheckerType.LOCAL)
+            .map(e => e.getStream())
             .sort((a, b) => {
                 return a.nickname < b.nickname ? -1 : 1;
             });
 
-        const external = this.mStreams
-            .filter(e => e.type === CheckerType.EXTERNAL)
-            .map(e => e.stream)
+        const external = entries
+            .filter(e => e.getType() === CheckerType.EXTERNAL)
+            .map(e => e.getStream())
             .sort((a, b) => {
                 if (a.platform < b.platform) { return -1; }
                 if (a.platform > b.platform) { return 1; }
@@ -156,44 +158,10 @@ export class Checker {
     }
 
     private updateStream() {
-
-        this.mStreams = this.mStreams.filter((info: CheckerEntry) => {
-            info.sensitivity--;
-            return info.sensitivity > 0;
-        });
+        this.mStreams2.stale();
     }
 
     private addStream(type: CheckerType, info: StreamInfo) {
-        const checkerEntry: CheckerEntry = {
-            type,
-            stream: info,
-            sensitivity: Checker.DEFAULT_SENSITIVITY,
-        };
-
-        let isUpdate = false;
-        this.mStreams = this.mStreams.map(entry => {
-            const keyId = entry.stream.keyid;
-            const platform = entry.stream.platform;
-            if (keyId === info.keyid && platform === info.platform) {
-                isUpdate = true;
-                return checkerEntry;
-            }
-            return entry;
-        });
-
-        if (!isUpdate) {
-            this.mStreams.push(checkerEntry);
-        }
+        this.mStreams2.upsertStream(type, info);
     }
-}
-
-type CheckerEntry = {
-    type: CheckerType,
-    stream: StreamInfo,
-    sensitivity: number,
-};
-
-enum CheckerType {
-    LOCAL = 'local',
-    EXTERNAL = 'external',
 }
