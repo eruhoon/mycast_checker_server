@@ -6,12 +6,15 @@ import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
 import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
 import { ServerManager } from './manager/ServerManager';
 import { Checker } from './model/checker/Checker';
+import { CheckerType } from './model/checker/CheckerEntry';
 import { StreamPlatform } from './model/Stream';
 import { SocketManager, SocketTag } from './SocketManager';
 
 export class StreamCheckerServer {
 
     public static main() {
+
+        const sOnTime = new Date().getTime();
 
         const serverManager: ServerManager = ServerManager.getInstance();
 
@@ -27,7 +30,19 @@ export class StreamCheckerServer {
         }
 
         const checker = new Checker(userLoader, streamLoader);
+        checker.setOnStreamAddCallback(s => {
+            const timestamp = new Date().getTime();
+            if (timestamp - sOnTime < 10000) {
+                console.warn('added at init: skipped');
+                return;
+            }
 
+            if (s.getType() !== CheckerType.LOCAL) {
+                console.log('added external: skipped');
+                return;
+            }
+            socketManager.notificationNewStream(s.getStream());
+        });
         serverManager.get('/stream/', (req, res) => {
             const streams = checker.getStreams();
             res.json(streams);

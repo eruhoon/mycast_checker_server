@@ -17,7 +17,7 @@ import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';
 import { Logger } from '../common/logger/Logger';
 import { StreamInfo, StreamPlatform, StreamSet } from '../Stream';
 import { CheckerType } from './CheckerEntry';
-import { CheckerEntryContainer } from './CheckerEntryContainer';
+import { CheckerEntryContainer, OnStreamAddCallback } from './CheckerEntryContainer';
 
 export class Checker {
 
@@ -46,12 +46,12 @@ export class Checker {
             new YoutubeCacheContainer(userLoader, streamloader);
 
         this.mContainer = new CheckerEntryContainer();
-        this.mContainer.setOnStreamAddCallback(entry => {
-            const { keyid, platform } = entry.getStream();
-            this.mLogger.log(`Added: ${keyid}@${platform}`);
-        });
 
         this.initCacheManager();
+    }
+
+    public setOnStreamAddCallback(callback: OnStreamAddCallback): void {
+        this.mContainer.setOnStreamAddCallback(callback);
     }
 
     public initCacheManager() {
