@@ -1,17 +1,11 @@
 import { StreamInfo } from '../Stream';
 
-export type CheckerEntry = {
-    type: CheckerType,
-    stream: StreamInfo,
-    sensitivity: number,
-};
-
 export const enum CheckerType {
     LOCAL = 'local',
     EXTERNAL = 'external',
 }
 
-export class CheckerEntry2 {
+export class CheckerEntry {
 
     private static readonly DEFAULT_SENSITIVITY = 3;
 
@@ -22,7 +16,7 @@ export class CheckerEntry2 {
     public constructor(type: CheckerType, stream: StreamInfo) {
         this.mType = type;
         this.mStream = stream;
-        this.mSensitivity = CheckerEntry2.DEFAULT_SENSITIVITY;
+        this.mSensitivity = CheckerEntry.DEFAULT_SENSITIVITY;
     }
 
     public getType(): CheckerType { return this.mType; }
@@ -35,7 +29,7 @@ export class CheckerEntry2 {
 
     public isStaled(): boolean { return this.mSensitivity <= 0; }
 
-    public isSameKey(entry: CheckerEntry2): boolean {
+    public isSameKey(entry: CheckerEntry): boolean {
         const s1 = this.getStream();
         const s2 = entry.getStream();
         return s1.keyid === s2.keyid && s1.platform === s2.platform;

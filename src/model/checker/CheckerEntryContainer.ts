@@ -1,11 +1,9 @@
 import { StreamInfo } from '../Stream';
-import { CheckerEntry2, CheckerType } from './CheckerEntry';
+import { CheckerEntry, CheckerType } from './CheckerEntry';
 
 export class CheckerEntryContainer {
 
-    private readonly DEFAULT_SENSITIVITY: number = 3;
-
-    private mEntries: CheckerEntry2[];
+    private mEntries: CheckerEntry[];
     private mOnStreamAddCallback: OnStreamAddCallback;
 
     public constructor() {
@@ -17,7 +15,7 @@ export class CheckerEntryContainer {
         this.mOnStreamAddCallback = callback;
     }
 
-    public getEntries(): CheckerEntry2[] {
+    public getEntries(): CheckerEntry[] {
         return this.mEntries;
     }
 
@@ -27,7 +25,7 @@ export class CheckerEntryContainer {
     }
 
     public upsertStream(type: CheckerType, stream: StreamInfo): void {
-        const entry = new CheckerEntry2(type, stream);
+        const entry = new CheckerEntry(type, stream);
         if (!this.mEntries.some(e => e.isSameKey(entry))) {
             this.insert(entry);
         } else {
@@ -35,15 +33,15 @@ export class CheckerEntryContainer {
         }
     }
 
-    private insert(entry: CheckerEntry2): void {
+    private insert(entry: CheckerEntry): void {
         this.mEntries.push(entry);
-        this.mOnStreamAddCallback(entry.getStream());
+        this.mOnStreamAddCallback(entry);
     }
 
-    private update(entry: CheckerEntry2): void {
+    private update(entry: CheckerEntry): void {
         this.mEntries = this.mEntries.map(e => e.isSameKey(entry) ? entry : e);
     }
 
 }
 
-export type OnStreamAddCallback = (stream: StreamInfo) => void;
+export type OnStreamAddCallback = (stream: CheckerEntry) => void;
