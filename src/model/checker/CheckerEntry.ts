@@ -4,7 +4,7 @@ export type CheckerEntry = {
     type: CheckerType,
     stream: StreamInfo,
     sensitivity: number,
-}
+};
 
 export const enum CheckerType {
     LOCAL = 'local',
