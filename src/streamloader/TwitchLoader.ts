@@ -1,6 +1,6 @@
-import { TwitchCacheContainer } from "../model/cache/TwitchCacheContainer";
-import { StreamInfo, StreamPlatform } from "../model/Stream";
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+import { TwitchCacheContainer } from '../model/cache/TwitchCacheContainer';
+import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class TwtichLoader extends StreamLoader {
 

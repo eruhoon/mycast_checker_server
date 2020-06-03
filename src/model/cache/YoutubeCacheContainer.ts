@@ -1,10 +1,10 @@
 import * as request from 'request';
 
-import { StreamCacheContainer } from "./StreamCacheContainer";
-import { StreamInfo, StreamPlatform } from "../../model/Stream";
-import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
-import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 import { Config } from '../../config/Config';
+import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { StreamInfo, StreamPlatform } from '../../model/Stream';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class YoutubeCacheContainer extends StreamCacheContainer {
 

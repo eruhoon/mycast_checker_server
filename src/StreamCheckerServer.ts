@@ -1,13 +1,13 @@
 import { Checker } from './Checker';
+import { Config } from './config/Config';
+import { DatabaseLoader } from './controller/DatabaseLoader';
+import { DummyStreamAsyncLoader } from './controller/DummyStreamAsyncLoader';
+import { DummyUserAsyncLoader } from './controller/DummyUserAsyncLoader';
+import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
 import { ServerManager } from './manager/ServerManager';
 import { StreamPlatform } from './model/Stream';
 import { SocketManager, SocketTag } from './SocketManager';
-import { DatabaseLoader } from './controller/DatabaseLoader';
-import { Config } from './config/Config';
-import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
-import { DummyUserAsyncLoader } from './controller/DummyUserAsyncLoader';
-import { IStreamAsyncLoader } from './controller/IStreamAsyncLoader';
-import { DummyStreamAsyncLoader } from './controller/DummyStreamAsyncLoader';
 
 export class StreamCheckerServer {
 

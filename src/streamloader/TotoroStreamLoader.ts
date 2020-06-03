@@ -16,13 +16,13 @@ export class TotoroStreamLoader extends StreamLoader {
 
     public requestInfo(callback: StreamLoaderCallback): void {
 
-        let caches = this.mManager.getCaches();
-        let streamKey = this.mUser.getStreamKeyId();
+        const caches = this.mManager.getCaches();
+        const streamKey = this.mUser.getStreamKeyId();
 
-        let cache = caches.find(cache => cache.name === streamKey);
+        const cache = caches.find(cache => cache.name === streamKey);
         if (cache) {
-            let nickname = this.mUser.getNickname();
-            let info: StreamInfo = {
+            const nickname = this.mUser.getNickname();
+            const info: StreamInfo = {
                 result: true,
                 platform: StreamPlatform.TOTORO,
                 keyid: streamKey,
@@ -33,8 +33,8 @@ export class TotoroStreamLoader extends StreamLoader {
                 title: nickname,
                 description: `${nickname}의 방송 [이웃채널]`,
                 url: `https://mycast.xyz/player/totoro/${streamKey}`,
-                viewer: cache.clients
-            }
+                viewer: cache.clients,
+            };
             callback(info);
         }
     }

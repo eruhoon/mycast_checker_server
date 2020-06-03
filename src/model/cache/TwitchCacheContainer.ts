@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
 
-import { StreamPlatform } from '../../model/Stream';
-import { TwitchUtils, RawTwitchUser, RawTwitchStream } from '../../utils/TwitchUtils';
-import { TwitchStreamCache } from '../../model/TwitchStreamCache';
-import { StreamCacheContainer } from './StreamCacheContainer';
-import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { StreamPlatform } from '../../model/Stream';
+import { TwitchStreamCache } from '../../model/TwitchStreamCache';
+import { RawTwitchStream, RawTwitchUser, TwitchUtils } from '../../utils/TwitchUtils';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class TwitchCacheContainer extends StreamCacheContainer {
 

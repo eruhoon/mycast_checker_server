@@ -1,6 +1,7 @@
 import * as request from 'request';
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+
 import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class AfreecaLoader extends StreamLoader {
 

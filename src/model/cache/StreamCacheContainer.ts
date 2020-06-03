@@ -1,4 +1,4 @@
-import { IStreamCacheContainer } from "./IStreamCacheContainer";
+import { IStreamCacheContainer } from './IStreamCacheContainer';
 
 export abstract class StreamCacheContainer implements IStreamCacheContainer {
 

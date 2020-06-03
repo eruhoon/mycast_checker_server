@@ -1,6 +1,7 @@
 import * as Mixer from 'beam-client-node';
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+
 import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class MixerLoader extends StreamLoader {
 

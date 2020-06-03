@@ -1,6 +1,9 @@
 {
+	"extends": "tslint:recommended",
 	"rules": {
-		"no-var-keyword": true
+		"no-var-keyword": true,
+		"quotemark": false,
+		"no-shadowed-variable": false,
 	},
 	"rulesDirectory": "./src"
 }

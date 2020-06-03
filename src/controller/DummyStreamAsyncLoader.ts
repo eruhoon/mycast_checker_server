@@ -1,5 +1,5 @@
-import { IStreamAsyncLoader } from "./IStreamAsyncLoader";
-import { StreamRow } from "../model/Database";
+import { StreamRow } from '../model/Database';
+import { IStreamAsyncLoader } from './IStreamAsyncLoader';
 
 export class DummyStreamAsyncLoader implements IStreamAsyncLoader {
 

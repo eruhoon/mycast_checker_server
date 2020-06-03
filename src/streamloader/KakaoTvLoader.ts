@@ -1,7 +1,8 @@
 import * as request from 'request';
-import { StreamLoaderCallback, StreamLoader } from './StreamLoader';
 import { callbackify } from 'util';
+
 import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 type RawKakaoTvChannel = {
 	id: string,

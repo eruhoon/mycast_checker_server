@@ -1,4 +1,4 @@
-import { RawTwitchUser, RawTwitchStream } from "../utils/TwitchUtils";
+import { RawTwitchStream, RawTwitchUser } from '../utils/TwitchUtils';
 
 export type TwitchStreamCache = {
 	keyword: string,
