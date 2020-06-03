@@ -28,7 +28,7 @@ export class Checker {
     private mTwitchCacheManager: TwitchCacheContainer;
     private mYoutubeCacheManager: YoutubeCacheContainer;
 
-    private mStreams2: CheckerEntryContainer;
+    private mContainer: CheckerEntryContainer;
 
     public constructor(
         userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
@@ -43,7 +43,7 @@ export class Checker {
         this.mYoutubeCacheManager =
             new YoutubeCacheContainer(userLoader, streamloader);
 
-        this.mStreams2 = new CheckerEntryContainer();
+        this.mContainer = new CheckerEntryContainer();
 
         this.initCacheManager();
     }
@@ -134,7 +134,7 @@ export class Checker {
     }
 
     public getStreams(): StreamSet {
-        const entries = this.mStreams2.getEntries();
+        const entries = this.mContainer.getEntries();
         const local = entries
             .filter(e => e.getType() === CheckerType.LOCAL)
             .map(e => e.getStream())
@@ -158,10 +158,10 @@ export class Checker {
     }
 
     private updateStream() {
-        this.mStreams2.stale();
+        this.mContainer.stale();
     }
 
     private addStream(type: CheckerType, info: StreamInfo) {
-        this.mStreams2.upsertStream(type, info);
+        this.mContainer.upsertStream(type, info);
     }
 }
