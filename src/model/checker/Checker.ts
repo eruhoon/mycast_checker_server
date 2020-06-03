@@ -14,12 +14,14 @@ import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
 import { WowzaCacheContainer } from '../cache/WowzaCacheContainer';
 import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';
+import { Logger } from '../common/logger/Logger';
 import { StreamInfo, StreamPlatform, StreamSet } from '../Stream';
 import { CheckerType } from './CheckerEntry';
 import { CheckerEntryContainer } from './CheckerEntryContainer';
 
 export class Checker {
 
+    private mLogger: Logger = new Logger('Checker');
     private mUserLoader: IUserAsyncLoader;
     private mStreamLoader: IStreamAsyncLoader;
 
@@ -45,7 +47,7 @@ export class Checker {
 
         this.mContainer = new CheckerEntryContainer();
         this.mContainer.setOnStreamAddCallback(stream => {
-            console.log(`Stream Added: ${stream.keyid}@${stream.platform}`);
+            this.mLogger.log(`Added: ${stream.keyid}@${stream.platform}`);
         });
 
         this.initCacheManager();
