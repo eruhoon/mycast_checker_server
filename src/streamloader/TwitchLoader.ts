@@ -30,7 +30,7 @@ export class TwtichLoader extends StreamLoader {
             nickname: cache.user.display_name,
             title: cache.user.display_name,
             description: cache.stream.title,
-            url: `https://player.twitch.tv/?channel=${this.mKeyword}`,
+            url: `//player.twitch.tv/?channel=${this.mKeyword}`,
             onair: true,
             viewer: cache.stream.viewer_count,
             thumbnail: cache.stream.thumbnail_url
