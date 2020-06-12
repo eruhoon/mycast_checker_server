@@ -4,12 +4,14 @@ import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
 import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
 import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
 import { LocalStreamLoader } from '../../streamloader/LocalStreamLoader';
+import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
 import { MixerLoader } from '../../streamloader/MixerLoader';
 import { StreamLoader } from '../../streamloader/StreamLoader';
 import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
 import { TwtichLoader } from '../../streamloader/TwitchLoader';
 import { UserExternalDecorator } from '../../streamloader/UserExternalDecorator';
 import { YoutubeLoader } from '../../streamloader/YoutubeLoader';
+import { NewLocalCacheContainer } from '../cache/NewLocalCacheContainer';
 import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
 import { WowzaCacheContainer } from '../cache/WowzaCacheContainer';
@@ -26,6 +28,7 @@ export class Checker {
     private mStreamLoader: IStreamAsyncLoader;
 
     private mWowzaCacheManager: WowzaCacheContainer;
+    private mNewLocalCacheManager: NewLocalCacheContainer;
     private mTotoroCacheManager: TotoroCacheContainer;
     private mTwitchCacheManager: TwitchCacheContainer;
     private mYoutubeCacheManager: YoutubeCacheContainer;
@@ -39,6 +42,7 @@ export class Checker {
         this.mStreamLoader = streamloader;
 
         this.mWowzaCacheManager = new WowzaCacheContainer();
+        this.mNewLocalCacheManager = new NewLocalCacheContainer();
         this.mTotoroCacheManager = new TotoroCacheContainer();
         this.mTwitchCacheManager =
             new TwitchCacheContainer(userLoader, streamloader);
@@ -56,6 +60,7 @@ export class Checker {
 
     public initCacheManager() {
         this.mWowzaCacheManager.start();
+        this.mNewLocalCacheManager.start();
         this.mTotoroCacheManager.start();
         this.mTwitchCacheManager.start();
         this.mYoutubeCacheManager.start(60000);
@@ -71,8 +76,10 @@ export class Checker {
             const platform = user.getStreamPlatform();
             switch (platform) {
                 case StreamPlatform.LOCAL:
-                    loader = new LocalStreamLoader(
-                        this.mWowzaCacheManager, user);
+//                    loader = new LocalStreamLoader(
+//                        this.mWowzaCacheManager, user);
+                    loader = new NewLocalStreamLoader(
+                        this.mNewLocalCacheManager, user);
                     break;
                 case StreamPlatform.TOTORO:
                     loader = new TotoroStreamLoader(
