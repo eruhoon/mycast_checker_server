@@ -28,7 +28,8 @@ export class TotoroStreamLoader extends StreamLoader {
                 keyid: streamKey,
                 icon: this.mUser.getIcon(),
                 nickname: this.mUser.getNickname(),
-                thumbnail: this.mUser.getBackground(),
+                // thumbnail: this.mUser.getBackground(), //2dfff.png
+                thumbnail: this.getThumbnail(streamKey),
                 onair: true,
                 title: nickname,
                 description: `${nickname}의 방송 [이웃채널]`,
@@ -37,6 +38,13 @@ export class TotoroStreamLoader extends StreamLoader {
             };
             callback(info);
         }
+    }
+
+    private getThumbnail(streamKey: string): string {
+        const host = 'https://parasite.banjai.tv/live';
+        const fileName = `${streamKey}.jpeg`;
+        const timestamp = new Date().getTime();
+        return `${host}/${fileName}?${timestamp}`;
     }
 
 }
