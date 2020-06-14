@@ -28,7 +28,7 @@ export class NewLocalStreamLoader extends StreamLoader {
                 keyid: streamKey,
                 icon: this.mUser.getIcon(),
                 nickname: this.mUser.getNickname(),
-                thumbnail: this.mUser.getBackground(),
+                thumbnail: this.getThumbnail(streamKey),
                 onair: true,
                 title: nickname,
                 description: `${nickname}의 방송 [공용채널]`,
@@ -37,6 +37,13 @@ export class NewLocalStreamLoader extends StreamLoader {
             };
             callback(info);
         }
+    }
+
+    private getThumbnail(streamKey: string): string {
+        const host = 'https://mycast.xyz:9011/thumbs';
+        const fileName = `${streamKey}-001.png`;
+        const timestamp = new Date().getTime();
+        return `${host}/${fileName}?${timestamp}`;
     }
 
 }
