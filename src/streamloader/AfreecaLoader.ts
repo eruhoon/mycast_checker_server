@@ -40,6 +40,7 @@ export class AfreecaLoader extends StreamLoader {
             }
 
             const id = realBroad.user_id;
+            const broadNo = realBroad.broad_no;
             const prefix = id.substring(0, 2);
 
             const stream: StreamInfo = {
@@ -51,7 +52,7 @@ export class AfreecaLoader extends StreamLoader {
                 title: realBroad.station_name,
                 description: realBroad.broad_title,
                 url: `http://play.afreeca.com/${id}/embed`,
-                thumbnail: realBroad.sn_url + '?' + new Date().getTime(),
+                thumbnail: `https://liveimg.afreecatv.com/${broadNo}_240x135.gif`,
                 onair: true,
                 viewer: parseInt(realBroad.total_view_cnt),
             };
@@ -65,6 +66,7 @@ interface RawAfreecaInfo {
     REAL_BROAD: [{
         user_id: string,
         user_nick: string,
+        broad_no: string,
         station_name: string,
         broad_title: string,
         sn_url: string,
