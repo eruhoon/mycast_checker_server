@@ -35,12 +35,12 @@ type RawTwitchUserType = 'staff' | 'admin' | 'global_mod' | '';
 
 export class TwitchUtils {
 
-    private static readonly Logger = new Logger('TwitchUtils');
+    private static readonly sLogger = new Logger('TwitchUtils');
 
     public static async loadUser(loginIds: string[]): Promise<RawTwitchUser[]> {
         const accessToken = await this.getAccessToken();
         if (!accessToken) {
-            console.error('Invalid accessToken');
+            this.sLogger.error('Invalid accessToken');
             return [];
         }
         const host = 'https://api.twitch.tv/helix/users';
@@ -57,7 +57,7 @@ export class TwitchUtils {
             const users: RawTwitchUser[] = res.data.data;
             return users;
         } catch (e) {
-            console.error(`TwitchUtils#loadUser: Request Error: ${e}`);
+            this.sLogger.error(`TwitchUtils#loadUser: Request Error: ${e}`);
             return [];
         }
     }
@@ -65,7 +65,7 @@ export class TwitchUtils {
     public static async loadStream(keywords: string[]): Promise<RawTwitchStream[]> {
         const accessToken = await this.getAccessToken();
         if (!accessToken) {
-            console.error('Invalid accessToken');
+            this.sLogger.error('Invalid accessToken');
             return [];
         }
         const userQuery = keywords.map(k => `user_login=${k}`).join('&');
@@ -78,7 +78,7 @@ export class TwitchUtils {
                 timeout: 5000,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
-                    'Client-ID': process.env.TWITCH_CLIENT_ID
+                    'Client-ID': process.env.TWITCH_CLIENT_ID,
                 }
             });
             const streams: RawTwitchStream[] = res.data.data;
@@ -88,7 +88,7 @@ export class TwitchUtils {
             });
             return streams;
         } catch (e) {
-            console.error(`TwitchUtils#loadStream: Request Error: ${e}`);
+            this.sLogger.error(`TwitchUtils#loadStream: Request Error: ${e}`);
             return [];
         }
 
@@ -107,7 +107,7 @@ export class TwitchUtils {
             const res = await Axios.post(url);
             return res.data.access_token;
         } catch (e) {
-            console.error(`getAccessToken: error: ${e}`);
+            this.sLogger.error(`getAccessToken: error: ${e}`);
             return null;
         }
     }
