@@ -1,15 +1,36 @@
 {
-	"extends": "tslint:recommended",
-	"rules": {
-		"no-var-keyword": true,
-		"quotemark": false,
-		"no-shadowed-variable": false,
-		"object-literal-sort-keys": false,
-		"radix": false,
-		"interface-over-type-literal": false,
-		"interface-name": false,
-		"arrow-parens": false,
-		"no-empty": false
-	},
-	"rulesDirectory": "./src"
+    "extends": "tslint:recommended",
+    "rules": {
+        "no-var-keyword": true,
+        "quotemark": false,
+        "member-ordering": [
+            true,
+            {
+                "order": [
+                    "public-static-field",
+                    "protected-static-field",
+                    "private-static-field",
+                    "public-instance-field",
+                    "protected-instance-field",
+                    "private-instance-field",
+                    "constructor",
+                    "public-instance-method",
+                    "protected-instance-method",
+                    "private-instance-method",
+                    "public-static-method",
+                    "protected-static-method",
+                    "private-static-method"
+                ]
+            }
+        ],
+        "no-shadowed-variable": false,
+        "object-literal-sort-keys": false,
+        "object-literal-key-quotes": false,
+        "radix": false,
+        "interface-over-type-literal": false,
+        "interface-name": false,
+        "arrow-parens": false,
+        "no-empty": false
+    },
+    "rulesDirectory": "./src"
 }
