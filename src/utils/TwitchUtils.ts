@@ -79,7 +79,7 @@ export class TwitchUtils {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Client-ID': process.env.TWITCH_CLIENT_ID,
-                }
+                },
             });
             const streams: RawTwitchStream[] = res.data.data;
             streams.forEach(s => {
@@ -100,7 +100,7 @@ export class TwitchUtils {
             client_id: process.env.TWITCH_CLIENT_ID,
             client_secret: process.env.TWITCH_SECRET,
             grant_type: 'client_credentials',
-            scope: 'user:read:email'
+            scope: 'user:read:email',
         });
         const url = `${host}?${query}`;
         try {
