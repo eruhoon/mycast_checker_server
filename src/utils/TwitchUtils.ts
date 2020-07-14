@@ -1,5 +1,6 @@
 import Axios from 'axios';
 import * as qs from 'querystring';
+import { ArrayUtils } from '../model/common/array/ArrayUtils';
 import { Logger } from '../model/common/logger/Logger';
 
 export type RawTwitchUser = {
@@ -68,6 +69,19 @@ export class TwitchUtils {
             this.sLogger.error('Invalid accessToken');
             return [];
         }
+        const keywordChunks = ArrayUtils.chunk<string>(keywords, 100);
+        const length = keywordChunks.length;
+        let streams: RawTwitchStream[] = [];
+        for (let i = 0; i < length; i++) {
+            const result = await this.loadStreamInternal(keywords, accessToken);
+            streams = streams.concat(result);
+        }
+        return streams;
+    }
+
+    private static async loadStreamInternal(
+        keywords: string[], token: string): Promise<RawTwitchStream[]> {
+
         const userQuery = keywords.map(k => `user_login=${k}`).join('&');
         const query = `${userQuery}&first=100`;
         const host = 'https://api.twitch.tv/helix/streams';
@@ -77,7 +91,7 @@ export class TwitchUtils {
             const res = await Axios.get(url, {
                 timeout: 5000,
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${token}`,
                     'Client-ID': process.env.TWITCH_CLIENT_ID,
                 },
             });
