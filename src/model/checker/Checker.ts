@@ -3,9 +3,8 @@ import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
 import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
 import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
-import { LocalStreamLoader } from '../../streamloader/LocalStreamLoader';
-import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
 import { MixerLoader } from '../../streamloader/MixerLoader';
+import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
 import { StreamLoader } from '../../streamloader/StreamLoader';
 import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
 import { TwtichLoader } from '../../streamloader/TwitchLoader';
@@ -76,8 +75,6 @@ export class Checker {
             const platform = user.getStreamPlatform();
             switch (platform) {
                 case StreamPlatform.LOCAL:
-//                    loader = new LocalStreamLoader(
-//                        this.mWowzaCacheManager, user);
                     loader = new NewLocalStreamLoader(
                         this.mNewLocalCacheManager, user);
                     break;
