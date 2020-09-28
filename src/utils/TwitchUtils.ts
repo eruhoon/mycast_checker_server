@@ -43,6 +43,22 @@ export class TwitchUtils {
             this.sLogger.error("Invalid accessToken");
             return [];
         }
+
+        const idChunks = ArrayUtils.chunk<string>(loginIds, 100);
+        const length = idChunks.length;
+        let twitchUsers: RawTwitchUser[] = [];
+        for (let i = 0; i < length; i++) {
+            const chunk = idChunks[i];
+            const result = await this.loadUserInternal(chunk, accessToken);
+            twitchUsers = twitchUsers.concat(result);
+        }
+        return twitchUsers;
+    }
+
+    public static async loadUserInternal(
+        loginIds: string[],
+        accessToken: string
+    ): Promise<RawTwitchUser[]> {
         const host = "https://api.twitch.tv/helix/users";
         const query = loginIds.map((k) => `login=${k}`).join("&");
         const url = `${host}?${query}`;
@@ -74,7 +90,8 @@ export class TwitchUtils {
         const length = keywordChunks.length;
         let streams: RawTwitchStream[] = [];
         for (let i = 0; i < length; i++) {
-            const result = await this.loadStreamInternal(keywords, accessToken);
+            const chunk = keywordChunks[i];
+            const result = await this.loadStreamInternal(chunk, accessToken);
             streams = streams.concat(result);
         }
         return streams;
