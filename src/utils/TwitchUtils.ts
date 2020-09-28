@@ -1,8 +1,7 @@
 import Axios from 'axios';
-import * as qs from 'querystring';
-import { TwitchTokenLoader } from '../api/twitch/TwitchTokenLoader';
 import { ArrayUtils } from '../model/common/array/ArrayUtils';
 import { Logger } from '../model/common/logger/Logger';
+import { TwitchTokenManager } from '../model/twitch/TwitchTokenManager';
 
 export type RawTwitchUser = {
     broadcaster_type: RawTwitchBroadcastType;
@@ -130,7 +129,7 @@ export class TwitchUtils {
     private static async getAccessToken(): Promise<string | null> {
         const clientId = process.env.TWITCH_CLIENT_ID;
         const secretKey = process.env.TWITCH_SECRET;
-        return await new TwitchTokenLoader(clientId, secretKey).load();
+        return await new TwitchTokenManager(clientId, secretKey).getToken();
     }
 
     private static decorateThumbnail(
