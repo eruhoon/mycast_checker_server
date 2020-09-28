@@ -1,15 +1,15 @@
-import * as http from "http";
-import * as https from "https";
-import * as Socketio from "socket.io";
+import * as http from 'http';
+import * as https from 'https';
+import * as Socketio from 'socket.io';
 
-import { IUserAsyncLoader } from "./controller/IUserAsyncLoader";
-import { StreamInfo, StreamSet } from "./model/Stream";
+import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
+import { StreamInfo, StreamSet } from './model/Stream';
 
 type SocketCallback = (socket: Socketio.Socket) => void;
 
 export enum SocketTag {
-    REFRESH_STREAMS = "refresh_streams",
-    NEW_STREAM_NOTIFICATION = "new_stream_notification",
+    REFRESH_STREAMS = 'refresh_streams',
+    NEW_STREAM_NOTIFICATION = 'new_stream_notification',
 }
 
 export class SocketManager {
@@ -26,7 +26,7 @@ export class SocketManager {
     }
 
     public init(initCallback: SocketCallback) {
-        this.mSocketio.on("connection", async (socket) => {
+        this.mSocketio.on('connection', async (socket) => {
             const keyHash = socket.handshake.query.keyhash;
             const privateKey = socket.handshake.query.key;
 

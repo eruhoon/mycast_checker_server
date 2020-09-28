@@ -1,5 +1,5 @@
-import { UserRow } from "./Database";
-import { StreamPlatform } from "./Stream";
+import { UserRow } from './Database';
+import { StreamPlatform } from './Stream';
 
 export type UserParam = {
     idx?: number;
@@ -30,15 +30,15 @@ export class User {
 
     public constructor(param: UserParam) {
         this.mIdx = param.idx ? param.idx : User.IDX_NONE;
-        this.mId = param.id ? param.id : "";
-        this.mHash = param.hash ? param.hash : "";
-        this.mNickname = param.nickname ? param.nickname : "";
-        this.mIcon = param.icon ? param.icon : "";
+        this.mId = param.id ? param.id : '';
+        this.mHash = param.hash ? param.hash : '';
+        this.mNickname = param.nickname ? param.nickname : '';
+        this.mIcon = param.icon ? param.icon : '';
         this.mPlatform = param.platform ? param.platform : StreamPlatform.LOCAL;
-        this.mAfreecaId = param.afreecaId ? param.afreecaId : "";
-        this.mTwitchId = param.twitchId ? param.twitchId : "";
-        this.mMixerId = param.mixerId ? param.mixerId : "";
-        this.mBackground = param.background ? param.background : "";
+        this.mAfreecaId = param.afreecaId ? param.afreecaId : '';
+        this.mTwitchId = param.twitchId ? param.twitchId : '';
+        this.mMixerId = param.mixerId ? param.mixerId : '';
+        this.mBackground = param.background ? param.background : '';
     }
 
     public getIdx(): number {
@@ -78,8 +78,8 @@ export class User {
             case StreamPlatform.MIXER:
                 return this.mMixerId;
             default:
-                console.error("User#getStreamKeyId: Invalid Platform");
-                return "";
+                console.error('User#getStreamKeyId: Invalid Platform');
+                return '';
         }
     }
 

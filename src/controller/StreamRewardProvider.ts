@@ -1,8 +1,8 @@
-import * as request from "request";
+import * as request from 'request';
 
 export class StreamRewardProvider {
     public requestStreamReward(hash: string, reward: number) {
-        const TAG = "StreamRewardProvider#requestStreamReward";
+        const TAG = 'StreamRewardProvider#requestStreamReward';
         const host = process.env.SHOP_SERVER_HOST;
         const port = process.env.SHOP_SERVER_PORT;
         const url = `http://${host}:${port}/${hash}/reward/stream`;

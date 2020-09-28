@@ -1,10 +1,10 @@
-import * as dotenv from "dotenv";
-import * as Mysql from "mysql";
+import * as dotenv from 'dotenv';
+import * as Mysql from 'mysql';
 
-import { StreamRow, UserRow } from "../model/Database";
-import { StreamPlatform } from "../model/Stream";
-import { User } from "../model/User";
-import { IUserAsyncLoader } from "./IUserAsyncLoader";
+import { StreamRow, UserRow } from '../model/Database';
+import { StreamPlatform } from '../model/Stream';
+import { User } from '../model/User';
+import { IUserAsyncLoader } from './IUserAsyncLoader';
 
 export class DatabaseLoader implements IUserAsyncLoader {
     private mDb: Mysql.Connection;
@@ -45,7 +45,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
     }
 
     public getStreams(): Promise<StreamRow[]> {
-        const query = "SELECT keyid as keyword, platform FROM stream";
+        const query = 'SELECT keyid as keyword, platform FROM stream';
         return new Promise((resolve, reject) => {
             this.mDb.query(query, (err, result) => {
                 if (err) {
@@ -77,7 +77,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
 
     public getUserByPrivKey(privKey: string): Promise<User | null> {
         const query =
-            "SELECT * FROM user WHERE private_key = ? AND confirm = 1";
+            'SELECT * FROM user WHERE private_key = ? AND confirm = 1';
         return new Promise((resolve, reject) => {
             this.mDb.query(query, [privKey], (err, result: UserRow[]) => {
                 if (err) {
@@ -86,7 +86,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
                     return;
                 }
                 if (result.length === 0) {
-                    console.error("no result");
+                    console.error('no result');
                     resolve(null);
                     return;
                 }
@@ -97,17 +97,17 @@ export class DatabaseLoader implements IUserAsyncLoader {
     }
 
     public getUserByHash(hash: string): Promise<User | null> {
-        const query = "SELECT * FROM user WHERE hash = ? AND confirm = 1";
+        const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
 
         return new Promise((resolve, reject) => {
-            this.mDb.query(query, ["hash"], (err, result: UserRow[]) => {
+            this.mDb.query(query, ['hash'], (err, result: UserRow[]) => {
                 if (err) {
                     console.error(`DatabaseLoader#getUsers: DB error ${err}`);
                     resolve(null);
                     return;
                 }
                 if (result.length === 0) {
-                    console.error("no result");
+                    console.error('no result');
                     resolve(null);
                     return;
                 }
@@ -118,7 +118,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
     }
 
     public searchUserByHash(hash: string, callback: (user: User) => void) {
-        const query = "SELECT * FROM user WHERE hash = ? AND confirm = 1";
+        const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
         this.mDb.query(query, [hash], (err, result: UserRow[]) => {
             if (err) {
                 console.error(`DatabaseLoader#getUsers: DB error ${err}`);

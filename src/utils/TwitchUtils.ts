@@ -1,8 +1,8 @@
-import Axios from "axios";
-import * as qs from "querystring";
-import { TwitchTokenLoader } from "../api/twitch/TwitchTokenLoader";
-import { ArrayUtils } from "../model/common/array/ArrayUtils";
-import { Logger } from "../model/common/logger/Logger";
+import Axios from 'axios';
+import * as qs from 'querystring';
+import { TwitchTokenLoader } from '../api/twitch/TwitchTokenLoader';
+import { ArrayUtils } from '../model/common/array/ArrayUtils';
+import { Logger } from '../model/common/logger/Logger';
 
 export type RawTwitchUser = {
     broadcaster_type: RawTwitchBroadcastType;
@@ -31,17 +31,17 @@ export type RawTwitchStream = {
     viewer_count: number;
 };
 
-type RawTwitchBroadcastType = "parter" | "affiliate" | "";
+type RawTwitchBroadcastType = 'parter' | 'affiliate' | '';
 
-type RawTwitchUserType = "staff" | "admin" | "global_mod" | "";
+type RawTwitchUserType = 'staff' | 'admin' | 'global_mod' | '';
 
 export class TwitchUtils {
-    private static readonly sLogger = new Logger("TwitchUtils");
+    private static readonly sLogger = new Logger('TwitchUtils');
 
     public static async loadUser(loginIds: string[]): Promise<RawTwitchUser[]> {
         const accessToken = await this.getAccessToken();
         if (!accessToken) {
-            this.sLogger.error("Invalid accessToken");
+            this.sLogger.error('Invalid accessToken');
             return [];
         }
 
@@ -60,15 +60,15 @@ export class TwitchUtils {
         loginIds: string[],
         accessToken: string
     ): Promise<RawTwitchUser[]> {
-        const host = "https://api.twitch.tv/helix/users";
-        const query = loginIds.map((k) => `login=${k}`).join("&");
+        const host = 'https://api.twitch.tv/helix/users';
+        const query = loginIds.map((k) => `login=${k}`).join('&');
         const url = `${host}?${query}`;
         try {
             const res = await Axios.get(url, {
                 timeout: 5000,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
-                    "Client-ID": process.env.TWITCH_CLIENT_ID,
+                    'Client-ID': process.env.TWITCH_CLIENT_ID,
                 },
             });
             const users: RawTwitchUser[] = res.data.data;
@@ -84,7 +84,7 @@ export class TwitchUtils {
     ): Promise<RawTwitchStream[]> {
         const accessToken = await this.getAccessToken();
         if (!accessToken) {
-            this.sLogger.error("Invalid accessToken");
+            this.sLogger.error('Invalid accessToken');
             return [];
         }
         const keywordChunks = ArrayUtils.chunk<string>(keywords, 100);
@@ -102,9 +102,9 @@ export class TwitchUtils {
         keywords: string[],
         token: string
     ): Promise<RawTwitchStream[]> {
-        const userQuery = keywords.map((k) => `user_login=${k}`).join("&");
+        const userQuery = keywords.map((k) => `user_login=${k}`).join('&');
         const query = `${userQuery}&first=100`;
-        const host = "https://api.twitch.tv/helix/streams";
+        const host = 'https://api.twitch.tv/helix/streams';
         const url = `${host}?${query}`;
 
         try {
@@ -112,7 +112,7 @@ export class TwitchUtils {
                 timeout: 5000,
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Client-ID": process.env.TWITCH_CLIENT_ID,
+                    'Client-ID': process.env.TWITCH_CLIENT_ID,
                 },
             });
             const streams: RawTwitchStream[] = res.data.data;
@@ -139,9 +139,9 @@ export class TwitchUtils {
         height: number
     ): string {
         let result = format
-            .replace("{width}", width.toString())
-            .replace("{height}", height.toString());
-        result += "?" + new Date().getTime();
+            .replace('{width}', width.toString())
+            .replace('{height}', height.toString());
+        result += '?' + new Date().getTime();
         return result;
     }
 }

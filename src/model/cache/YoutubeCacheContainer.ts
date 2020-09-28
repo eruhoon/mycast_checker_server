@@ -1,10 +1,10 @@
-import * as request from "request";
+import * as request from 'request';
 
-import { Config } from "../../config/Config";
-import { IStreamAsyncLoader } from "../../controller/IStreamAsyncLoader";
-import { IUserAsyncLoader } from "../../controller/IUserAsyncLoader";
-import { StreamInfo, StreamPlatform } from "../../model/Stream";
-import { StreamCacheContainer } from "./StreamCacheContainer";
+import { Config } from '../../config/Config';
+import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { StreamInfo, StreamPlatform } from '../../model/Stream';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class YoutubeCacheContainer extends StreamCacheContainer {
     private mUserLoader: IUserAsyncLoader | null = null;
@@ -23,7 +23,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
     }
 
     public async update() {
-        console.time("YoutubeCacheContainer#update");
+        console.time('YoutubeCacheContainer#update');
         const keywords = await this.getStreamIds();
         const channels = await YoutubeCacheUtils.getChannel(keywords);
 
@@ -55,7 +55,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
         console.log(
             `YoutubeCacheContainer#update: ${onair}/${keywords.length}`
         );
-        console.timeEnd("YoutubeCacheContainer#update");
+        console.timeEnd('YoutubeCacheContainer#update');
     }
 
     public getCache(keyword: string): StreamInfo | null {
@@ -68,7 +68,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 
     private async getStreamIds(): Promise<string[]> {
         if (this.mUserLoader === null || this.mStreamLoader === null) {
-            console.error("YoutubeCacheContainer#getStreamIds: no loader");
+            console.error('YoutubeCacheContainer#getStreamIds: no loader');
             return [];
         }
 
@@ -137,13 +137,13 @@ type RawStream = {
 
 class YoutubeCacheUtils {
     public static async getChannel(keywords: string[]): Promise<RawChannel[]> {
-        const id = keywords.join(",");
+        const id = keywords.join(',');
         const key = Config.getYoutubeApiKey();
         const opt = {
-            url: "https://www.googleapis.com/youtube/v3/channels",
+            url: 'https://www.googleapis.com/youtube/v3/channels',
             timeout: 3000,
-            headers: { referer: "http://mycast.xyz" },
-            qs: { part: "snippet,brandingSettings", id, key },
+            headers: { referer: 'http://mycast.xyz' },
+            qs: { part: 'snippet,brandingSettings', id, key },
             json: true,
         };
 
@@ -171,17 +171,17 @@ class YoutubeCacheUtils {
     public static getStream(channelId: string): Promise<RawStream | null> {
         const key = Config.getYoutubeApiKey();
         const opt = {
-            url: "https://www.googleapis.com/youtube/v3/search",
+            url: 'https://www.googleapis.com/youtube/v3/search',
             timeout: 3000,
-            headers: { referer: "http://mycast.xyz" },
+            headers: { referer: 'http://mycast.xyz' },
             qs: {
-                part: "snippet",
+                part: 'snippet',
                 channelId,
-                eventType: "live",
-                type: "video",
+                eventType: 'live',
+                type: 'video',
                 key,
                 fields:
-                    "items(id(channelId,videoId),snippet(description,thumbnails/high,title))",
+                    'items(id(channelId,videoId),snippet(description,thumbnails/high,title))',
             },
             json: true,
         };

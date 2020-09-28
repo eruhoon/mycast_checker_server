@@ -1,15 +1,15 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 
-import { IStreamAsyncLoader } from "../../controller/IStreamAsyncLoader";
-import { IUserAsyncLoader } from "../../controller/IUserAsyncLoader";
-import { StreamPlatform } from "../../model/Stream";
-import { TwitchStreamCache } from "../../model/TwitchStreamCache";
+import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { StreamPlatform } from '../../model/Stream';
+import { TwitchStreamCache } from '../../model/TwitchStreamCache';
 import {
     RawTwitchStream,
     RawTwitchUser,
     TwitchUtils,
-} from "../../utils/TwitchUtils";
-import { StreamCacheContainer } from "./StreamCacheContainer";
+} from '../../utils/TwitchUtils';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class TwitchCacheContainer extends StreamCacheContainer {
     private mCaches: TwitchStreamCache[];
@@ -30,10 +30,10 @@ export class TwitchCacheContainer extends StreamCacheContainer {
     }
 
     public async update() {
-        console.time("TwitchCacheContainer#update");
+        console.time('TwitchCacheContainer#update');
 
         if (this.mUserLoader === null || this.mStreamLoader === null) {
-            console.error("TwitchCacheContainer#update: no loader");
+            console.error('TwitchCacheContainer#update: no loader');
         } else {
             const keywordsFromUser: string[] = (
                 await this.mUserLoader.getUsers()
@@ -78,7 +78,7 @@ export class TwitchCacheContainer extends StreamCacheContainer {
                 .length;
             console.log(`TwitchCacheContainer#update: ${onair}/${total}`);
         }
-        console.timeEnd("TwitchCacheContainer#update");
+        console.timeEnd('TwitchCacheContainer#update');
     }
 
     public getCache(keyword: string): TwitchStreamCache | null {

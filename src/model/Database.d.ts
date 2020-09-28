@@ -1,4 +1,4 @@
-import { StreamPlatform } from "./Stream";
+import { StreamPlatform } from './Stream';
 
 export type UserRow = {
     idx: number;

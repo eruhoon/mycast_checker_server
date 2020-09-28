@@ -1,12 +1,12 @@
-import Axios from "axios";
-import * as dotenv from "dotenv";
+import Axios from 'axios';
+import * as dotenv from 'dotenv';
 
-import { RawTotoroStream } from "../RawTotoroModel";
-import { StreamCacheContainer } from "./StreamCacheContainer";
+import { RawTotoroStream } from '../RawTotoroModel';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class NewLocalCacheContainer extends StreamCacheContainer {
     private static readonly URL: string =
-        "http://mycast.xyz:1985/api/v1/streams/";
+        'http://mycast.xyz:1985/api/v1/streams/';
 
     private mCaches: RawTotoroStream[];
 
@@ -37,7 +37,7 @@ export class NewLocalCacheContainer extends StreamCacheContainer {
         try {
             const rawClients: RawTotoroStream[] = rawJson.streams.filter(
                 (c) => {
-                    return c.publish.active === true && c.app === "live";
+                    return c.publish.active === true && c.app === 'live';
                 }
             );
             const clients: RawTotoroStream[] = [];

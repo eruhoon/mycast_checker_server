@@ -1,6 +1,6 @@
-import Axios from "axios";
-import * as qs from "querystring";
-import { Logger } from "../../model/common/logger/Logger";
+import Axios from 'axios';
+import * as qs from 'querystring';
+import { Logger } from '../../model/common/logger/Logger';
 
 export class TwitchTokenLoader {
     private mLogger: Logger;
@@ -8,18 +8,18 @@ export class TwitchTokenLoader {
     private readonly mSecretKey: string;
 
     public constructor(clientId: string, secretKey: string) {
-        this.mLogger = new Logger("TwitchTokenLoader");
+        this.mLogger = new Logger('TwitchTokenLoader');
         this.mClientId = clientId;
         this.mSecretKey = secretKey;
     }
 
     public async load(): Promise<string | null> {
-        const host = "https://id.twitch.tv/oauth2/token";
+        const host = 'https://id.twitch.tv/oauth2/token';
         const query = qs.stringify({
             client_id: this.mClientId,
             client_secret: this.mSecretKey,
-            grant_type: "client_credentials",
-            scope: "user:read:email",
+            grant_type: 'client_credentials',
+            scope: 'user:read:email',
         });
         const url = `${host}?${query}`;
         try {

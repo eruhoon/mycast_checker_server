@@ -1,4 +1,4 @@
-import { StreamInfo } from "../model/Stream";
+import { StreamInfo } from '../model/Stream';
 
 export abstract class StreamLoader {
     public abstract requestInfo(callback: StreamLoaderCallback): void;

@@ -1,4 +1,4 @@
-import { IStreamCacheContainer } from "./IStreamCacheContainer";
+import { IStreamCacheContainer } from './IStreamCacheContainer';
 
 export abstract class StreamCacheContainer implements IStreamCacheContainer {
     private mScheduler: NodeJS.Timer | null;
@@ -9,7 +9,7 @@ export abstract class StreamCacheContainer implements IStreamCacheContainer {
 
     public start(interval: number = 10000): void {
         if (this.mScheduler !== null) {
-            console.error("StreamCacheContainer#start: Already Start");
+            console.error('StreamCacheContainer#start: Already Start');
             return;
         }
         this.update();

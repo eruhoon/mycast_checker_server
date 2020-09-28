@@ -1,10 +1,10 @@
-import * as dotenv from "dotenv";
-import * as Express from "express";
-import { readFileSync } from "fs";
-import * as http from "http";
-import * as https from "https";
+import * as dotenv from 'dotenv';
+import * as Express from 'express';
+import { readFileSync } from 'fs';
+import * as http from 'http';
+import * as https from 'https';
 
-import { Config } from "../config/Config";
+import { Config } from '../config/Config';
 
 export class ServerManager {
     private static sInstance: ServerManager = null;
@@ -34,10 +34,10 @@ export class ServerManager {
 
         this.mApp.use((req, res, next) => {
             const origin = req.headers.origin;
-            if (typeof origin === "string" && this.isWhiteList(origin)) {
-                res.header("Access-Control-Allow-Origin", origin);
+            if (typeof origin === 'string' && this.isWhiteList(origin)) {
+                res.header('Access-Control-Allow-Origin', origin);
             }
-            res.header("Access-Control-Allow-Credentials", "true");
+            res.header('Access-Control-Allow-Credentials', 'true');
             next();
         });
     }
@@ -45,7 +45,7 @@ export class ServerManager {
     public start(port: number = Config.DEFAULT_PORT) {
         if (!this.mServer) return;
         this.mServer.listen(port, () => {
-            console.log("Stream Checker started..");
+            console.log('Stream Checker started..');
         });
     }
 
@@ -64,9 +64,9 @@ export class ServerManager {
 
     private isWhiteList(host: string): boolean {
         const whiteList = [
-            "http://localhost:4200",
-            "http://mycast.xyz",
-            "http://mycast.xyz:10080",
+            'http://localhost:4200',
+            'http://mycast.xyz',
+            'http://mycast.xyz:10080',
         ];
         return whiteList.indexOf(host) > -1;
     }

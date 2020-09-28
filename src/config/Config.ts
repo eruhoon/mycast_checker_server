@@ -116,11 +116,11 @@ export class Config {
     }
 
     public static isDebugMode(): boolean {
-        return process.env.DEBUG_MODE === "true";
+        return process.env.DEBUG_MODE === 'true';
     }
 
     public static isHttpsEnabled(): boolean {
-        return process.env.ENABLE_HTTPS === "true";
+        return process.env.ENABLE_HTTPS === 'true';
     }
 
     public static getDefaultPort(): number {

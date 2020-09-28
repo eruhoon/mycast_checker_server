@@ -1,7 +1,7 @@
-import * as request from "request";
+import * as request from 'request';
 
-import { StreamInfo, StreamPlatform } from "../model/Stream";
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class AfreecaLoader extends StreamLoader {
     public mId: string;
@@ -12,23 +12,23 @@ export class AfreecaLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback): void {
-        const url = "http://sch.afreeca.com/api.php";
+        const url = 'http://sch.afreeca.com/api.php';
 
         const opt = {
             timeout: 3000,
             json: true,
             qs: {
-                m: "liveSearch",
-                v: "1.0",
-                szOrder: "",
-                c: "EUC-KR",
+                m: 'liveSearch',
+                v: '1.0',
+                szOrder: '',
+                c: 'EUC-KR',
                 szKeyword: this.mId,
             },
         };
 
         request.get(url, opt, (err, res, body: RawAfreecaInfo) => {
             if (err || res.statusCode !== 200 || !body) {
-                console.error("AfreecaLoader: Request Error", err);
+                console.error('AfreecaLoader: Request Error', err);
                 return;
             }
 

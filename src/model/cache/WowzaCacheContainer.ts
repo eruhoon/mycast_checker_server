@@ -1,13 +1,13 @@
-import * as dotenv from "dotenv";
-import * as request from "request";
-import * as xml2js from "xml2js";
+import * as dotenv from 'dotenv';
+import * as request from 'request';
+import * as xml2js from 'xml2js';
 
-import { RawWowzaModel, RawWowzaStream } from "../../model/RawWowzaModel";
-import { StreamCacheContainer } from "./StreamCacheContainer";
+import { RawWowzaModel, RawWowzaStream } from '../../model/RawWowzaModel';
+import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class WowzaCacheContainer extends StreamCacheContainer {
     private static readonly URL: string =
-        "http://mycast.xyz:8086/connectioncounts?";
+        'http://mycast.xyz:8086/connectioncounts?';
 
     private mCaches: RawWowzaStream[];
 
@@ -43,7 +43,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
             request.get(WowzaCacheContainer.URL, opt, (err, res, body) => {
                 if (err || res.statusCode !== 200 || !body) {
                     console.error(
-                        "WowzaCacheContainer#update: Request Error",
+                        'WowzaCacheContainer#update: Request Error',
                         err
                     );
                     return;
@@ -60,7 +60,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
                 xml2js.parseString(xml, (err, result: RawWowzaModel | null) => {
                     if (err) {
                         console.error(
-                            "WowzaCacheContainer#parseRaw: Parse Error",
+                            'WowzaCacheContainer#parseRaw: Parse Error',
                             err
                         );
                         return;
@@ -68,7 +68,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
 
                     if (!result) {
                         console.error(
-                            "WowzaCacheContainer#parseRaw: Null Result"
+                            'WowzaCacheContainer#parseRaw: Null Result'
                         );
                         return;
                     }
@@ -84,7 +84,8 @@ export class WowzaCacheContainer extends StreamCacheContainer {
     }
 
     private static parseModel(model: RawWowzaModel): RawWowzaStream[] {
-        const wowzaServer = model.WowzaMediaServer || model.WowzaStreamingEngine;
+        const wowzaServer =
+            model.WowzaMediaServer || model.WowzaStreamingEngine;
         if (!wowzaServer) return [];
 
         return wowzaServer.Stream.map((streamWrapper) => streamWrapper.$);

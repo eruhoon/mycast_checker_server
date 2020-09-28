@@ -1,8 +1,8 @@
-import * as request from "request";
-import { callbackify } from "util";
+import * as request from 'request';
+import { callbackify } from 'util';
 
-import { StreamInfo, StreamPlatform } from "../model/Stream";
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 type RawKakaoTvChannel = {
     id: string;
@@ -20,7 +20,6 @@ type RawKakaoTvVideo = {
 };
 
 export class KakaoTvLoader extends StreamLoader {
-
     public mChannelId: string;
 
     public constructor(id: string) {
@@ -66,7 +65,7 @@ export class KakaoTvLoader extends StreamLoader {
                 }
 
                 const path = res.request.uri.pathname;
-                const isLive = path.indexOf("livelink") !== -1;
+                const isLive = path.indexOf('livelink') !== -1;
                 if (!isLive) {
                     return;
                 }
@@ -108,7 +107,7 @@ export class KakaoTvLoader extends StreamLoader {
                 const channel = body.liveLink.channel;
                 const live = body.liveLink.live;
 
-                const isOnAir = live.status === "ONAIR";
+                const isOnAir = live.status === 'ONAIR';
                 if (!isOnAir) {
                     return;
                 }

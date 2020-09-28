@@ -18,11 +18,11 @@ export type StreamInfo = {
 };
 
 export declare const enum StreamPlatform {
-    LOCAL = "local",
-    TWITCH = "twitch",
-    AFREECA = "afreeca",
-    KAKAOTV = "kakaotv",
-    YOUTUBE = "youtube",
-    TOTORO = "totoro",
-    MIXER = "mixer",
+    LOCAL = 'local',
+    TWITCH = 'twitch',
+    AFREECA = 'afreeca',
+    KAKAOTV = 'kakaotv',
+    YOUTUBE = 'youtube',
+    TOTORO = 'totoro',
+    MIXER = 'mixer',
 }

@@ -1,8 +1,8 @@
-import { StreamInfo } from "../Stream";
+import { StreamInfo } from '../Stream';
 
 export const enum CheckerType {
-    LOCAL = "local",
-    EXTERNAL = "external",
+    LOCAL = 'local',
+    EXTERNAL = 'external',
 }
 
 export class CheckerEntry {

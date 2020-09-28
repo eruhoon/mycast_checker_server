@@ -1,5 +1,5 @@
-import { User } from "../model/User";
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+import { User } from '../model/User';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class UserExternalDecorator extends StreamLoader {
     private mUser: User;

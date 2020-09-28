@@ -1,5 +1,5 @@
-import { StreamInfo } from "../Stream";
-import { CheckerEntry, CheckerType } from "./CheckerEntry";
+import { StreamInfo } from '../Stream';
+import { CheckerEntry, CheckerType } from './CheckerEntry';
 
 export class CheckerEntryContainer {
     private mEntries: CheckerEntry[];

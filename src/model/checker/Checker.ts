@@ -1,30 +1,30 @@
-import { IStreamAsyncLoader } from "../../controller/IStreamAsyncLoader";
-import { IUserAsyncLoader } from "../../controller/IUserAsyncLoader";
-import { StreamRewardProvider } from "../../controller/StreamRewardProvider";
-import { AfreecaLoader } from "../../streamloader/AfreecaLoader";
-import { KakaoTvLoader } from "../../streamloader/KakaoTvLoader";
-import { MixerLoader } from "../../streamloader/MixerLoader";
-import { NewLocalStreamLoader } from "../../streamloader/NewLocalStreamLoader";
-import { StreamLoader } from "../../streamloader/StreamLoader";
-import { TotoroStreamLoader } from "../../streamloader/TotoroStreamLoader";
-import { TwtichLoader } from "../../streamloader/TwitchLoader";
-import { UserExternalDecorator } from "../../streamloader/UserExternalDecorator";
-import { YoutubeLoader } from "../../streamloader/YoutubeLoader";
-import { NewLocalCacheContainer } from "../cache/NewLocalCacheContainer";
-import { TotoroCacheContainer } from "../cache/TotoroCacheContainer";
-import { TwitchCacheContainer } from "../cache/TwitchCacheContainer";
-import { WowzaCacheContainer } from "../cache/WowzaCacheContainer";
-import { YoutubeCacheContainer } from "../cache/YoutubeCacheContainer";
-import { Logger } from "../common/logger/Logger";
-import { StreamInfo, StreamPlatform, StreamSet } from "../Stream";
-import { CheckerType } from "./CheckerEntry";
+import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
+import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
+import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
+import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
+import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
+import { MixerLoader } from '../../streamloader/MixerLoader';
+import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
+import { StreamLoader } from '../../streamloader/StreamLoader';
+import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
+import { TwtichLoader } from '../../streamloader/TwitchLoader';
+import { UserExternalDecorator } from '../../streamloader/UserExternalDecorator';
+import { YoutubeLoader } from '../../streamloader/YoutubeLoader';
+import { NewLocalCacheContainer } from '../cache/NewLocalCacheContainer';
+import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
+import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
+import { WowzaCacheContainer } from '../cache/WowzaCacheContainer';
+import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';
+import { Logger } from '../common/logger/Logger';
+import { StreamInfo, StreamPlatform, StreamSet } from '../Stream';
+import { CheckerType } from './CheckerEntry';
 import {
     CheckerEntryContainer,
     OnStreamAddCallback,
-} from "./CheckerEntryContainer";
+} from './CheckerEntryContainer';
 
 export class Checker {
-    private mLogger: Logger = new Logger("Checker");
+    private mLogger: Logger = new Logger('Checker');
     private mUserLoader: IUserAsyncLoader;
     private mStreamLoader: IStreamAsyncLoader;
 

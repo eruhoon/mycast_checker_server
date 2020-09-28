@@ -1,5 +1,5 @@
-import { YoutubeCacheContainer } from "../model/cache/YoutubeCacheContainer";
-import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
+import { YoutubeCacheContainer } from '../model/cache/YoutubeCacheContainer';
+import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class YoutubeLoader extends StreamLoader {
     private mManager: YoutubeCacheContainer;
