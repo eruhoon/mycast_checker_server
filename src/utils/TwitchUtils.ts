@@ -1,5 +1,6 @@
 import Axios from "axios";
 import * as qs from "querystring";
+import { TwitchTokenLoader } from "../api/twitch/TwitchTokenLoader";
 import { ArrayUtils } from "../model/common/array/ArrayUtils";
 import { Logger } from "../model/common/logger/Logger";
 
@@ -127,21 +128,9 @@ export class TwitchUtils {
     }
 
     private static async getAccessToken(): Promise<string | null> {
-        const host = "https://id.twitch.tv/oauth2/token";
-        const query = qs.stringify({
-            client_id: process.env.TWITCH_CLIENT_ID,
-            client_secret: process.env.TWITCH_SECRET,
-            grant_type: "client_credentials",
-            scope: "user:read:email",
-        });
-        const url = `${host}?${query}`;
-        try {
-            const res = await Axios.post(url);
-            return res.data.access_token;
-        } catch (e) {
-            this.sLogger.error(`getAccessToken: error: ${e}`);
-            return null;
-        }
+        const clientId = process.env.TWITCH_CLIENT_ID;
+        const secretKey = process.env.TWITCH_SECRET;
+        return await new TwitchTokenLoader(clientId, secretKey).load();
     }
 
     private static decorateThumbnail(
