@@ -24,16 +24,16 @@ export class DatabaseLoader implements IUserAsyncLoader {
     }
 
     public async getStreamIds(platform: StreamPlatform): Promise<string[]> {
-        let keywordsFromUser: string[] = (await this.getUsers())
+        const keywordsFromUser: string[] = (await this.getUsers())
             .filter((u) => u.getStreamPlatform() === platform)
             .map((u) => u.getStreamKeyId());
 
-        let keywordsFromStream: string[] = (await this.getStreams())
+        const keywordsFromStream: string[] = (await this.getStreams())
             .filter((stream) => stream.platform === platform)
             .map((stream) => stream.keyword);
 
-        let keywords: string[] = [];
-        let addWithoutDuplicated = (keyword: string) => {
+        const keywords: string[] = [];
+        const addWithoutDuplicated = (keyword: string) => {
             if (!keyword) return;
             if (keywords.findIndex((k) => k === keyword) !== -1) return;
             keywords.push(keyword);

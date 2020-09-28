@@ -20,6 +20,17 @@ type RawKakaoTvVideo = {
 };
 
 export class KakaoTvLoader extends StreamLoader {
+
+    public mChannelId: string;
+
+    public constructor(id: string) {
+        super();
+        this.mChannelId = id;
+    }
+
+    public requestInfo(callback: StreamLoaderCallback): void {
+        KakaoTvLoader.loadInfo(this.mChannelId, callback);
+    }
     private static async loadInfo(
         channelId: string,
         callback: StreamLoaderCallback
@@ -113,16 +124,5 @@ export class KakaoTvLoader extends StreamLoader {
                 resolve(video);
             });
         });
-    }
-
-    public mChannelId: string;
-
-    public constructor(id: string) {
-        super();
-        this.mChannelId = id;
-    }
-
-    public requestInfo(callback: StreamLoaderCallback): void {
-        KakaoTvLoader.loadInfo(this.mChannelId, callback);
     }
 }

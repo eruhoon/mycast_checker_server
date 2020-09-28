@@ -9,8 +9,27 @@ export class WowzaCacheContainer extends StreamCacheContainer {
     private static readonly URL: string =
         "http://mycast.xyz:8086/connectioncounts?";
 
+    private mCaches: RawWowzaStream[];
+
+    public constructor() {
+        super();
+        dotenv.config();
+        this.mCaches = [];
+    }
+
+    public getCaches(): RawWowzaStream[] {
+        return this.mCaches;
+    }
+
+    public async update() {
+        const xml = await WowzaCacheContainer.getRawWowzaXml();
+        const model = await WowzaCacheContainer.parseXml(xml);
+        const newCaches = WowzaCacheContainer.parseModel(model);
+        this.mCaches = newCaches;
+    }
+
     private static getRawWowzaXml(): Promise<string> {
-        let opt = {
+        const opt = {
             auth: {
                 user: process.env.WOWZA_SERVER_ID,
                 pass: process.env.WOWZA_SERVER_PW,
@@ -65,28 +84,9 @@ export class WowzaCacheContainer extends StreamCacheContainer {
     }
 
     private static parseModel(model: RawWowzaModel): RawWowzaStream[] {
-        let wowzaServer = model.WowzaMediaServer || model.WowzaStreamingEngine;
+        const wowzaServer = model.WowzaMediaServer || model.WowzaStreamingEngine;
         if (!wowzaServer) return [];
 
         return wowzaServer.Stream.map((streamWrapper) => streamWrapper.$);
-    }
-
-    private mCaches: RawWowzaStream[];
-
-    public constructor() {
-        super();
-        dotenv.config();
-        this.mCaches = [];
-    }
-
-    public getCaches(): RawWowzaStream[] {
-        return this.mCaches;
-    }
-
-    public async update() {
-        let xml = await WowzaCacheContainer.getRawWowzaXml();
-        let model = await WowzaCacheContainer.parseXml(xml);
-        let newCaches = WowzaCacheContainer.parseModel(model);
-        this.mCaches = newCaches;
     }
 }

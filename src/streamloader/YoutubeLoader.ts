@@ -12,7 +12,7 @@ export class YoutubeLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback): void {
-        let cache = this.mManager.getCache(this.mChannelId);
+        const cache = this.mManager.getCache(this.mChannelId);
         if (cache === null) {
             return;
         }

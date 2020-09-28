@@ -24,17 +24,17 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 
     public async update() {
         console.time("YoutubeCacheContainer#update");
-        let keywords = await this.getStreamIds();
-        let channels = await YoutubeCacheUtils.getChannel(keywords);
+        const keywords = await this.getStreamIds();
+        const channels = await YoutubeCacheUtils.getChannel(keywords);
 
-        let streams: StreamInfo[] = [];
+        const streams: StreamInfo[] = [];
         for (let i = 0; i < channels.length; i++) {
-            let channel = channels[i];
-            let rawStream = await YoutubeCacheUtils.getStream(channel.id);
+            const channel = channels[i];
+            const rawStream = await YoutubeCacheUtils.getStream(channel.id);
             if (rawStream === null) continue;
-            let videoId = rawStream.id.videoId;
-            let viewer = await YoutubeCacheUtils.getVideoCount(videoId);
-            let info: StreamInfo = {
+            const videoId = rawStream.id.videoId;
+            const viewer = await YoutubeCacheUtils.getVideoCount(videoId);
+            const info: StreamInfo = {
                 result: true,
                 platform: StreamPlatform.YOUTUBE,
                 keyid: channel.id,
@@ -45,13 +45,13 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
                 url: `https://www.youtube.com/embed/${videoId}?autoplay=1`,
                 thumbnail: rawStream.snippet.thumbnails.high.url,
                 onair: true,
-                viewer: viewer,
+                viewer,
             };
             streams.push(info);
         }
         this.mCaches = streams;
 
-        let onair = streams.length;
+        const onair = streams.length;
         console.log(
             `YoutubeCacheContainer#update: ${onair}/${keywords.length}`
         );
@@ -59,7 +59,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
     }
 
     public getCache(keyword: string): StreamInfo | null {
-        let cache = this.mCaches.find((cache) => cache.keyid === keyword);
+        const cache = this.mCaches.find((cache) => cache.keyid === keyword);
         if (!cache) {
             return null;
         }
@@ -72,18 +72,18 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
             return [];
         }
 
-        let keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
+        const keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
             .filter((u) => u.getStreamPlatform() === StreamPlatform.YOUTUBE)
             .map((u) => u.getStreamKeyId());
 
-        let keywordsFromStream: string[] = (
+        const keywordsFromStream: string[] = (
             await this.mStreamLoader.getStreams()
         )
             .filter((stream) => stream.platform === StreamPlatform.YOUTUBE)
             .map((stream) => stream.keyword);
 
-        let keywords: string[] = [];
-        let addWithoutDuplicated = (keyword: string) => {
+        const keywords: string[] = [];
+        const addWithoutDuplicated = (keyword: string) => {
             if (!keyword) return;
             if (keywords.findIndex((k) => k === keyword) !== -1) return;
             keywords.push(keyword);
@@ -137,9 +137,9 @@ type RawStream = {
 
 class YoutubeCacheUtils {
     public static async getChannel(keywords: string[]): Promise<RawChannel[]> {
-        let id = keywords.join(",");
-        let key = Config.getYoutubeApiKey();
-        let opt = {
+        const id = keywords.join(",");
+        const key = Config.getYoutubeApiKey();
+        const opt = {
             url: "https://www.googleapis.com/youtube/v3/channels",
             timeout: 3000,
             headers: { referer: "http://mycast.xyz" },
@@ -162,15 +162,15 @@ class YoutubeCacheUtils {
                     return;
                 }
 
-                let channels: RawChannel[] = body.items;
+                const channels: RawChannel[] = body.items;
                 resolve(channels);
             });
         });
     }
 
     public static getStream(channelId: string): Promise<RawStream | null> {
-        let key = Config.getYoutubeApiKey();
-        let opt = {
+        const key = Config.getYoutubeApiKey();
+        const opt = {
             url: "https://www.googleapis.com/youtube/v3/search",
             timeout: 3000,
             headers: { referer: "http://mycast.xyz" },
@@ -201,7 +201,7 @@ class YoutubeCacheUtils {
                     return;
                 }
 
-                let items: RawStream[] = body.items;
+                const items: RawStream[] = body.items;
 
                 resolve(items[0]);
             });
@@ -210,7 +210,7 @@ class YoutubeCacheUtils {
 
     public static getVideoCount(videoId: string): Promise<number> {
         return new Promise((resolve) => {
-            let url = `https://www.youtube.com/live_stats?v=${videoId}`;
+            const url = `https://www.youtube.com/live_stats?v=${videoId}`;
             request.get(url, (err, res, body) => {
                 if (err || res.statusCode !== 200 || !body) {
                     resolve(0);

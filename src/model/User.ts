@@ -41,21 +41,6 @@ export class User {
         this.mBackground = param.background ? param.background : "";
     }
 
-    public static createWithRow(row: UserRow): User {
-        return new User({
-            idx: row.idx,
-            id: row.id,
-            hash: row.hash,
-            nickname: row.nickname,
-            icon: row.icon,
-            platform: row.broadcast_class,
-            twitchId: row.twitch_id,
-            afreecaId: row.afreeca_id,
-            mixerId: row.mixer_id,
-            background: row.broadcast_bgimg,
-        });
-    }
-
     public getIdx(): number {
         return this.mIdx;
     }
@@ -100,6 +85,21 @@ export class User {
 
     public getBackground(): string {
         return this.mBackground;
+    }
+
+    public static createWithRow(row: UserRow): User {
+        return new User({
+            idx: row.idx,
+            id: row.id,
+            hash: row.hash,
+            nickname: row.nickname,
+            icon: row.icon,
+            platform: row.broadcast_class,
+            twitchId: row.twitch_id,
+            afreecaId: row.afreeca_id,
+            mixerId: row.mixer_id,
+            background: row.broadcast_bgimg,
+        });
     }
     /*
 	{

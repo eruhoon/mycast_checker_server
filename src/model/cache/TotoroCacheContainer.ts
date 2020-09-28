@@ -10,6 +10,22 @@ export class TotoroCacheContainer extends StreamCacheContainer {
 
     private mCaches: RawTotoroStream[];
 
+    public constructor() {
+        super();
+        dotenv.config();
+        this.mCaches = [];
+    }
+
+    public getCaches(): RawTotoroStream[] {
+        return this.mCaches;
+    }
+
+    public async update(): Promise<void> {
+        const json = await TotoroCacheContainer.getTotoroJson();
+        const newCaches = TotoroCacheContainer.parseRaw(json);
+        this.mCaches = newCaches;
+    }
+
     private static async getTotoroJson(): Promise<any> {
         const json = await Axios.get(TotoroCacheContainer.URL);
         return json.data;
@@ -37,21 +53,5 @@ export class TotoroCacheContainer extends StreamCacheContainer {
             );
             return [];
         }
-    }
-
-    public constructor() {
-        super();
-        dotenv.config();
-        this.mCaches = [];
-    }
-
-    public getCaches(): RawTotoroStream[] {
-        return this.mCaches;
-    }
-
-    public async update(): Promise<void> {
-        const json = await TotoroCacheContainer.getTotoroJson();
-        const newCaches = TotoroCacheContainer.parseRaw(json);
-        this.mCaches = newCaches;
     }
 }

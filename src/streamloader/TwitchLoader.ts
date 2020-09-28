@@ -13,7 +13,7 @@ export class TwtichLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback) {
-        let cache = this.mManager.getCache(this.mKeyword);
+        const cache = this.mManager.getCache(this.mKeyword);
         if (cache === null) {
             return;
         }
@@ -21,7 +21,7 @@ export class TwtichLoader extends StreamLoader {
             return;
         }
 
-        let info: StreamInfo = {
+        const info: StreamInfo = {
             result: true,
             platform: StreamPlatform.TWITCH,
             keyid: cache.keyword,

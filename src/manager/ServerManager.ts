@@ -9,11 +9,6 @@ import { Config } from "../config/Config";
 export class ServerManager {
     private static sInstance: ServerManager = null;
 
-    public static getInstance(): ServerManager {
-        if (this.sInstance === null) this.sInstance = new ServerManager();
-        return this.sInstance;
-    }
-
     private mApp: Express.Express;
     private mServer: https.Server | http.Server;
 
@@ -74,5 +69,10 @@ export class ServerManager {
             "http://mycast.xyz:10080",
         ];
         return whiteList.indexOf(host) > -1;
+    }
+
+    public static getInstance(): ServerManager {
+        if (this.sInstance === null) this.sInstance = new ServerManager();
+        return this.sInstance;
     }
 }
