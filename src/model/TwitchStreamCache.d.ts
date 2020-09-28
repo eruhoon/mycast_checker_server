@@ -1,7 +1,8 @@
-import { RawTwitchStream, RawTwitchUser } from '../utils/TwitchUtils';
+import { TwitchStreamDto } from '../api/twitch/TwitchStreamDto';
+import { TwitchUserDto } from '../api/twitch/TwitchUserDto';
 
 export type TwitchStreamCache = {
     keyword: string;
-    user: RawTwitchUser | null;
-    stream: RawTwitchStream | null;
+    user: TwitchUserDto | null;
+    stream: TwitchStreamDto | null;
 };

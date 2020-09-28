@@ -1,19 +1,17 @@
 import * as dotenv from 'dotenv';
-
+import { TwitchStreamDto } from '../../api/twitch/TwitchStreamDto';
+import { TwitchUserDto } from '../../api/twitch/TwitchUserDto';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamPlatform } from '../../model/Stream';
 import { TwitchStreamCache } from '../../model/TwitchStreamCache';
-import {
-    RawTwitchStream,
-    RawTwitchUser,
-    TwitchUtils,
-} from '../../utils/TwitchUtils';
+import { TwitchManager } from '../twitch/TwitchManager';
 import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class TwitchCacheContainer extends StreamCacheContainer {
     private mCaches: TwitchStreamCache[];
     private mNewCaches: TwitchStreamCache[];
+    private mTwitchManager: TwitchManager;
     private mUserLoader: IUserAsyncLoader;
     private mStreamLoader: IStreamAsyncLoader;
 
@@ -24,7 +22,10 @@ export class TwitchCacheContainer extends StreamCacheContainer {
         super();
         dotenv.config();
         this.mCaches = [];
-
+        this.mTwitchManager = new TwitchManager(
+            process.env.TWITCH_CLIENT_ID,
+            process.env.TWITCH_SECRET
+        );
         this.mUserLoader = userLoader;
         this.mStreamLoader = streamloader;
     }
@@ -65,9 +66,9 @@ export class TwitchCacheContainer extends StreamCacheContainer {
             );
 
             this.applyKeywords(keywords);
-            const userData = await TwitchUtils.loadUser(keywords);
+            const userData = await this.mTwitchManager.loadUser(keywords);
             this.applyUserInfos(userData);
-            const streams = await TwitchUtils.loadStream(
+            const streams = await this.mTwitchManager.loadStream(
                 userData.map((u) => u.login)
             );
             this.applyStreamInfos(streams);
@@ -95,7 +96,7 @@ export class TwitchCacheContainer extends StreamCacheContainer {
         });
     }
 
-    private applyUserInfos(users: RawTwitchUser[]) {
+    private applyUserInfos(users: TwitchUserDto[]) {
         users.forEach((user) => {
             const cache = this.mNewCaches.find(
                 (cache) => user.login === cache.keyword
@@ -106,7 +107,7 @@ export class TwitchCacheContainer extends StreamCacheContainer {
         });
     }
 
-    private applyStreamInfos(streams: RawTwitchStream[]) {
+    private applyStreamInfos(streams: TwitchStreamDto[]) {
         streams.forEach((stream) => {
             const cache = this.mNewCaches.find((cache) => {
                 if (!cache.user) {
