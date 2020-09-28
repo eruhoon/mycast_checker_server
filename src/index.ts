@@ -1,3 +1,3 @@
-import { StreamCheckerServer } from './StreamCheckerServer';
+import { StreamCheckerServer } from "./StreamCheckerServer";
 
 StreamCheckerServer.main();

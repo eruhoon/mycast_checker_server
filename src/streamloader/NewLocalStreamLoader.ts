@@ -1,10 +1,9 @@
-import { NewLocalCacheContainer } from '../model/cache/NewLocalCacheContainer';
-import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { User } from '../model/User';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { NewLocalCacheContainer } from "../model/cache/NewLocalCacheContainer";
+import { StreamInfo, StreamPlatform } from "../model/Stream";
+import { User } from "../model/User";
+import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 
 export class NewLocalStreamLoader extends StreamLoader {
-
     public mManager: NewLocalCacheContainer;
     public mUser: User;
 
@@ -15,11 +14,10 @@ export class NewLocalStreamLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback): void {
-
         const caches = this.mManager.getCaches();
         const streamKey = this.mUser.getStreamKeyId();
 
-        const cache = caches.find(cache => cache.name === streamKey);
+        const cache = caches.find((cache) => cache.name === streamKey);
         if (cache) {
             const nickname = this.mUser.getNickname();
             const info: StreamInfo = {
@@ -40,10 +38,9 @@ export class NewLocalStreamLoader extends StreamLoader {
     }
 
     private getThumbnail(streamKey: string): string {
-        const host = 'https://mycast.xyz:9011/thumbs';
+        const host = "https://mycast.xyz:9011/thumbs";
         const fileName = `${streamKey}-001.png`;
         const timestamp = new Date().getTime();
         return `${host}/${fileName}?${timestamp}`;
     }
-
 }

@@ -1,5 +1,4 @@
 export class Logger {
-
     private mTag: string;
 
     public constructor(tag: string) {

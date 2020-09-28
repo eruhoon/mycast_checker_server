@@ -1,10 +1,9 @@
-import { TotoroCacheContainer } from '../model/cache/TotoroCacheContainer';
-import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { User } from '../model/User';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { TotoroCacheContainer } from "../model/cache/TotoroCacheContainer";
+import { StreamInfo, StreamPlatform } from "../model/Stream";
+import { User } from "../model/User";
+import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 
 export class TotoroStreamLoader extends StreamLoader {
-
     public mManager: TotoroCacheContainer;
     public mUser: User;
 
@@ -15,11 +14,10 @@ export class TotoroStreamLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback): void {
-
         const caches = this.mManager.getCaches();
         const streamKey = this.mUser.getStreamKeyId();
 
-        const cache = caches.find(cache => cache.name === streamKey);
+        const cache = caches.find((cache) => cache.name === streamKey);
         if (cache) {
             const nickname = this.mUser.getNickname();
             const info: StreamInfo = {
@@ -41,10 +39,9 @@ export class TotoroStreamLoader extends StreamLoader {
     }
 
     private getThumbnail(streamKey: string): string {
-        const host = 'https://parasite.banjai.tv/live';
+        const host = "https://parasite.banjai.tv/live";
         const fileName = `${streamKey}.jpeg`;
         const timestamp = new Date().getTime();
         return `${host}/${fileName}?${timestamp}`;
     }
-
 }

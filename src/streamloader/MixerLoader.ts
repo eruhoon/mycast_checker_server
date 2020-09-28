@@ -1,10 +1,9 @@
-import * as Mixer from 'beam-client-node';
+import * as Mixer from "beam-client-node";
 
-import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { StreamInfo, StreamPlatform } from "../model/Stream";
+import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 
 export class MixerLoader extends StreamLoader {
-
     private mChannelName: string;
 
     public constructor(channelName: string) {
@@ -13,10 +12,9 @@ export class MixerLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback): void {
-
         const client = new Mixer.Client(new Mixer.DefaultRequestRunner());
 
-        client.request('GET', `channels/${this.mChannelName}`).then((res) => {
+        client.request("GET", `channels/${this.mChannelName}`).then((res) => {
             const stream: MixerStream = res.body as MixerStream;
             if (!stream.online) {
                 return;
@@ -30,7 +28,9 @@ export class MixerLoader extends StreamLoader {
                 keyid: stream.user.username,
                 icon,
                 nickname: stream.user.username,
-                thumbnail: `https://thumbs.mixer.com/channel/${stream.id}.small.jpg?t=${new Date().getTime()}`,
+                thumbnail: `https://thumbs.mixer.com/channel/${
+                    stream.id
+                }.small.jpg?t=${new Date().getTime()}`,
                 onair: stream.online,
                 title: stream.name,
                 description: stream.name,
@@ -43,15 +43,15 @@ export class MixerLoader extends StreamLoader {
 }
 
 type MixerStream = {
-    id: number,
-    online: boolean,
-    name: string,
-    viewersCurrent: number,
-    description: string,
-    thumbnail: string | null,
+    id: number;
+    online: boolean;
+    name: string;
+    viewersCurrent: number;
+    description: string;
+    thumbnail: string | null;
     user: {
-        id: number,
-        username: string,
-        avatarUrl: string | null,
-    },
+        id: number;
+        username: string;
+        avatarUrl: string | null;
+    };
 };

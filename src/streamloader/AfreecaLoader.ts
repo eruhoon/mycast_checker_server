@@ -1,10 +1,9 @@
-import * as request from 'request';
+import * as request from "request";
 
-import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { StreamInfo, StreamPlatform } from "../model/Stream";
+import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 
 export class AfreecaLoader extends StreamLoader {
-
     public mId: string;
 
     public constructor(id: string) {
@@ -13,28 +12,29 @@ export class AfreecaLoader extends StreamLoader {
     }
 
     public requestInfo(callback: StreamLoaderCallback): void {
-
-        const url = 'http://sch.afreeca.com/api.php';
+        const url = "http://sch.afreeca.com/api.php";
 
         const opt = {
             timeout: 3000,
             json: true,
             qs: {
-                m: 'liveSearch',
-                v: '1.0',
-                szOrder: '',
-                c: 'EUC-KR',
+                m: "liveSearch",
+                v: "1.0",
+                szOrder: "",
+                c: "EUC-KR",
                 szKeyword: this.mId,
             },
         };
 
         request.get(url, opt, (err, res, body: RawAfreecaInfo) => {
             if (err || res.statusCode !== 200 || !body) {
-                console.error('AfreecaLoader: Request Error', err);
+                console.error("AfreecaLoader: Request Error", err);
                 return;
             }
 
-            const realBroad = body.REAL_BROAD.find((e) => e.user_id === this.mId);
+            const realBroad = body.REAL_BROAD.find(
+                (e) => e.user_id === this.mId
+            );
             if (!realBroad) {
                 return;
             }
@@ -63,13 +63,15 @@ export class AfreecaLoader extends StreamLoader {
 }
 
 interface RawAfreecaInfo {
-    REAL_BROAD: [{
-        user_id: string,
-        user_nick: string,
-        broad_no: string,
-        station_name: string,
-        broad_title: string,
-        sn_url: string,
-        total_view_cnt: string,
-    }];
+    REAL_BROAD: [
+        {
+            user_id: string;
+            user_nick: string;
+            broad_no: string;
+            station_name: string;
+            broad_title: string;
+            sn_url: string;
+            total_view_cnt: string;
+        }
+    ];
 }

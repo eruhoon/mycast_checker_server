@@ -1,5 +1,4 @@
 export class ArrayUtils {
-
     public static chunk<T>(arr: T[], size: number): T[][] {
         const chunks = [];
         for (let i = 0; i < arr.length; i += size) {

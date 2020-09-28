@@ -1,9 +1,8 @@
-import { TwitchCacheContainer } from '../model/cache/TwitchCacheContainer';
-import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { TwitchCacheContainer } from "../model/cache/TwitchCacheContainer";
+import { StreamInfo, StreamPlatform } from "../model/Stream";
+import { StreamLoader, StreamLoaderCallback } from "./StreamLoader";
 
 export class TwtichLoader extends StreamLoader {
-
     private mManager: TwitchCacheContainer;
     private mKeyword: string;
 
@@ -33,9 +32,8 @@ export class TwtichLoader extends StreamLoader {
             url: `//player.twitch.tv/?channel=${this.mKeyword}`,
             onair: true,
             viewer: cache.stream.viewer_count,
-            thumbnail: cache.stream.thumbnail_url
+            thumbnail: cache.stream.thumbnail_url,
         };
         callback(info);
     }
-
 }

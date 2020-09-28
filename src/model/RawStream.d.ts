@@ -1,3 +1,3 @@
 export type RawStream = {
-	brostyle: string
-}
+    brostyle: string;
+};
