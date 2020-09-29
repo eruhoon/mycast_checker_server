@@ -24,6 +24,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 
     public async update() {
         console.time('YoutubeCacheContainer#update');
+        return;
         const keywords = await this.getStreamIds();
         const channels = await YoutubeCacheUtils.getChannel(keywords);
 
