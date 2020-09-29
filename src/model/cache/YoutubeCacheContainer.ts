@@ -31,7 +31,9 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i];
             const rawStream = await YoutubeCacheUtils.getStream(channel.id);
-            if (rawStream === null) continue;
+            if (rawStream === null) {
+                continue;
+            }
             const videoId = rawStream.id.videoId;
             const viewer = await YoutubeCacheUtils.getVideoCount(videoId);
             const info: StreamInfo = {
@@ -84,8 +86,12 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
 
         const keywords: string[] = [];
         const addWithoutDuplicated = (keyword: string) => {
-            if (!keyword) return;
-            if (keywords.findIndex((k) => k === keyword) !== -1) return;
+            if (!keyword) {
+                return;
+            }
+            if (keywords.findIndex((k) => k === keyword) !== -1) {
+                return;
+            }
             keywords.push(keyword);
         };
         keywordsFromUser.forEach((keyword) => addWithoutDuplicated(keyword));
