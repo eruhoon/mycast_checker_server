@@ -11,7 +11,7 @@
     "iconv-lite": "^0.4.24",
     "mysql": "^2.17.1",
     "request": "^2.88.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "sync-request": "^3.0.1",
     "xml-parser": "^1.2.1",
     "xml2js": "^0.4.22"
