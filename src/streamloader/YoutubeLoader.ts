@@ -1,7 +1,8 @@
 import { YoutubeCacheContainer } from '../model/cache/YoutubeCacheContainer';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { StreamInfo } from '../model/Stream';
+import { StreamLoader2 } from './StreamLoader2';
 
-export class YoutubeLoader extends StreamLoader {
+export class YoutubeLoader extends StreamLoader2 {
   private mManager: YoutubeCacheContainer;
   private mChannelId: string;
 
@@ -11,11 +12,8 @@ export class YoutubeLoader extends StreamLoader {
     this.mChannelId = channelId;
   }
 
-  requestInfo(callback: StreamLoaderCallback): void {
+  async getInfo(): Promise<StreamInfo | null> {
     const cache = this.mManager.getCache(this.mChannelId);
-    if (cache === null) {
-      return;
-    }
-    callback(cache);
+    return cache;
   }
 }
