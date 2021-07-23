@@ -22,60 +22,60 @@ import {
 } from './CheckerEntryContainer';
 
 export class Checker {
-  private mUserLoader: IUserAsyncLoader;
-  private mStreamLoader: IStreamAsyncLoader;
+  #userLoader: IUserAsyncLoader;
+  #streamLoader: IStreamAsyncLoader;
 
-  private mWowzaCacheManager: WowzaCacheContainer;
-  private mNewLocalCacheManager: NewLocalCacheContainer;
-  private mTotoroCacheManager: TotoroCacheContainer;
-  private mTwitchCacheManager: TwitchCacheContainer;
-  private mYoutubeCacheManager: YoutubeCacheContainer;
+  #wowzaCacheManager: WowzaCacheContainer;
+  #newLocalCacheManager: NewLocalCacheContainer;
+  #totoroCacheManager: TotoroCacheContainer;
+  #twitchCacheManager: TwitchCacheContainer;
+  #youtubeCacheManager: YoutubeCacheContainer;
 
-  private mContainer: CheckerEntryContainer;
+  #container: CheckerEntryContainer;
 
   constructor(userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
-    this.mUserLoader = userLoader;
-    this.mStreamLoader = streamloader;
+    this.#userLoader = userLoader;
+    this.#streamLoader = streamloader;
 
-    this.mWowzaCacheManager = new WowzaCacheContainer();
-    this.mNewLocalCacheManager = new NewLocalCacheContainer();
-    this.mTotoroCacheManager = new TotoroCacheContainer();
-    this.mTwitchCacheManager = new TwitchCacheContainer(
+    this.#wowzaCacheManager = new WowzaCacheContainer();
+    this.#newLocalCacheManager = new NewLocalCacheContainer();
+    this.#totoroCacheManager = new TotoroCacheContainer();
+    this.#twitchCacheManager = new TwitchCacheContainer(
       userLoader,
       streamloader
     );
-    this.mYoutubeCacheManager = new YoutubeCacheContainer();
+    this.#youtubeCacheManager = new YoutubeCacheContainer();
 
-    this.mContainer = new CheckerEntryContainer();
+    this.#container = new CheckerEntryContainer();
 
     this.initCacheManager();
   }
 
   setOnStreamAddCallback(callback: OnStreamAddCallback): void {
-    this.mContainer.setOnStreamAddCallback(callback);
+    this.#container.setOnStreamAddCallback(callback);
   }
 
   initCacheManager() {
-    this.mWowzaCacheManager.start();
-    this.mNewLocalCacheManager.start();
-    this.mTotoroCacheManager.start();
-    this.mTwitchCacheManager.start();
-    this.mYoutubeCacheManager.start(60000);
+    this.#wowzaCacheManager.start();
+    this.#newLocalCacheManager.start();
+    this.#totoroCacheManager.start();
+    this.#twitchCacheManager.start();
+    this.#youtubeCacheManager.start(60000);
   }
 
   async update() {
-    this.updateStream();
+    this.#updateStream();
 
-    const users = await this.mUserLoader.getUsers();
+    const users = await this.#userLoader.getUsers();
     users.forEach((user) => {
       let loader: StreamLoader | null = null;
       const platform = user.getStreamPlatform();
       switch (platform) {
         case StreamPlatform.LOCAL:
-          loader = new NewLocalStreamLoader(this.mNewLocalCacheManager, user);
+          loader = new NewLocalStreamLoader(this.#newLocalCacheManager, user);
           break;
         case StreamPlatform.TOTORO:
-          loader = new TotoroStreamLoader(this.mTotoroCacheManager, user);
+          loader = new TotoroStreamLoader(this.#totoroCacheManager, user);
           break;
         case StreamPlatform.AFREECA:
           loader = new AfreecaLoader(user.getStreamKeyId());
@@ -83,7 +83,7 @@ export class Checker {
           break;
         case StreamPlatform.TWITCH:
           loader = new TwtichLoader(
-            this.mTwitchCacheManager,
+            this.#twitchCacheManager,
             user.getStreamKeyId()
           );
           loader = new UserExternalDecorator(user, loader);
@@ -99,12 +99,12 @@ export class Checker {
             const provider = new StreamRewardProvider();
             provider.requestStreamReward(user.getHash(), info.viewer);
           }
-          this.addStream(CheckerType.LOCAL, info);
+          this.#addStream(CheckerType.LOCAL, info);
         });
       }
     });
 
-    const streamRows = await this.mStreamLoader.getStreams();
+    const streamRows = await this.#streamLoader.getStreams();
     streamRows.forEach((row) => {
       let loader: StreamLoader | null = null;
       const platform = row.platform;
@@ -113,13 +113,13 @@ export class Checker {
           loader = new AfreecaLoader(row.keyword);
           break;
         case StreamPlatform.TWITCH:
-          loader = new TwtichLoader(this.mTwitchCacheManager, row.keyword);
+          loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
           break;
         case StreamPlatform.KAKAOTV:
           loader = new KakaoTvLoader(row.keyword);
           break;
         case StreamPlatform.YOUTUBE:
-          loader = new YoutubeLoader(this.mYoutubeCacheManager, row.keyword);
+          loader = new YoutubeLoader(this.#youtubeCacheManager, row.keyword);
           break;
       }
 
@@ -131,14 +131,14 @@ export class Checker {
           if (!info.onair) {
             return;
           }
-          this.addStream(CheckerType.EXTERNAL, info);
+          this.#addStream(CheckerType.EXTERNAL, info);
         });
       }
     });
   }
 
   getStreams(): StreamSet {
-    const entries = this.mContainer.getEntries();
+    const entries = this.#container.getEntries();
     const local = entries
       .filter((e) => e.getType() === CheckerType.LOCAL)
       .map((e) => e.getStream())
@@ -165,11 +165,11 @@ export class Checker {
     };
   }
 
-  private updateStream() {
-    this.mContainer.stale();
+  #updateStream() {
+    this.#container.stale();
   }
 
-  private addStream(type: CheckerType, info: StreamInfo) {
-    this.mContainer.upsertStream(type, info);
+  #addStream(type: CheckerType, info: StreamInfo) {
+    this.#container.upsertStream(type, info);
   }
 }

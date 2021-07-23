@@ -6,36 +6,36 @@ export const enum CheckerType {
 }
 
 export class CheckerEntry {
-  private static readonly DEFAULT_SENSITIVITY = 3;
+  static readonly #DEFAULT_SENSITIVITY = 3;
 
-  private mType: CheckerType;
-  private mStream: StreamInfo;
-  private mSensitivity: number;
+  #type: CheckerType;
+  #stream: StreamInfo;
+  #sensitivity: number;
 
   constructor(type: CheckerType, stream: StreamInfo) {
-    this.mType = type;
-    this.mStream = stream;
-    this.mSensitivity = CheckerEntry.DEFAULT_SENSITIVITY;
+    this.#type = type;
+    this.#stream = stream;
+    this.#sensitivity = CheckerEntry.#DEFAULT_SENSITIVITY;
   }
 
   getType(): CheckerType {
-    return this.mType;
+    return this.#type;
   }
 
   getStream(): StreamInfo {
-    return this.mStream;
+    return this.#stream;
   }
 
   getSensitivity(): number {
-    return this.mSensitivity;
+    return this.#sensitivity;
   }
 
   stale(): void {
-    this.mSensitivity--;
+    this.#sensitivity--;
   }
 
   isStaled(): boolean {
-    return this.mSensitivity <= 0;
+    return this.#sensitivity <= 0;
   }
 
   isSameKey(entry: CheckerEntry): boolean {
