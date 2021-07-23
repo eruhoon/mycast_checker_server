@@ -7,7 +7,7 @@ import * as https from 'https';
 import { Config } from '../config/Config';
 
 export class ServerManager {
-  private static sInstance: ServerManager = null;
+  private static sInstance: ServerManager | null = null;
 
   private mApp: Express.Express;
   private mServer: https.Server | http.Server;
@@ -17,8 +17,12 @@ export class ServerManager {
 
     this.mApp = Express();
 
-    const key: string = process.env.SSL_PRIVKEY;
-    const cert: string = process.env.SSL_CERT;
+    const key = process.env.SSL_PRIVKEY;
+    const cert = process.env.SSL_CERT;
+
+    if (!key || !cert) {
+      throw new Error('ServerManager: environment value not set');
+    }
 
     if (Config.isHttpsEnabled()) {
       this.mServer = https.createServer(

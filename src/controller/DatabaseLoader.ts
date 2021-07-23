@@ -12,9 +12,13 @@ export class DatabaseLoader implements IUserAsyncLoader {
   public constructor() {
     dotenv.config();
 
-    const user: string = process.env.DB_USER;
-    const password: string = process.env.DB_PASSWORD;
-    const database: string = process.env.DB_NAME;
+    const user = process.env.DB_USER;
+    const password = process.env.DB_PASSWORD;
+    const database = process.env.DB_NAME;
+
+    if (!user || !password || !database) {
+      throw new Error('database has not set');
+    }
 
     this.mDb = Mysql.createConnection({
       user,
@@ -114,7 +118,7 @@ export class DatabaseLoader implements IUserAsyncLoader {
     });
   }
 
-  public searchUserByHash(hash: string, callback: (user: User) => void) {
+  public searchUserByHash(hash: string, callback: (user: User | null) => void) {
     const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
     this.mDb.query(query, [hash], (err, result: UserRow[]) => {
       if (err) {

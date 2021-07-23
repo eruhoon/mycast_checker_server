@@ -3,7 +3,7 @@ import { TwitchTokenLoader } from '../../api/twitch/TwitchTokenLoader';
 export class TwitchTokenManager {
   private readonly EXPIRES_TIME = 5 * 60 * 1000;
   private mExpires: number;
-  private mTokenCache: string | null;
+  private mTokenCache: string | null = null;
   private mLoader: TwitchTokenLoader;
 
   public constructor(clientId: string, secretKey: string) {
@@ -11,7 +11,7 @@ export class TwitchTokenManager {
     this.mLoader = new TwitchTokenLoader(clientId, secretKey);
   }
 
-  public async getToken(): Promise<string> {
+  public async getToken(): Promise<string | null> {
     const now = new Date().getTime();
     if (this.isExpired(now) || this.mTokenCache === null) {
       this.mTokenCache = await this.mLoader.load();

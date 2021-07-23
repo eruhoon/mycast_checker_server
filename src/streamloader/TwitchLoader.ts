@@ -21,6 +21,10 @@ export class TwtichLoader extends StreamLoader {
       return;
     }
 
+    if (cache.user === null) {
+      return;
+    }
+
     const info: StreamInfo = {
       result: true,
       platform: StreamPlatform.TWITCH,

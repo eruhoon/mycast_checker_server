@@ -19,7 +19,9 @@ export abstract class StreamCacheContainer implements IStreamCacheContainer {
   }
 
   public stop(): void {
-    clearInterval(this.mScheduler);
+    if (this.mScheduler) {
+      clearInterval(this.mScheduler);
+    }
     this.mScheduler = null;
   }
 

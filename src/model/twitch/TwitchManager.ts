@@ -18,7 +18,7 @@ export class TwitchManager {
     this.mStreamLoader = new TwitchStreamLoadManager(clientId);
   }
 
-  public async getToken(): Promise<string> {
+  public async getToken(): Promise<string | null> {
     return await this.mTokenManager.getToken();
   }
 

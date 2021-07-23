@@ -50,10 +50,7 @@ export class Checker {
       userLoader,
       streamloader
     );
-    this.mYoutubeCacheManager = new YoutubeCacheContainer(
-      userLoader,
-      streamloader
-    );
+    this.mYoutubeCacheManager = new YoutubeCacheContainer();
 
     this.mContainer = new CheckerEntryContainer();
 
@@ -77,7 +74,7 @@ export class Checker {
 
     const users = await this.mUserLoader.getUsers();
     users.forEach((user) => {
-      let loader: StreamLoader = null;
+      let loader: StreamLoader | null = null;
       const platform = user.getStreamPlatform();
       switch (platform) {
         case StreamPlatform.LOCAL:
@@ -119,7 +116,7 @@ export class Checker {
 
     const streamRows = await this.mStreamLoader.getStreams();
     streamRows.forEach((row) => {
-      let loader: StreamLoader = null;
+      let loader: StreamLoader | null = null;
       const platform = row.platform;
       switch (platform) {
         case StreamPlatform.AFREECA:

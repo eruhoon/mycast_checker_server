@@ -10,7 +10,7 @@ import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class TwitchCacheContainer extends StreamCacheContainer {
   private mCaches: TwitchStreamCache[];
-  private mNewCaches: TwitchStreamCache[];
+  private mNewCaches: TwitchStreamCache[] = [];
   private mTwitchManager: TwitchManager;
   private mUserLoader: IUserAsyncLoader;
   private mStreamLoader: IStreamAsyncLoader;
@@ -22,10 +22,12 @@ export class TwitchCacheContainer extends StreamCacheContainer {
     super();
     dotenv.config();
     this.mCaches = [];
-    this.mTwitchManager = new TwitchManager(
-      process.env.TWITCH_CLIENT_ID,
-      process.env.TWITCH_SECRET
-    );
+    const clientId = process.env.TWITCH_CLIENT_ID;
+    const secret = process.env.TWITCH_SECRET;
+    if (!clientId || !secret) {
+      throw new Error('client, secret has not set');
+    }
+    this.mTwitchManager = new TwitchManager(clientId, secret);
     this.mUserLoader = userLoader;
     this.mStreamLoader = streamloader;
   }
