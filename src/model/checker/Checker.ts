@@ -3,7 +3,6 @@ import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
 import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
 import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
-import { MixerLoader } from '../../streamloader/MixerLoader';
 import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
 import { StreamLoader } from '../../streamloader/StreamLoader';
 import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
@@ -15,7 +14,6 @@ import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
 import { WowzaCacheContainer } from '../cache/WowzaCacheContainer';
 import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';
-import { Logger } from '../common/logger/Logger';
 import { StreamInfo, StreamPlatform, StreamSet } from '../Stream';
 import { CheckerType } from './CheckerEntry';
 import {
@@ -24,7 +22,6 @@ import {
 } from './CheckerEntryContainer';
 
 export class Checker {
-  private mLogger: Logger = new Logger('Checker');
   private mUserLoader: IUserAsyncLoader;
   private mStreamLoader: IStreamAsyncLoader;
 
@@ -91,10 +88,6 @@ export class Checker {
           );
           loader = new UserExternalDecorator(user, loader);
           break;
-        case StreamPlatform.MIXER:
-          loader = new MixerLoader(user.getStreamKeyId());
-          loader = new UserExternalDecorator(user, loader);
-          break;
       }
 
       if (loader !== null) {
@@ -124,9 +117,6 @@ export class Checker {
           break;
         case StreamPlatform.KAKAOTV:
           loader = new KakaoTvLoader(row.keyword);
-          break;
-        case StreamPlatform.MIXER:
-          loader = new MixerLoader(row.keyword);
           break;
         case StreamPlatform.YOUTUBE:
           loader = new YoutubeLoader(this.mYoutubeCacheManager, row.keyword);
