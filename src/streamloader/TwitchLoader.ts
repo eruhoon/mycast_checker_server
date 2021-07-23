@@ -1,28 +1,27 @@
 import { TwitchCacheContainer } from '../model/cache/TwitchCacheContainer';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { StreamLoader2 } from './StreamLoader2';
 
-export class TwtichLoader extends StreamLoader {
-  private mManager: TwitchCacheContainer;
-  private mKeyword: string;
+export class TwtichLoader extends StreamLoader2 {
+  #container: TwitchCacheContainer;
+  #keyword: string;
 
   constructor(manager: TwitchCacheContainer, keyword: string) {
     super();
-    this.mManager = manager;
-    this.mKeyword = keyword;
+    this.#container = manager;
+    this.#keyword = keyword;
   }
 
-  requestInfo(callback: StreamLoaderCallback) {
-    const cache = this.mManager.getCache(this.mKeyword);
+  async getInfo(): Promise<StreamInfo | null> {
+    const cache = this.#container.getCache(this.#keyword);
     if (cache === null) {
-      return;
+      return null;
     }
     if (cache.stream === null) {
-      return;
+      return null;
     }
-
     if (cache.user === null) {
-      return;
+      return null;
     }
 
     const info: StreamInfo = {
@@ -33,11 +32,11 @@ export class TwtichLoader extends StreamLoader {
       nickname: cache.user.display_name,
       title: cache.user.display_name,
       description: cache.stream.title,
-      url: `//player.twitch.tv/?channel=${this.mKeyword}`,
+      url: `//player.twitch.tv/?channel=${this.#keyword}`,
       onair: true,
       viewer: cache.stream.viewer_count,
       thumbnail: cache.stream.thumbnail_url,
     };
-    callback(info);
+    return info;
   }
 }
