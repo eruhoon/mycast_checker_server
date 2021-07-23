@@ -17,66 +17,66 @@ export type UserParam = {
 export class User {
   static IDX_NONE: number = -1;
 
-  private mIdx: number;
-  private mId: string;
-  private mHash: string;
-  private mNickname: string;
-  private mIcon: string;
-  private mPlatform: StreamPlatform;
-  private mAfreecaId: string;
-  private mTwitchId: string;
-  private mMixerId: string;
-  private mBackground: string;
+  #idx: number;
+  #id: string;
+  #hash: string;
+  #nickname: string;
+  #icon: string;
+  #platform: StreamPlatform;
+  #afreecaId: string;
+  #twitchId: string;
+  #mixerId: string;
+  #background: string;
 
   constructor(param: UserParam) {
-    this.mIdx = param.idx ? param.idx : User.IDX_NONE;
-    this.mId = param.id ? param.id : '';
-    this.mHash = param.hash ? param.hash : '';
-    this.mNickname = param.nickname ? param.nickname : '';
-    this.mIcon = param.icon ? param.icon : '';
-    this.mPlatform = param.platform ? param.platform : StreamPlatform.LOCAL;
-    this.mAfreecaId = param.afreecaId ? param.afreecaId : '';
-    this.mTwitchId = param.twitchId ? param.twitchId : '';
-    this.mMixerId = param.mixerId ? param.mixerId : '';
-    this.mBackground = param.background ? param.background : '';
+    this.#idx = param.idx ? param.idx : User.IDX_NONE;
+    this.#id = param.id ? param.id : '';
+    this.#hash = param.hash ? param.hash : '';
+    this.#nickname = param.nickname ? param.nickname : '';
+    this.#icon = param.icon ? param.icon : '';
+    this.#platform = param.platform ? param.platform : StreamPlatform.LOCAL;
+    this.#afreecaId = param.afreecaId ? param.afreecaId : '';
+    this.#twitchId = param.twitchId ? param.twitchId : '';
+    this.#mixerId = param.mixerId ? param.mixerId : '';
+    this.#background = param.background ? param.background : '';
   }
 
   getIdx(): number {
-    return this.mIdx;
+    return this.#idx;
   }
 
   getId(): string {
-    return this.mId;
+    return this.#id;
   }
 
   getHash(): string {
-    return this.mHash;
+    return this.#hash;
   }
 
   getNickname(): string {
-    return this.mNickname;
+    return this.#nickname;
   }
 
   getIcon(): string {
-    return this.mIcon;
+    return this.#icon;
   }
 
   getStreamPlatform(): StreamPlatform {
-    return this.mPlatform;
+    return this.#platform;
   }
 
   getStreamKeyId(): string {
-    switch (this.mPlatform) {
+    switch (this.#platform) {
       case StreamPlatform.LOCAL:
-        return this.mHash.substring(0, 5);
+        return this.#hash.substring(0, 5);
       case StreamPlatform.TOTORO:
-        return this.mHash.substring(0, 5);
+        return this.#hash.substring(0, 5);
       case StreamPlatform.AFREECA:
-        return this.mAfreecaId;
+        return this.#afreecaId;
       case StreamPlatform.TWITCH:
-        return this.mTwitchId;
+        return this.#twitchId;
       case StreamPlatform.MIXER:
-        return this.mMixerId;
+        return this.#mixerId;
       default:
         console.error('User#getStreamKeyId: Invalid Platform');
         return '';
@@ -84,7 +84,7 @@ export class User {
   }
 
   getBackground(): string {
-    return this.mBackground;
+    return this.#background;
   }
 
   static createWithRow(row: UserRow): User {
