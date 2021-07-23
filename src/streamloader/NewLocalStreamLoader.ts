@@ -1,14 +1,13 @@
 import { NewLocalCacheContainer } from '../model/cache/NewLocalCacheContainer';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { User } from '../model/User';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
-export class NewLocalStreamLoader extends StreamLoader2 {
+export class NewLocalStreamLoader implements StreamLoader {
   #manager: NewLocalCacheContainer;
   #user: User;
 
   constructor(manager: NewLocalCacheContainer, user: User) {
-    super();
     this.#manager = manager;
     this.#user = user;
   }

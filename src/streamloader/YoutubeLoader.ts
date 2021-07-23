@@ -1,19 +1,17 @@
 import { YoutubeCacheContainer } from '../model/cache/YoutubeCacheContainer';
 import { StreamInfo } from '../model/Stream';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
-export class YoutubeLoader extends StreamLoader2 {
-  private mManager: YoutubeCacheContainer;
-  private mChannelId: string;
+export class YoutubeLoader implements StreamLoader {
+  #manager: YoutubeCacheContainer;
+  #channelId: string;
 
   constructor(manager: YoutubeCacheContainer, channelId: string) {
-    super();
-    this.mManager = manager;
-    this.mChannelId = channelId;
+    this.#manager = manager;
+    this.#channelId = channelId;
   }
 
   async getInfo(): Promise<StreamInfo | null> {
-    const cache = this.mManager.getCache(this.mChannelId);
-    return cache;
+    return this.#manager.getCache(this.#channelId);
   }
 }

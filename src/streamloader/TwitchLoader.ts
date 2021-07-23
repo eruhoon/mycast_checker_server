@@ -1,13 +1,12 @@
 import { TwitchCacheContainer } from '../model/cache/TwitchCacheContainer';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
-export class TwtichLoader extends StreamLoader2 {
+export class TwtichLoader implements StreamLoader {
   #container: TwitchCacheContainer;
   #keyword: string;
 
   constructor(manager: TwitchCacheContainer, keyword: string) {
-    super();
     this.#container = manager;
     this.#keyword = keyword;
   }

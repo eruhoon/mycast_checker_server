@@ -1,14 +1,13 @@
 import { TotoroCacheContainer } from '../model/cache/TotoroCacheContainer';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { User } from '../model/User';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
-export class TotoroStreamLoader extends StreamLoader2 {
+export class TotoroStreamLoader implements StreamLoader {
   #manager: TotoroCacheContainer;
   #user: User;
 
   constructor(manager: TotoroCacheContainer, user: User) {
-    super();
     this.#manager = manager;
     this.#user = user;
   }

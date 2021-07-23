@@ -1,13 +1,12 @@
 import { StreamInfo } from '../model/Stream';
 import { User } from '../model/User';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
-export class UserExternalDecorator extends StreamLoader2 {
+export class UserExternalDecorator implements StreamLoader {
   #user: User;
-  #loader: StreamLoader2;
+  #loader: StreamLoader;
 
-  constructor(user: User, loader: StreamLoader2) {
-    super();
+  constructor(user: User, loader: StreamLoader) {
     this.#user = user;
     this.#loader = loader;
   }

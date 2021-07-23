@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
 type RawKakaoTvChannel = {
   id: string;
@@ -17,11 +17,10 @@ type RawKakaoTvVideo = {
   viewer: number;
 };
 
-export class KakaoTvLoader extends StreamLoader2 {
+export class KakaoTvLoader implements StreamLoader {
   #channelId: string;
 
   constructor(id: string) {
-    super();
     this.#channelId = id;
   }
 

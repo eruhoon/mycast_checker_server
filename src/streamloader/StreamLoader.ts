@@ -1,7 +1,5 @@
 import { StreamInfo } from '../model/Stream';
 
-export abstract class StreamLoader {
-  abstract requestInfo(callback: StreamLoaderCallback): void;
+export interface StreamLoader {
+  getInfo(): Promise<StreamInfo | null>;
 }
-
-export type StreamLoaderCallback = (info: StreamInfo) => void;

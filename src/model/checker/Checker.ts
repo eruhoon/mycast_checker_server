@@ -91,7 +91,10 @@ export class Checker {
       }
 
       if (loader !== null) {
-        loader.requestInfo((info) => {
+        loader.getInfo().then((info) => {
+          if (!info) {
+            return;
+          }
           if (
             info.platform === StreamPlatform.LOCAL ||
             info.platform === StreamPlatform.TOTORO
@@ -124,7 +127,7 @@ export class Checker {
       }
 
       if (loader !== null) {
-        loader.requestInfo((info) => {
+        loader.getInfo().then((info) => {
           if (!info || !info.result) {
             return;
           }

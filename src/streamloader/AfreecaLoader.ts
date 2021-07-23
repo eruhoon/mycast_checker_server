@@ -1,13 +1,12 @@
 import axios from 'axios';
 import * as QueryString from 'qs';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader2 } from './StreamLoader2';
+import { StreamLoader } from './StreamLoader';
 
-export class AfreecaLoader extends StreamLoader2 {
+export class AfreecaLoader implements StreamLoader {
   #id: string;
 
   constructor(id: string) {
-    super();
     this.#id = id;
   }
 
