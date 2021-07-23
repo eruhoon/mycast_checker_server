@@ -6,12 +6,12 @@ export class TwitchTokenManager {
   private mTokenCache: string | null = null;
   private mLoader: TwitchTokenLoader;
 
-  public constructor(clientId: string, secretKey: string) {
+  constructor(clientId: string, secretKey: string) {
     this.mExpires = 0;
     this.mLoader = new TwitchTokenLoader(clientId, secretKey);
   }
 
-  public async getToken(): Promise<string | null> {
+  async getToken(): Promise<string | null> {
     const now = new Date().getTime();
     if (this.isExpired(now) || this.mTokenCache === null) {
       this.mTokenCache = await this.mLoader.load();

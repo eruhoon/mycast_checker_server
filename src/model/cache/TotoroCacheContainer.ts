@@ -10,17 +10,17 @@ export class TotoroCacheContainer extends StreamCacheContainer {
 
   private mCaches: RawTotoroStream[];
 
-  public constructor() {
+  constructor() {
     super();
     dotenv.config();
     this.mCaches = [];
   }
 
-  public getCaches(): RawTotoroStream[] {
+  getCaches(): RawTotoroStream[] {
     return this.mCaches;
   }
 
-  public async update(): Promise<void> {
+  async update(): Promise<void> {
     const json = await TotoroCacheContainer.getTotoroJson();
     const newCaches = TotoroCacheContainer.parseRaw(json);
     this.mCaches = newCaches;

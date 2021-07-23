@@ -6,14 +6,11 @@ export class TwitchUserLoadManager {
   private readonly CHUNK_SIZE = 100;
   private mLoader: TwitchUserLoader;
 
-  public constructor(clientId: string) {
+  constructor(clientId: string) {
     this.mLoader = new TwitchUserLoader(clientId);
   }
 
-  public async load(
-    loginIds: string[],
-    token: string
-  ): Promise<TwitchUserDto[]> {
+  async load(loginIds: string[], token: string): Promise<TwitchUserDto[]> {
     const idChunks = ArrayUtils.chunk<string>(loginIds, this.CHUNK_SIZE);
     const length = idChunks.length;
     let twitchUsers: TwitchUserDto[] = [];

@@ -20,14 +20,14 @@ type RawKakaoTvVideo = {
 };
 
 export class KakaoTvLoader extends StreamLoader {
-  public mChannelId: string;
+  mChannelId: string;
 
-  public constructor(id: string) {
+  constructor(id: string) {
     super();
     this.mChannelId = id;
   }
 
-  public requestInfo(callback: StreamLoaderCallback): void {
+  requestInfo(callback: StreamLoaderCallback): void {
     KakaoTvLoader.loadInfo(this.mChannelId, callback);
   }
   private static async loadInfo(

@@ -5,13 +5,13 @@ export class UserExternalDecorator extends StreamLoader {
   private mUser: User;
   private mLoader: StreamLoader;
 
-  public constructor(user: User, loader: StreamLoader) {
+  constructor(user: User, loader: StreamLoader) {
     super();
     this.mUser = user;
     this.mLoader = loader;
   }
 
-  public requestInfo(callback: StreamLoaderCallback) {
+  requestInfo(callback: StreamLoaderCallback) {
     this.mLoader.requestInfo((info) => {
       info.keyid = this.mUser.getId();
       info.nickname = `${this.mUser.getNickname()}[${info.platform}]`;

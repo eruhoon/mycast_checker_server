@@ -15,7 +15,7 @@ export type UserParam = {
 };
 
 export class User {
-  public static IDX_NONE: number = -1;
+  static IDX_NONE: number = -1;
 
   private mIdx: number;
   private mId: string;
@@ -28,7 +28,7 @@ export class User {
   private mMixerId: string;
   private mBackground: string;
 
-  public constructor(param: UserParam) {
+  constructor(param: UserParam) {
     this.mIdx = param.idx ? param.idx : User.IDX_NONE;
     this.mId = param.id ? param.id : '';
     this.mHash = param.hash ? param.hash : '';
@@ -41,31 +41,31 @@ export class User {
     this.mBackground = param.background ? param.background : '';
   }
 
-  public getIdx(): number {
+  getIdx(): number {
     return this.mIdx;
   }
 
-  public getId(): string {
+  getId(): string {
     return this.mId;
   }
 
-  public getHash(): string {
+  getHash(): string {
     return this.mHash;
   }
 
-  public getNickname(): string {
+  getNickname(): string {
     return this.mNickname;
   }
 
-  public getIcon(): string {
+  getIcon(): string {
     return this.mIcon;
   }
 
-  public getStreamPlatform(): StreamPlatform {
+  getStreamPlatform(): StreamPlatform {
     return this.mPlatform;
   }
 
-  public getStreamKeyId(): string {
+  getStreamKeyId(): string {
     switch (this.mPlatform) {
       case StreamPlatform.LOCAL:
         return this.mHash.substring(0, 5);
@@ -83,11 +83,11 @@ export class User {
     }
   }
 
-  public getBackground(): string {
+  getBackground(): string {
     return this.mBackground;
   }
 
-  public static createWithRow(row: UserRow): User {
+  static createWithRow(row: UserRow): User {
     return new User({
       idx: row.idx,
       id: row.id,

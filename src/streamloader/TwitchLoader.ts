@@ -6,13 +6,13 @@ export class TwtichLoader extends StreamLoader {
   private mManager: TwitchCacheContainer;
   private mKeyword: string;
 
-  public constructor(manager: TwitchCacheContainer, keyword: string) {
+  constructor(manager: TwitchCacheContainer, keyword: string) {
     super();
     this.mManager = manager;
     this.mKeyword = keyword;
   }
 
-  public requestInfo(callback: StreamLoaderCallback) {
+  requestInfo(callback: StreamLoaderCallback) {
     const cache = this.mManager.getCache(this.mKeyword);
     if (cache === null) {
       return;

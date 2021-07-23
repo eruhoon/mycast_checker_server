@@ -36,10 +36,7 @@ export class Checker {
 
   private mContainer: CheckerEntryContainer;
 
-  public constructor(
-    userLoader: IUserAsyncLoader,
-    streamloader: IStreamAsyncLoader
-  ) {
+  constructor(userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
     this.mUserLoader = userLoader;
     this.mStreamLoader = streamloader;
 
@@ -57,11 +54,11 @@ export class Checker {
     this.initCacheManager();
   }
 
-  public setOnStreamAddCallback(callback: OnStreamAddCallback): void {
+  setOnStreamAddCallback(callback: OnStreamAddCallback): void {
     this.mContainer.setOnStreamAddCallback(callback);
   }
 
-  public initCacheManager() {
+  initCacheManager() {
     this.mWowzaCacheManager.start();
     this.mNewLocalCacheManager.start();
     this.mTotoroCacheManager.start();
@@ -69,7 +66,7 @@ export class Checker {
     this.mYoutubeCacheManager.start(60000);
   }
 
-  public async update() {
+  async update() {
     this.updateStream();
 
     const users = await this.mUserLoader.getUsers();
@@ -150,7 +147,7 @@ export class Checker {
     });
   }
 
-  public getStreams(): StreamSet {
+  getStreams(): StreamSet {
     const entries = this.mContainer.getEntries();
     const local = entries
       .filter((e) => e.getType() === CheckerType.LOCAL)

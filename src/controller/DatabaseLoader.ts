@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as Mysql from 'mysql';
+import { Logger } from '../model/common/logger/Logger';
 
 import { StreamRow, UserRow } from '../model/Database';
 import { StreamPlatform } from '../model/Stream';
@@ -7,9 +8,10 @@ import { User } from '../model/User';
 import { IUserAsyncLoader } from './IUserAsyncLoader';
 
 export class DatabaseLoader implements IUserAsyncLoader {
-  private mDb: Mysql.Connection;
+  #logger: Logger = new Logger('DatabaseLoader');
+  #db: Mysql.Connection;
 
-  public constructor() {
+  constructor() {
     dotenv.config();
 
     const user = process.env.DB_USER;
@@ -20,14 +22,14 @@ export class DatabaseLoader implements IUserAsyncLoader {
       throw new Error('database has not set');
     }
 
-    this.mDb = Mysql.createConnection({
+    this.#db = Mysql.createConnection({
       user,
       password,
       database,
     });
   }
 
-  public async getStreamIds(platform: StreamPlatform): Promise<string[]> {
+  async getStreamIds(platform: StreamPlatform): Promise<string[]> {
     const keywordsFromUser: string[] = (await this.getUsers())
       .filter((u) => u.getStreamPlatform() === platform)
       .map((u) => u.getStreamKeyId());
@@ -48,12 +50,12 @@ export class DatabaseLoader implements IUserAsyncLoader {
     return keywords;
   }
 
-  public getStreams(): Promise<StreamRow[]> {
+  getStreams(): Promise<StreamRow[]> {
     const query = 'SELECT keyid as keyword, platform FROM stream';
     return new Promise((resolve, reject) => {
-      this.mDb.query(query, (err, result) => {
+      this.#db.query(query, (err, result) => {
         if (err) {
-          console.error(`DatabaseLoader#getStreams: DB error ${err}`);
+          this.#logger.error(`DatabaseLoader#getStreams: DB error ${err}`);
           resolve([]);
           return;
         }
@@ -62,12 +64,12 @@ export class DatabaseLoader implements IUserAsyncLoader {
     });
   }
 
-  public getUsers(): Promise<User[]> {
+  getUsers(): Promise<User[]> {
     const query = `SELECT * FROM user WHERE confirm = 1`;
     return new Promise<User[]>((resolve) => {
-      this.mDb.query(query, (err, result: UserRow[]) => {
+      this.#db.query(query, (err, result: UserRow[]) => {
         if (err) {
-          console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+          this.#logger.error(`DatabaseLoader#getUsers: DB error ${err}`);
           resolve([]);
           return;
         }
@@ -77,17 +79,17 @@ export class DatabaseLoader implements IUserAsyncLoader {
     });
   }
 
-  public getUserByPrivKey(privKey: string): Promise<User | null> {
+  getUserByPrivKey(privKey: string): Promise<User | null> {
     const query = 'SELECT * FROM user WHERE private_key = ? AND confirm = 1';
     return new Promise((resolve, reject) => {
-      this.mDb.query(query, [privKey], (err, result: UserRow[]) => {
+      this.#db.query(query, [privKey], (err, result: UserRow[]) => {
         if (err) {
-          console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+          this.#logger.error(`DatabaseLoader#getUsers: DB error ${err}`);
           resolve(null);
           return;
         }
         if (result.length === 0) {
-          console.error('no result');
+          this.#logger.error('no result');
           resolve(null);
           return;
         }
@@ -97,18 +99,18 @@ export class DatabaseLoader implements IUserAsyncLoader {
     });
   }
 
-  public getUserByHash(hash: string): Promise<User | null> {
+  getUserByHash(hash: string): Promise<User | null> {
     const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
 
     return new Promise((resolve, reject) => {
-      this.mDb.query(query, ['hash'], (err, result: UserRow[]) => {
+      this.#db.query(query, ['hash'], (err, result: UserRow[]) => {
         if (err) {
-          console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+          this.#logger.error(`DatabaseLoader#getUsers: DB error ${err}`);
           resolve(null);
           return;
         }
         if (result.length === 0) {
-          console.error('no result');
+          this.#logger.error('no result');
           resolve(null);
           return;
         }
@@ -118,11 +120,11 @@ export class DatabaseLoader implements IUserAsyncLoader {
     });
   }
 
-  public searchUserByHash(hash: string, callback: (user: User | null) => void) {
+  searchUserByHash(hash: string, callback: (user: User | null) => void) {
     const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
-    this.mDb.query(query, [hash], (err, result: UserRow[]) => {
+    this.#db.query(query, [hash], (err, result: UserRow[]) => {
       if (err) {
-        console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+        this.#logger.error(`DatabaseLoader#getUsers: DB error ${err}`);
         callback(null);
         return;
       }

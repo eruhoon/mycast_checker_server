@@ -5,14 +5,11 @@ import { ArrayUtils } from '../common/array/ArrayUtils';
 export class TwitchStreamLoadManager {
   private mLoader: TwitchStreamLoader;
 
-  public constructor(clientId: string) {
+  constructor(clientId: string) {
     this.mLoader = new TwitchStreamLoader(clientId);
   }
 
-  public async load(
-    keywords: string[],
-    token: string
-  ): Promise<TwitchStreamDto[]> {
+  async load(keywords: string[], token: string): Promise<TwitchStreamDto[]> {
     const keywordChunks = ArrayUtils.chunk<string>(keywords, 100);
     const length = keywordChunks.length;
     let streams: TwitchStreamDto[] = [];

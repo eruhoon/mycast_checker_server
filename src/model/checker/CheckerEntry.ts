@@ -12,33 +12,33 @@ export class CheckerEntry {
   private mStream: StreamInfo;
   private mSensitivity: number;
 
-  public constructor(type: CheckerType, stream: StreamInfo) {
+  constructor(type: CheckerType, stream: StreamInfo) {
     this.mType = type;
     this.mStream = stream;
     this.mSensitivity = CheckerEntry.DEFAULT_SENSITIVITY;
   }
 
-  public getType(): CheckerType {
+  getType(): CheckerType {
     return this.mType;
   }
 
-  public getStream(): StreamInfo {
+  getStream(): StreamInfo {
     return this.mStream;
   }
 
-  public getSensitivity(): number {
+  getSensitivity(): number {
     return this.mSensitivity;
   }
 
-  public stale(): void {
+  stale(): void {
     this.mSensitivity--;
   }
 
-  public isStaled(): boolean {
+  isStaled(): boolean {
     return this.mSensitivity <= 0;
   }
 
-  public isSameKey(entry: CheckerEntry): boolean {
+  isSameKey(entry: CheckerEntry): boolean {
     const s1 = this.getStream();
     const s2 = entry.getStream();
     return s1.keyid === s2.keyid && s1.platform === s2.platform;

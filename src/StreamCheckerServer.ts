@@ -11,7 +11,7 @@ import { StreamPlatform } from './model/Stream';
 import { SocketManager, SocketTag } from './SocketManager';
 
 export class StreamCheckerServer {
-  public static main() {
+  static main() {
     const sOnTime = new Date().getTime();
 
     const serverManager: ServerManager = ServerManager.getInstance();

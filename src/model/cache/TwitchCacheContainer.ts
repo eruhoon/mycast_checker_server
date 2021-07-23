@@ -15,10 +15,7 @@ export class TwitchCacheContainer extends StreamCacheContainer {
   private mUserLoader: IUserAsyncLoader;
   private mStreamLoader: IStreamAsyncLoader;
 
-  public constructor(
-    userLoader: IUserAsyncLoader,
-    streamloader: IStreamAsyncLoader
-  ) {
+  constructor(userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
     super();
     dotenv.config();
     this.mCaches = [];
@@ -32,7 +29,7 @@ export class TwitchCacheContainer extends StreamCacheContainer {
     this.mStreamLoader = streamloader;
   }
 
-  public async update() {
+  async update() {
     console.time('TwitchCacheContainer#update');
 
     if (this.mUserLoader === null || this.mStreamLoader === null) {
@@ -77,7 +74,7 @@ export class TwitchCacheContainer extends StreamCacheContainer {
     console.timeEnd('TwitchCacheContainer#update');
   }
 
-  public getCache(keyword: string): TwitchStreamCache | null {
+  getCache(keyword: string): TwitchStreamCache | null {
     const cache = this.mCaches.find((cache) => cache.keyword === keyword);
     if (!cache) {
       return null;

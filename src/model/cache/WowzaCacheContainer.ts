@@ -11,17 +11,17 @@ export class WowzaCacheContainer extends StreamCacheContainer {
 
   private mCaches: RawWowzaStream[];
 
-  public constructor() {
+  constructor() {
     super();
     dotenv.config();
     this.mCaches = [];
   }
 
-  public getCaches(): RawWowzaStream[] {
+  getCaches(): RawWowzaStream[] {
     return this.mCaches;
   }
 
-  public async update() {
+  async update() {
     const xml = await WowzaCacheContainer.getRawWowzaXml();
     const model = await WowzaCacheContainer.parseXml(xml);
     const newCaches = WowzaCacheContainer.parseModel(model);

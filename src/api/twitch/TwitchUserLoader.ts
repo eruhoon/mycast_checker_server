@@ -3,18 +3,15 @@ import { Logger } from '../../model/common/logger/Logger';
 import { TwitchUserDto } from './TwitchUserDto';
 
 export class TwitchUserLoader {
-  private mLogger: Logger;
-  private mClientId: string;
+  readonly #logger: Logger;
+  readonly #clientId: string;
 
-  public constructor(clientId: string) {
-    this.mLogger = new Logger('TwitchUserLoader');
-    this.mClientId = clientId;
+  constructor(clientId: string) {
+    this.#logger = new Logger('TwitchUserLoader');
+    this.#clientId = clientId;
   }
 
-  public async load(
-    loginIds: string[],
-    token: string
-  ): Promise<TwitchUserDto[]> {
+  async load(loginIds: string[], token: string): Promise<TwitchUserDto[]> {
     const host = 'https://api.twitch.tv/helix/users';
     const query = loginIds.map((k) => `login=${k}`).join('&');
     const url = `${host}?${query}`;
@@ -23,13 +20,13 @@ export class TwitchUserLoader {
         timeout: 5000,
         headers: {
           Authorization: `Bearer ${token}`,
-          'Client-ID': this.mClientId,
+          'Client-ID': this.#clientId,
         },
       });
       const users: TwitchUserDto[] = data.data;
       return users;
     } catch (e) {
-      this.mLogger.error(`loadUser: Request Error: ${e}`);
+      this.#logger.error(`loadUser: Request Error: ${e}`);
       return [];
     }
   }

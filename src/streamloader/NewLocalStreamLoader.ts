@@ -4,16 +4,16 @@ import { User } from '../model/User';
 import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class NewLocalStreamLoader extends StreamLoader {
-  public mManager: NewLocalCacheContainer;
-  public mUser: User;
+  mManager: NewLocalCacheContainer;
+  mUser: User;
 
-  public constructor(manager: NewLocalCacheContainer, user: User) {
+  constructor(manager: NewLocalCacheContainer, user: User) {
     super();
     this.mManager = manager;
     this.mUser = user;
   }
 
-  public requestInfo(callback: StreamLoaderCallback): void {
+  requestInfo(callback: StreamLoaderCallback): void {
     const caches = this.mManager.getCaches();
     const streamKey = this.mUser.getStreamKeyId();
 

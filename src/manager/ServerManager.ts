@@ -5,17 +5,19 @@ import * as http from 'http';
 import * as https from 'https';
 
 import { Config } from '../config/Config';
+import { Logger } from '../model/common/logger/Logger';
 
 export class ServerManager {
-  private static sInstance: ServerManager | null = null;
+  static #instance: ServerManager | null = null;
 
-  private mApp: Express.Express;
-  private mServer: https.Server | http.Server;
+  #logger = new Logger('ServerManager');
+  #app: Express.Express;
+  #server: https.Server | http.Server;
 
-  public constructor() {
+  constructor() {
     dotenv.config();
 
-    this.mApp = Express();
+    this.#app = Express();
 
     const key = process.env.SSL_PRIVKEY;
     const cert = process.env.SSL_CERT;
@@ -25,20 +27,20 @@ export class ServerManager {
     }
 
     if (Config.isHttpsEnabled()) {
-      this.mServer = https.createServer(
+      this.#server = https.createServer(
         {
           key: readFileSync(key),
           cert: readFileSync(cert),
         },
-        this.mApp
+        this.#app
       );
     } else {
-      this.mServer = http.createServer(this.mApp);
+      this.#server = http.createServer(this.#app);
     }
 
-    this.mApp.use((req, res, next) => {
+    this.#app.use((req, res, next) => {
       const origin = req.headers.origin;
-      if (typeof origin === 'string' && this.isWhiteList(origin)) {
+      if (typeof origin === 'string' && this.#isWhiteList(origin)) {
         res.header('Access-Control-Allow-Origin', origin);
       }
       res.header('Access-Control-Allow-Credentials', 'true');
@@ -46,27 +48,27 @@ export class ServerManager {
     });
   }
 
-  public start(port: number = Config.DEFAULT_PORT) {
-    if (!this.mServer) return;
-    this.mServer.listen(port, () => {
-      console.log('Stream Checker started..');
+  start(port: number = Config.DEFAULT_PORT) {
+    if (!this.#server) return;
+    this.#server.listen(port, () => {
+      this.#logger.log('Stream Checker started..');
     });
   }
 
   // TODO: Any
-  public get(
+  get(
     path: string,
     callback: (req: Express.Request, re: Express.Response) => void
   ) {
-    if (!this.mApp) return;
-    this.mApp.get(path, callback);
+    if (!this.#app) return;
+    this.#app.get(path, callback);
   }
 
-  public getServer(): https.Server | http.Server {
-    return this.mServer;
+  getServer(): https.Server | http.Server {
+    return this.#server;
   }
 
-  private isWhiteList(host: string): boolean {
+  #isWhiteList(host: string): boolean {
     const whiteList = [
       'http://localhost:4200',
       'http://mycast.xyz',
@@ -75,8 +77,8 @@ export class ServerManager {
     return whiteList.indexOf(host) > -1;
   }
 
-  public static getInstance(): ServerManager {
-    if (this.sInstance === null) this.sInstance = new ServerManager();
-    return this.sInstance;
+  static getInstance(): ServerManager {
+    if (this.#instance === null) this.#instance = new ServerManager();
+    return this.#instance;
   }
 }

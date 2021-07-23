@@ -11,18 +11,18 @@ export class TwitchManager {
   private mUserLoader: TwitchUserLoadManager;
   private mStreamLoader: TwitchStreamLoadManager;
 
-  public constructor(clientId: string, secretKey: string) {
+  constructor(clientId: string, secretKey: string) {
     this.mLogger = new Logger('TwitchManager');
     this.mTokenManager = new TwitchTokenManager(clientId, secretKey);
     this.mUserLoader = new TwitchUserLoadManager(clientId);
     this.mStreamLoader = new TwitchStreamLoadManager(clientId);
   }
 
-  public async getToken(): Promise<string | null> {
+  async getToken(): Promise<string | null> {
     return await this.mTokenManager.getToken();
   }
 
-  public async loadUser(loginIds: string[]): Promise<TwitchUserDto[]> {
+  async loadUser(loginIds: string[]): Promise<TwitchUserDto[]> {
     const token = await this.getToken();
     if (!token) {
       this.mLogger.error('Invalid accessToken');
@@ -31,7 +31,7 @@ export class TwitchManager {
     return await this.mUserLoader.load(loginIds, token);
   }
 
-  public async loadStream(keywords: string[]): Promise<TwitchStreamDto[]> {
+  async loadStream(keywords: string[]): Promise<TwitchStreamDto[]> {
     const token = await this.getToken();
     if (!token) {
       this.mLogger.error('Invalid accessToken');

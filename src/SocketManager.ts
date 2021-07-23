@@ -17,15 +17,12 @@ export class SocketManager {
 
   private mSocketio: Socketio.Server;
 
-  public constructor(
-    http: http.Server | https.Server,
-    userLoader: IUserAsyncLoader
-  ) {
+  constructor(http: http.Server | https.Server, userLoader: IUserAsyncLoader) {
     this.mSocketio = Socketio(http);
     this.mUserLoader = userLoader;
   }
 
-  public init(initCallback: SocketCallback) {
+  init(initCallback: SocketCallback) {
     this.mSocketio.on('connection', async (socket) => {
       const keyHash = socket.handshake.query.keyhash;
       const privateKey = socket.handshake.query.key;
@@ -53,11 +50,11 @@ export class SocketManager {
     });
   }
 
-  public refreshStreams(streams: StreamSet) {
+  refreshStreams(streams: StreamSet) {
     this.mSocketio.emit(SocketTag.REFRESH_STREAMS, streams);
   }
 
-  public notificationNewStream(stream: StreamInfo): void {
+  notificationNewStream(stream: StreamInfo): void {
     this.mSocketio.emit(SocketTag.NEW_STREAM_NOTIFICATION, stream);
   }
 }

@@ -5,25 +5,25 @@ export class CheckerEntryContainer {
   private mEntries: CheckerEntry[];
   private mOnStreamAddCallback: OnStreamAddCallback;
 
-  public constructor() {
+  constructor() {
     this.mEntries = [];
     this.mOnStreamAddCallback = (_) => {};
   }
 
-  public setOnStreamAddCallback(callback: OnStreamAddCallback): void {
+  setOnStreamAddCallback(callback: OnStreamAddCallback): void {
     this.mOnStreamAddCallback = callback;
   }
 
-  public getEntries(): CheckerEntry[] {
+  getEntries(): CheckerEntry[] {
     return this.mEntries;
   }
 
-  public stale(): void {
+  stale(): void {
     this.mEntries.forEach((e) => e.stale());
     this.mEntries = this.mEntries.filter((e) => !e.isStaled());
   }
 
-  public upsertStream(type: CheckerType, stream: StreamInfo): void {
+  upsertStream(type: CheckerType, stream: StreamInfo): void {
     const entry = new CheckerEntry(type, stream);
     if (!this.mEntries.some((e) => e.isSameKey(entry))) {
       this.insert(entry);

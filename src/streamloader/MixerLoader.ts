@@ -6,12 +6,12 @@ import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 export class MixerLoader extends StreamLoader {
   private mChannelName: string;
 
-  public constructor(channelName: string) {
+  constructor(channelName: string) {
     super();
     this.mChannelName = channelName;
   }
 
-  public requestInfo(callback: StreamLoaderCallback): void {
+  requestInfo(callback: StreamLoaderCallback): void {
     const client = new Mixer.Client(new Mixer.DefaultRequestRunner());
 
     client.request('GET', `channels/${this.mChannelName}`).then((res) => {

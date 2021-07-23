@@ -4,14 +4,14 @@ import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class AfreecaLoader extends StreamLoader {
-  public mId: string;
+  mId: string;
 
-  public constructor(id: string) {
+  constructor(id: string) {
     super();
     this.mId = id;
   }
 
-  public requestInfo(callback: StreamLoaderCallback): void {
+  requestInfo(callback: StreamLoaderCallback): void {
     const url = 'http://sch.afreeca.com/api.php';
 
     const opt = {

@@ -4,16 +4,16 @@ import { User } from '../model/User';
 import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
 
 export class TotoroStreamLoader extends StreamLoader {
-  public mManager: TotoroCacheContainer;
-  public mUser: User;
+  mManager: TotoroCacheContainer;
+  mUser: User;
 
-  public constructor(manager: TotoroCacheContainer, user: User) {
+  constructor(manager: TotoroCacheContainer, user: User) {
     super();
     this.mManager = manager;
     this.mUser = user;
   }
 
-  public requestInfo(callback: StreamLoaderCallback): void {
+  requestInfo(callback: StreamLoaderCallback): void {
     const caches = this.mManager.getCaches();
     const streamKey = this.mUser.getStreamKeyId();
 

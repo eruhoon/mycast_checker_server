@@ -1,39 +1,38 @@
 import Axios from 'axios';
 import * as dotenv from 'dotenv';
+import { Logger } from '../common/logger/Logger';
 
 import { RawTotoroStream } from '../RawTotoroModel';
 import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class NewLocalCacheContainer extends StreamCacheContainer {
-  private static readonly URL: string =
-    'http://mycast.xyz:1985/api/v1/streams/';
+  static readonly #URL: string = 'http://mycast.xyz:1985/api/v1/streams/';
 
-  private mCaches: RawTotoroStream[];
+  #logger = new Logger('NewLocalCacheContainer');
+  #caches: RawTotoroStream[];
 
-  public constructor() {
+  constructor() {
     super();
     dotenv.config();
-    this.mCaches = [];
+    this.#caches = [];
   }
 
-  public getCaches(): RawTotoroStream[] {
-    return this.mCaches;
+  getCaches(): RawTotoroStream[] {
+    return this.#caches;
   }
 
-  public async update(): Promise<void> {
-    const json = await NewLocalCacheContainer.getTotoroJson();
-    const newCaches = NewLocalCacheContainer.parseRaw(json);
-    this.mCaches = newCaches;
+  async update(): Promise<void> {
+    const json = await NewLocalCacheContainer.#getTotoroJson();
+    const newCaches = NewLocalCacheContainer.#parseRaw(json);
+    this.#caches = newCaches;
   }
 
-  private static async getTotoroJson(): Promise<any> {
-    const json = await Axios.get(NewLocalCacheContainer.URL);
+  static async #getTotoroJson(): Promise<any> {
+    const json = await Axios.get(NewLocalCacheContainer.#URL);
     return json.data;
   }
 
-  private static parseRaw(rawJson: {
-    streams: RawTotoroStream[];
-  }): RawTotoroStream[] {
+  static #parseRaw(rawJson: { streams: RawTotoroStream[] }): RawTotoroStream[] {
     try {
       const rawClients: RawTotoroStream[] = rawJson.streams.filter((c) => {
         return c.publish.active === true && c.app === 'live';
