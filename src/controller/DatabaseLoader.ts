@@ -7,134 +7,131 @@ import { User } from '../model/User';
 import { IUserAsyncLoader } from './IUserAsyncLoader';
 
 export class DatabaseLoader implements IUserAsyncLoader {
-    private mDb: Mysql.Connection;
+  private mDb: Mysql.Connection;
 
-    public constructor() {
-        dotenv.config();
+  public constructor() {
+    dotenv.config();
 
-        const user: string = process.env.DB_USER;
-        const password: string = process.env.DB_PASSWORD;
-        const database: string = process.env.DB_NAME;
+    const user: string = process.env.DB_USER;
+    const password: string = process.env.DB_PASSWORD;
+    const database: string = process.env.DB_NAME;
 
-        this.mDb = Mysql.createConnection({
-            user,
-            password,
-            database,
-        });
-    }
+    this.mDb = Mysql.createConnection({
+      user,
+      password,
+      database,
+    });
+  }
 
-    public async getStreamIds(platform: StreamPlatform): Promise<string[]> {
-        const keywordsFromUser: string[] = (await this.getUsers())
-            .filter((u) => u.getStreamPlatform() === platform)
-            .map((u) => u.getStreamKeyId());
+  public async getStreamIds(platform: StreamPlatform): Promise<string[]> {
+    const keywordsFromUser: string[] = (await this.getUsers())
+      .filter((u) => u.getStreamPlatform() === platform)
+      .map((u) => u.getStreamKeyId());
 
-        const keywordsFromStream: string[] = (await this.getStreams())
-            .filter((stream) => stream.platform === platform)
-            .map((stream) => stream.keyword);
+    const keywordsFromStream: string[] = (await this.getStreams())
+      .filter((stream) => stream.platform === platform)
+      .map((stream) => stream.keyword);
 
-        const keywords: string[] = [];
-        const addWithoutDuplicated = (keyword: string) => {
-            if (!keyword) return;
-            if (keywords.findIndex((k) => k === keyword) !== -1) return;
-            keywords.push(keyword);
-        };
-        keywordsFromUser.forEach((keyword) => addWithoutDuplicated(keyword));
-        keywordsFromStream.forEach((keyword) => addWithoutDuplicated(keyword));
+    const keywords: string[] = [];
+    const addWithoutDuplicated = (keyword: string) => {
+      if (!keyword) return;
+      if (keywords.findIndex((k) => k === keyword) !== -1) return;
+      keywords.push(keyword);
+    };
+    keywordsFromUser.forEach((keyword) => addWithoutDuplicated(keyword));
+    keywordsFromStream.forEach((keyword) => addWithoutDuplicated(keyword));
 
-        return keywords;
-    }
+    return keywords;
+  }
 
-    public getStreams(): Promise<StreamRow[]> {
-        const query = 'SELECT keyid as keyword, platform FROM stream';
-        return new Promise((resolve, reject) => {
-            this.mDb.query(query, (err, result) => {
-                if (err) {
-                    console.error(`DatabaseLoader#getStreams: DB error ${err}`);
-                    resolve([]);
-                    return;
-                }
-                resolve(result);
-            });
-        });
-    }
+  public getStreams(): Promise<StreamRow[]> {
+    const query = 'SELECT keyid as keyword, platform FROM stream';
+    return new Promise((resolve, reject) => {
+      this.mDb.query(query, (err, result) => {
+        if (err) {
+          console.error(`DatabaseLoader#getStreams: DB error ${err}`);
+          resolve([]);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
 
-    public getUsers(): Promise<User[]> {
-        const query = `SELECT * FROM user WHERE confirm = 1`;
-        return new Promise<User[]>((resolve) => {
-            this.mDb.query(query, (err, result: UserRow[]) => {
-                if (err) {
-                    console.error(`DatabaseLoader#getUsers: DB error ${err}`);
-                    resolve([]);
-                    return;
-                }
-                const users: User[] = result.map((row) =>
-                    User.createWithRow(row)
-                );
-                resolve(users);
-            });
-        });
-    }
+  public getUsers(): Promise<User[]> {
+    const query = `SELECT * FROM user WHERE confirm = 1`;
+    return new Promise<User[]>((resolve) => {
+      this.mDb.query(query, (err, result: UserRow[]) => {
+        if (err) {
+          console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+          resolve([]);
+          return;
+        }
+        const users: User[] = result.map((row) => User.createWithRow(row));
+        resolve(users);
+      });
+    });
+  }
 
-    public getUserByPrivKey(privKey: string): Promise<User | null> {
-        const query =
-            'SELECT * FROM user WHERE private_key = ? AND confirm = 1';
-        return new Promise((resolve, reject) => {
-            this.mDb.query(query, [privKey], (err, result: UserRow[]) => {
-                if (err) {
-                    console.error(`DatabaseLoader#getUsers: DB error ${err}`);
-                    resolve(null);
-                    return;
-                }
-                if (result.length === 0) {
-                    console.error('no result');
-                    resolve(null);
-                    return;
-                }
-                const user: User = User.createWithRow(result[0]);
-                resolve(user);
-            });
-        });
-    }
+  public getUserByPrivKey(privKey: string): Promise<User | null> {
+    const query = 'SELECT * FROM user WHERE private_key = ? AND confirm = 1';
+    return new Promise((resolve, reject) => {
+      this.mDb.query(query, [privKey], (err, result: UserRow[]) => {
+        if (err) {
+          console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+          resolve(null);
+          return;
+        }
+        if (result.length === 0) {
+          console.error('no result');
+          resolve(null);
+          return;
+        }
+        const user: User = User.createWithRow(result[0]);
+        resolve(user);
+      });
+    });
+  }
 
-    public getUserByHash(hash: string): Promise<User | null> {
-        const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
+  public getUserByHash(hash: string): Promise<User | null> {
+    const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
 
-        return new Promise((resolve, reject) => {
-            this.mDb.query(query, ['hash'], (err, result: UserRow[]) => {
-                if (err) {
-                    console.error(`DatabaseLoader#getUsers: DB error ${err}`);
-                    resolve(null);
-                    return;
-                }
-                if (result.length === 0) {
-                    console.error('no result');
-                    resolve(null);
-                    return;
-                }
-                const user: User = User.createWithRow(result[0]);
-                resolve(user);
-            });
-        });
-    }
+    return new Promise((resolve, reject) => {
+      this.mDb.query(query, ['hash'], (err, result: UserRow[]) => {
+        if (err) {
+          console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+          resolve(null);
+          return;
+        }
+        if (result.length === 0) {
+          console.error('no result');
+          resolve(null);
+          return;
+        }
+        const user: User = User.createWithRow(result[0]);
+        resolve(user);
+      });
+    });
+  }
 
-    public searchUserByHash(hash: string, callback: (user: User) => void) {
-        const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
-        this.mDb.query(query, [hash], (err, result: UserRow[]) => {
-            if (err) {
-                console.error(`DatabaseLoader#getUsers: DB error ${err}`);
-                callback(null);
-                return;
-            }
-            if (!result) {
-                callback(null);
-                return;
-            }
-            if (result.length === 0) {
-                callback(null);
-                return;
-            }
-            const user: User = User.createWithRow(result[0]);
-            callback(user);
-        });
-    }
+  public searchUserByHash(hash: string, callback: (user: User) => void) {
+    const query = 'SELECT * FROM user WHERE hash = ? AND confirm = 1';
+    this.mDb.query(query, [hash], (err, result: UserRow[]) => {
+      if (err) {
+        console.error(`DatabaseLoader#getUsers: DB error ${err}`);
+        callback(null);
+        return;
+      }
+      if (!result) {
+        callback(null);
+        return;
+      }
+      if (result.length === 0) {
+        callback(null);
+        return;
+      }
+      const user: User = User.createWithRow(result[0]);
+      callback(user);
+    });
+  }
 }
