@@ -49,7 +49,7 @@ export class AfreecaLoader extends StreamLoader {
         nickname: realBroad.user_nick,
         title: realBroad.station_name,
         description: realBroad.broad_title,
-        url: `http://play.afreeca.com/${id}/embed`,
+        url: `https://play.afreecatv.com/${id}/embed`,
         thumbnail: `https://liveimg.afreecatv.com/${broadNo}_240x135.gif`,
         onair: true,
         viewer: parseInt(realBroad.total_view_cnt),
