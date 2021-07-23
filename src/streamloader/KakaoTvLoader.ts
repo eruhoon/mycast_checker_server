@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
-import { StreamLoader, StreamLoaderCallback } from './StreamLoader';
+import { StreamLoader2 } from './StreamLoader2';
 
 type RawKakaoTvChannel = {
   id: string;
@@ -17,7 +17,7 @@ type RawKakaoTvVideo = {
   viewer: number;
 };
 
-export class KakaoTvLoader extends StreamLoader {
+export class KakaoTvLoader extends StreamLoader2 {
   #channelId: string;
 
   constructor(id: string) {
@@ -25,12 +25,8 @@ export class KakaoTvLoader extends StreamLoader {
     this.#channelId = id;
   }
 
-  requestInfo(callback: StreamLoaderCallback): void {
-    KakaoTvLoader.#loadInfo(this.#channelId).then((stream) => {
-      if (stream) {
-        callback(stream);
-      }
-    });
+  async getInfo(): Promise<StreamInfo | null> {
+    return KakaoTvLoader.#loadInfo(this.#channelId);
   }
 
   static async #loadInfo(channelId: string): Promise<StreamInfo | null> {
