@@ -1,17 +1,17 @@
 export class Logger {
-  private mTag: string;
+  #tag: string;
 
   constructor(tag: string) {
-    this.mTag = tag;
+    this.#tag = tag;
   }
 
   log(log: any): void {
     // tslint:disable-next-line: no-console
-    console.log(`${this.mTag}:`, log);
+    console.log(`${this.#tag}:`, log);
   }
 
   error(log: any): void {
     // tslint:disable-next-line: no-console
-    console.log(`${this.mTag}:`, log);
+    console.log(`${this.#tag}:`, log);
   }
 }
