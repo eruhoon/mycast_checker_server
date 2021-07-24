@@ -1,4 +1,3 @@
-import { Logger } from '../model/common/logger/Logger';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { KakaoTvChannelLoader } from './kakaotv/KakaoTvChannelLoader';
 import { KakaoTvVideoLoader } from './kakaotv/KakaoTvVideoLoader';
