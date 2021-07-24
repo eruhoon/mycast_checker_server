@@ -23,8 +23,8 @@ export class TwitchTokenLoader {
     });
     const url = `${host}?${query}`;
     try {
-      const res = await Axios.post(url);
-      return res.data.access_token;
+      const { data } = await Axios.post(url);
+      return data.access_token;
     } catch (e) {
       this.#logger.error(`getAccessToken: error: ${e}`);
       return null;
