@@ -46,7 +46,6 @@ export class AfreecaLoader implements StreamLoader {
   #parseInfo(raw: RawAfreecaInfo): StreamInfo | null {
     const realBroad = raw.REAL_BROAD.find((e) => e.user_id === this.#id);
     if (!realBroad) {
-      Log.error('parseInfo: parse error: ' + raw);
       return null;
     }
 
