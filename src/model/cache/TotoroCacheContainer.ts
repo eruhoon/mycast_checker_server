@@ -1,8 +1,11 @@
 import Axios from 'axios';
 import * as dotenv from 'dotenv';
+import { Logger } from '../common/logger/Logger';
 
 import { RawTotoroStream } from '../RawTotoroModel';
 import { StreamCacheContainer } from './StreamCacheContainer';
+
+const Log = new Logger('TotoroCacheContainer');
 
 export class TotoroCacheContainer extends StreamCacheContainer {
   static readonly #URL: string = 'http://52.79.252.217:1985/api/v1/streams/';
@@ -42,7 +45,7 @@ export class TotoroCacheContainer extends StreamCacheContainer {
       });
       return clients;
     } catch (exception) {
-      console.error(`TotoroCacheContainer#parseRaw: Exception: ${exception}`);
+      Log.error(`TotoroCacheContainer#parseRaw: Exception: ${exception}`);
       return [];
     }
   }
