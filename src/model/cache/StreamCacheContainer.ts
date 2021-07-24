@@ -1,28 +1,28 @@
 import { IStreamCacheContainer } from './IStreamCacheContainer';
 
 export abstract class StreamCacheContainer implements IStreamCacheContainer {
-  private mScheduler: NodeJS.Timer | null;
+  #scheduler: NodeJS.Timer | null;
 
   constructor() {
-    this.mScheduler = null;
+    this.#scheduler = null;
   }
 
   start(interval: number = 10000): void {
-    if (this.mScheduler !== null) {
+    if (this.#scheduler !== null) {
       console.error('StreamCacheContainer#start: Already Start');
       return;
     }
     this.update();
-    this.mScheduler = setInterval(() => {
+    this.#scheduler = setInterval(() => {
       this.update();
     }, interval);
   }
 
   stop(): void {
-    if (this.mScheduler) {
-      clearInterval(this.mScheduler);
+    if (this.#scheduler) {
+      clearInterval(this.#scheduler);
     }
-    this.mScheduler = null;
+    this.#scheduler = null;
   }
 
   abstract update(): void;

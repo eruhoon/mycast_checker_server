@@ -9,38 +9,37 @@ import { TwitchManager } from '../twitch/TwitchManager';
 import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class TwitchCacheContainer extends StreamCacheContainer {
-  private mCaches: TwitchStreamCache[];
-  private mNewCaches: TwitchStreamCache[] = [];
-  private mTwitchManager: TwitchManager;
-  private mUserLoader: IUserAsyncLoader;
-  private mStreamLoader: IStreamAsyncLoader;
+  #caches: TwitchStreamCache[] = [];
+  #newCaches: TwitchStreamCache[] = [];
+  #twitchManager: TwitchManager;
+  #userLoader: IUserAsyncLoader;
+  #streamLoader: IStreamAsyncLoader;
 
   constructor(userLoader: IUserAsyncLoader, streamloader: IStreamAsyncLoader) {
     super();
     dotenv.config();
-    this.mCaches = [];
     const clientId = process.env.TWITCH_CLIENT_ID;
     const secret = process.env.TWITCH_SECRET;
     if (!clientId || !secret) {
       throw new Error('client, secret has not set');
     }
-    this.mTwitchManager = new TwitchManager(clientId, secret);
-    this.mUserLoader = userLoader;
-    this.mStreamLoader = streamloader;
+    this.#twitchManager = new TwitchManager(clientId, secret);
+    this.#userLoader = userLoader;
+    this.#streamLoader = streamloader;
   }
 
   async update() {
     console.time('TwitchCacheContainer#update');
 
-    if (this.mUserLoader === null || this.mStreamLoader === null) {
+    if (this.#userLoader === null || this.#streamLoader === null) {
       console.error('TwitchCacheContainer#update: no loader');
     } else {
-      const keywordsFromUser: string[] = (await this.mUserLoader.getUsers())
+      const keywordsFromUser: string[] = (await this.#userLoader.getUsers())
         .filter((u) => u.getStreamPlatform() === StreamPlatform.TWITCH)
         .map((u) => u.getStreamKeyId());
 
       const keywordsFromStream: string[] = (
-        await this.mStreamLoader.getStreams()
+        await this.#streamLoader.getStreams()
       )
         .filter((stream) => stream.platform === StreamPlatform.TWITCH)
         .map((stream) => stream.keyword);
@@ -58,39 +57,39 @@ export class TwitchCacheContainer extends StreamCacheContainer {
       keywordsFromUser.forEach((keyword) => addWithoutDuplicated(keyword));
       keywordsFromStream.forEach((keyword) => addWithoutDuplicated(keyword));
 
-      this.applyKeywords(keywords);
-      const userData = await this.mTwitchManager.loadUser(keywords);
-      this.applyUserInfos(userData);
-      const streams = await this.mTwitchManager.loadStream(
+      this.#applyKeywords(keywords);
+      const userData = await this.#twitchManager.loadUser(keywords);
+      this.#applyUserInfos(userData);
+      const streams = await this.#twitchManager.loadStream(
         userData.map((u) => u.login)
       );
-      this.applyStreamInfos(streams);
-      this.mCaches = this.mNewCaches;
+      this.#applyStreamInfos(streams);
+      this.#caches = this.#newCaches;
 
-      const total = this.mCaches.length;
-      const onair = this.mCaches.filter((cache) => cache.stream != null).length;
+      const total = this.#caches.length;
+      const onair = this.#caches.filter((cache) => cache.stream != null).length;
       console.log(`TwitchCacheContainer#update: ${onair}/${total}`);
     }
     console.timeEnd('TwitchCacheContainer#update');
   }
 
   getCache(keyword: string): TwitchStreamCache | null {
-    const cache = this.mCaches.find((cache) => cache.keyword === keyword);
+    const cache = this.#caches.find((cache) => cache.keyword === keyword);
     if (!cache) {
       return null;
     }
     return cache;
   }
 
-  private applyKeywords(keywords: string[]) {
-    this.mNewCaches = keywords.map((keyword) => {
+  #applyKeywords(keywords: string[]) {
+    this.#newCaches = keywords.map((keyword) => {
       return { keyword, user: null, stream: null };
     });
   }
 
-  private applyUserInfos(users: TwitchUserDto[]) {
+  #applyUserInfos(users: TwitchUserDto[]) {
     users.forEach((user) => {
-      const cache = this.mNewCaches.find(
+      const cache = this.#newCaches.find(
         (cache) => user.login === cache.keyword
       );
       if (cache) {
@@ -99,9 +98,9 @@ export class TwitchCacheContainer extends StreamCacheContainer {
     });
   }
 
-  private applyStreamInfos(streams: TwitchStreamDto[]) {
+  #applyStreamInfos(streams: TwitchStreamDto[]) {
     streams.forEach((stream) => {
-      const cache = this.mNewCaches.find((cache) => {
+      const cache = this.#newCaches.find((cache) => {
         if (!cache.user) {
           return false;
         }

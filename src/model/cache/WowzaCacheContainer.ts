@@ -6,29 +6,28 @@ import { RawWowzaModel, RawWowzaStream } from '../../model/RawWowzaModel';
 import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class WowzaCacheContainer extends StreamCacheContainer {
-  private static readonly URL: string =
-    'http://mycast.xyz:8086/connectioncounts?';
+  static readonly #URL: string = 'http://mycast.xyz:8086/connectioncounts?';
 
-  private mCaches: RawWowzaStream[];
+  #caches: RawWowzaStream[];
 
   constructor() {
     super();
     dotenv.config();
-    this.mCaches = [];
+    this.#caches = [];
   }
 
   getCaches(): RawWowzaStream[] {
-    return this.mCaches;
+    return this.#caches;
   }
 
   async update() {
-    const xml = await WowzaCacheContainer.getRawWowzaXml();
-    const model = await WowzaCacheContainer.parseXml(xml);
-    const newCaches = WowzaCacheContainer.parseModel(model);
-    this.mCaches = newCaches;
+    const xml = await WowzaCacheContainer.#getRawWowzaXml();
+    const model = await WowzaCacheContainer.#parseXml(xml);
+    const newCaches = WowzaCacheContainer.#parseModel(model);
+    this.#caches = newCaches;
   }
 
-  private static getRawWowzaXml(): Promise<string> {
+  static #getRawWowzaXml(): Promise<string> {
     const opt = {
       auth: {
         user: process.env.WOWZA_SERVER_ID,
@@ -40,7 +39,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
     };
 
     return new Promise<string>((resolve) => {
-      request.get(WowzaCacheContainer.URL, opt, (err, res, body) => {
+      request.get(WowzaCacheContainer.#URL, opt, (err, res, body) => {
         if (err || res.statusCode !== 200 || !body) {
           console.error('WowzaCacheContainer#update: Request Error', err);
           return;
@@ -51,7 +50,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
     });
   }
 
-  private static parseXml(xml: string): Promise<RawWowzaModel> {
+  static #parseXml(xml: string): Promise<RawWowzaModel> {
     return new Promise((resolve) => {
       try {
         xml2js.parseString(xml, (err, result: RawWowzaModel | null) => {
@@ -73,7 +72,7 @@ export class WowzaCacheContainer extends StreamCacheContainer {
     });
   }
 
-  private static parseModel(model: RawWowzaModel): RawWowzaStream[] {
+  static #parseModel(model: RawWowzaModel): RawWowzaStream[] {
     const wowzaServer = model.WowzaMediaServer || model.WowzaStreamingEngine;
     if (!wowzaServer) return [];
 

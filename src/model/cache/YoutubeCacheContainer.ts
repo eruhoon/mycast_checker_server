@@ -1,13 +1,13 @@
-import { StreamInfo } from '../../model/Stream';
+import { StreamInfo } from '../Stream';
 import { StreamCacheContainer } from './StreamCacheContainer';
 
 export class YoutubeCacheContainer extends StreamCacheContainer {
-  private mCaches: StreamInfo[];
+  #caches: StreamInfo[];
 
   constructor() {
     super();
 
-    this.mCaches = [];
+    this.#caches = [];
   }
 
   async update() {
@@ -15,7 +15,7 @@ export class YoutubeCacheContainer extends StreamCacheContainer {
   }
 
   getCache(keyword: string): StreamInfo | null {
-    const cache = this.mCaches.find((cache) => cache.keyid === keyword);
+    const cache = this.#caches.find((cache) => cache.keyid === keyword);
     if (!cache) {
       return null;
     }
