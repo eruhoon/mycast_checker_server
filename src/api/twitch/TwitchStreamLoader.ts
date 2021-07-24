@@ -16,19 +16,16 @@ export class TwitchStreamLoader {
     const query = `${userQuery}&first=100`;
     const host = 'https://api.twitch.tv/helix/streams';
     const url = `${host}?${query}`;
-
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Client-ID': this.#clientId,
+    };
     try {
-      const { data } = await Axios.get(url, {
-        timeout: 5000,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Client-ID': this.#clientId,
-        },
-      });
+      const { data } = await Axios.get(url, { timeout: 5000, headers });
       const streams: TwitchStreamDto[] = data.data;
       return streams;
     } catch (e) {
-      this.#logger.error(`TwitchUtils#loadStream: Request Error: ${e}`);
+      this.#logger.error(`loadStream: Request Error: ${e}`);
       return [];
     }
   }
