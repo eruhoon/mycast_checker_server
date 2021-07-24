@@ -1,7 +1,10 @@
 import axios from 'axios';
 import * as QueryString from 'qs';
+import { Logger } from '../model/common/logger/Logger';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { StreamLoader } from './StreamLoader';
+
+const Log = new Logger('AfreecaLoader');
 
 export class AfreecaLoader implements StreamLoader {
   #id: string;
@@ -20,7 +23,13 @@ export class AfreecaLoader implements StreamLoader {
       szKeyword: this.#id,
     });
     const url = `${host}?${query}`;
-    const res = await axios.get<RawAfreecaInfo>(url, { timeout: 3000 });
+    let res;
+    try {
+      res = await axios.get<RawAfreecaInfo>(url, { timeout: 3000 });
+    } catch {
+      Log.error('getInfo: network error');
+      return null;
+    }
     const body = res.data;
 
     const realBroad = body.REAL_BROAD.find((e) => e.user_id === this.#id);

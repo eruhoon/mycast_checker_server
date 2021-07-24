@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Logger } from '../model/common/logger/Logger';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { StreamLoader } from './StreamLoader';
 
@@ -16,6 +17,8 @@ type RawKakaoTvVideo = {
   thumbnail: string;
   viewer: number;
 };
+
+const Log = new Logger('KakaoTvLoader');
 
 export class KakaoTvLoader implements StreamLoader {
   #channelId: string;
@@ -57,7 +60,13 @@ export class KakaoTvLoader implements StreamLoader {
     channelId: string
   ): Promise<RawKakaoTvChannel | null> {
     const url = `http://web-tv.kakao.com/channel/${channelId}`;
-    const res = await axios.get(url, { timeout: 5000 });
+    let res;
+    try {
+      res = await axios.get(url, { timeout: 5000 });
+    } catch {
+      Log.error('loadChannel: network error');
+      return null;
+    }
     const body = res.data;
     if (res.status !== 200) {
       return null;

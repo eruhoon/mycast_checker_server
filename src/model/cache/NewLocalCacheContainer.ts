@@ -28,8 +28,13 @@ export class NewLocalCacheContainer extends StreamCacheContainer {
   }
 
   static async #getTotoroJson(): Promise<any> {
-    const json = await Axios.get(NewLocalCacheContainer.#URL);
-    return json.data;
+    try {
+      const json = await Axios.get(NewLocalCacheContainer.#URL);
+      return json.data;
+    } catch (e) {
+      console.error('NewLocalCacheContainer: error, ' + e);
+      return null;
+    }
   }
 
   static #parseRaw(rawJson: { streams: RawTotoroStream[] }): RawTotoroStream[] {
