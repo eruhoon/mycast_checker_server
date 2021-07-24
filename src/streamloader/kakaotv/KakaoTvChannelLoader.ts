@@ -40,7 +40,6 @@ export class KakaoTvChannelLoader {
       const path = res.request.path;
       return { body, path };
     } catch {
-      Log.error('loadChannel: network error');
       return null;
     }
   }
