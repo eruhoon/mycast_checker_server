@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as QueryString from 'qs';
+import * as qs from 'qs';
 import { Logger } from '../model/common/logger/Logger';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { StreamLoader } from './StreamLoader';
@@ -14,8 +14,17 @@ export class AfreecaLoader implements StreamLoader {
   }
 
   async getInfo(): Promise<StreamInfo | null> {
+    const rawInfo = await this.#requestInfo();
+    if (!rawInfo) {
+      return null;
+    }
+    const stream = this.#parseInfo(rawInfo);
+    return stream;
+  }
+
+  async #requestInfo(): Promise<RawAfreecaInfo | null> {
     const host = 'http://sch.afreeca.com/api.php';
-    const query = QueryString.stringify({
+    const query = qs.stringify({
       m: 'liveSearch',
       v: '1.0',
       szOrder: '',
@@ -23,17 +32,21 @@ export class AfreecaLoader implements StreamLoader {
       szKeyword: this.#id,
     });
     const url = `${host}?${query}`;
-    let res;
     try {
-      res = await axios.get<RawAfreecaInfo>(url, { timeout: 3000 });
-    } catch {
-      Log.error('getInfo: network error');
+      const res = await axios.get<RawAfreecaInfo>(url, { timeout: 3000 });
+      if (!res || res.status !== 200 || !res.data) {
+        return null;
+      }
+      return res.data;
+    } catch (e) {
       return null;
     }
-    const body = res.data;
+  }
 
-    const realBroad = body.REAL_BROAD.find((e) => e.user_id === this.#id);
+  #parseInfo(raw: RawAfreecaInfo): StreamInfo | null {
+    const realBroad = raw.REAL_BROAD.find((e) => e.user_id === this.#id);
     if (!realBroad) {
+      Log.error('parseInfo: parse error: ' + raw);
       return null;
     }
 
