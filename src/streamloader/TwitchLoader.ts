@@ -1,6 +1,9 @@
 import { TwitchCacheContainer } from '../model/cache/TwitchCacheContainer';
+import { Logger } from '../model/common/logger/Logger';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { StreamLoader } from './StreamLoader';
+
+const Log = new Logger('TwitchLoader');
 
 export class TwtichLoader implements StreamLoader {
   #container: TwitchCacheContainer;
@@ -13,13 +16,7 @@ export class TwtichLoader implements StreamLoader {
 
   async getInfo(): Promise<StreamInfo | null> {
     const cache = this.#container.getCache(this.#keyword);
-    if (cache === null) {
-      return null;
-    }
-    if (cache.stream === null) {
-      return null;
-    }
-    if (cache.user === null) {
+    if (!cache || !cache.stream || !cache.user) {
       return null;
     }
 
