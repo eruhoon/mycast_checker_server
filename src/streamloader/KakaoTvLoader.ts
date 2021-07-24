@@ -69,7 +69,7 @@ export class KakaoTvLoader implements StreamLoader {
       return null;
     }
 
-    const matched = path.match(/livelink\/(.*)/);
+    const matched = path.match(/livelink\/(.*)\?.*/);
     if (!matched) {
       return null;
     }
@@ -90,8 +90,13 @@ export class KakaoTvLoader implements StreamLoader {
       return null;
     }
 
-    const channel = body.channel;
-    const live = body.live;
+    if (!body.liveLink) {
+      console.error('KakaoTvLoader: structure error');
+      return null;
+    }
+
+    const channel = body.liveLink.channel;
+    const live = body.liveLink.live;
 
     const isOnAir = live.status === 'ONAIR';
     if (!isOnAir) {
