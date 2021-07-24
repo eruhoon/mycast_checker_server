@@ -13,17 +13,17 @@ export enum SocketTag {
 }
 
 export class SocketManager {
-  private mUserLoader: IUserAsyncLoader;
+  #userLoader: IUserAsyncLoader;
 
-  private mSocketio: Socketio.Server;
+  #socketio: Socketio.Server;
 
   constructor(http: http.Server | https.Server, userLoader: IUserAsyncLoader) {
-    this.mSocketio = Socketio(http);
-    this.mUserLoader = userLoader;
+    this.#socketio = Socketio(http);
+    this.#userLoader = userLoader;
   }
 
   init(initCallback: SocketCallback) {
-    this.mSocketio.on('connection', async (socket) => {
+    this.#socketio.on('connection', async (socket) => {
       const keyHash = socket.handshake.query.keyhash;
       const privateKey = socket.handshake.query.key;
 
@@ -31,7 +31,7 @@ export class SocketManager {
       if (!keyHash && !privateKey) socket.disconnect();
 
       if (privateKey) {
-        const user = await this.mUserLoader.getUserByPrivKey(privateKey);
+        const user = await this.#userLoader.getUserByPrivKey(privateKey);
         if (!user) {
           socket.disconnect();
         } else {
@@ -39,7 +39,7 @@ export class SocketManager {
         }
       } else {
         // DEPRECATED MODULE
-        const users = await this.mUserLoader.getUsers();
+        const users = await this.#userLoader.getUsers();
         const user = users.find((user) => user.getHash() === keyHash);
         if (!user) {
           socket.disconnect();
@@ -51,10 +51,10 @@ export class SocketManager {
   }
 
   refreshStreams(streams: StreamSet) {
-    this.mSocketio.emit(SocketTag.REFRESH_STREAMS, streams);
+    this.#socketio.emit(SocketTag.REFRESH_STREAMS, streams);
   }
 
   notificationNewStream(stream: StreamInfo): void {
-    this.mSocketio.emit(SocketTag.NEW_STREAM_NOTIFICATION, stream);
+    this.#socketio.emit(SocketTag.NEW_STREAM_NOTIFICATION, stream);
   }
 }
