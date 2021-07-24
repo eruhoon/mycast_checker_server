@@ -4,8 +4,6 @@ import { KakaoTvChannelLoader } from './kakaotv/KakaoTvChannelLoader';
 import { KakaoTvVideoLoader } from './kakaotv/KakaoTvVideoLoader';
 import { StreamLoader } from './StreamLoader';
 
-const Log = new Logger('KakaoTvLoader');
-
 export class KakaoTvLoader implements StreamLoader {
   #channelId: string;
   #channelLoader = new KakaoTvChannelLoader();
