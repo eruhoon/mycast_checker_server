@@ -1,42 +1,30 @@
-import axios from 'axios';
 import { Logger } from '../model/common/logger/Logger';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
+import { KakaoTvChannelLoader } from './kakaotv/KakaoTvChannelLoader';
+import { KakaoTvVideoLoader } from './kakaotv/KakaoTvVideoLoader';
 import { StreamLoader } from './StreamLoader';
-
-type RawKakaoTvChannel = {
-  id: string;
-  icon: string;
-  videoId: string;
-};
-
-type RawKakaoTvVideo = {
-  nickname: string;
-  title: string;
-  description: string;
-  url: string;
-  thumbnail: string;
-  viewer: number;
-};
 
 const Log = new Logger('KakaoTvLoader');
 
 export class KakaoTvLoader implements StreamLoader {
   #channelId: string;
+  #channelLoader = new KakaoTvChannelLoader();
+  #videoLoader = new KakaoTvVideoLoader();
 
   constructor(id: string) {
     this.#channelId = id;
   }
 
   async getInfo(): Promise<StreamInfo | null> {
-    return KakaoTvLoader.#loadInfo(this.#channelId);
+    return this.#loadInfo(this.#channelId);
   }
 
-  static async #loadInfo(channelId: string): Promise<StreamInfo | null> {
-    const channel = await this.#loadChannel(channelId);
+  async #loadInfo(channelId: string): Promise<StreamInfo | null> {
+    const channel = await this.#channelLoader.load(channelId);
     if (!channel) {
       return null;
     }
-    const video = await this.#loadVideo(channel.videoId);
+    const video = await this.#videoLoader.load(channel.videoId);
     if (!video) {
       return null;
     }
@@ -54,72 +42,5 @@ export class KakaoTvLoader implements StreamLoader {
       viewer: video.viewer,
     };
     return stream;
-  }
-
-  static async #loadChannel(
-    channelId: string
-  ): Promise<RawKakaoTvChannel | null> {
-    const url = `http://web-tv.kakao.com/channel/${channelId}`;
-    let res;
-    try {
-      res = await axios.get(url, { timeout: 5000 });
-    } catch {
-      Log.error('loadChannel: network error');
-      return null;
-    }
-    const body = res.data;
-    if (res.status !== 200) {
-      return null;
-    }
-
-    const path = res.request.path;
-    const isLive = path.indexOf('livelink') !== -1;
-    if (!isLive) {
-      return null;
-    }
-
-    const matched = path.match(/livelink\/(.*)\?.*/);
-    if (!matched) {
-      return null;
-    }
-    const videoId = matched[1];
-    const icon = body.match(/\<meta.*og\:image.*content=\"(.*)\"\>/)[1];
-    const channel = { id: channelId, icon, videoId };
-    return channel;
-  }
-
-  static async #loadVideo(videoId: string): Promise<RawKakaoTvVideo | null> {
-    const url = `http://web-tv.kakao.com/api/v1/app/livelinks/${videoId}/impress?fulllevels=liveLink&player=monet_flash&section=home&dteType=PC&service=kakao_tv&fields=ccuCount,thumbnailUri`;
-
-    const opt = { timeout: 5000 };
-    const res = await axios.get(url, opt);
-    const body = res.data;
-    if (!res || res.status !== 200 || !body) {
-      console.error('KakaoTvLoader: network error');
-      return null;
-    }
-
-    if (!body.liveLink) {
-      console.error('KakaoTvLoader: structure error');
-      return null;
-    }
-
-    const channel = body.liveLink.channel;
-    const live = body.liveLink.live;
-
-    const isOnAir = live.status === 'ONAIR';
-    if (!isOnAir) {
-      return null;
-    }
-
-    const video: RawKakaoTvVideo = {
-      nickname: channel.name,
-      title: channel.name,
-      description: live.title,
-      url: `http://web-tv.kakao.com/embed/player/livelink/${videoId}`,
-      thumbnail: live.thumbnailUri,
-      viewer: parseInt(live.ccuCount),
-    };
-    return video;
   }
 }
