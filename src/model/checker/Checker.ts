@@ -9,7 +9,7 @@ import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
 import { TwtichLoader } from '../../streamloader/TwitchLoader';
 import { UserExternalDecorator } from '../../streamloader/UserExternalDecorator';
 import { YoutubeLoader } from '../../streamloader/YoutubeLoader';
-import { NewLocalCacheContainer } from '../cache/NewLocalCacheContainer';
+import { NewLocalCacheContainer } from '../cache/LocalCacheContainer';
 import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
 import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';

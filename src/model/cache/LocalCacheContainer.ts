@@ -22,22 +22,22 @@ export class NewLocalCacheContainer extends StreamCacheContainer {
   }
 
   async update(): Promise<void> {
-    const json = await NewLocalCacheContainer.#getTotoroJson();
-    const newCaches = NewLocalCacheContainer.#parseRaw(json);
+    const json = await this.#getJson();
+    const newCaches = this.#parseRaw(json);
     this.#caches = newCaches;
   }
 
-  static async #getTotoroJson(): Promise<any> {
+  async #getJson(): Promise<any> {
     try {
       const json = await Axios.get(NewLocalCacheContainer.#URL);
       return json.data;
     } catch (e) {
-      console.error('NewLocalCacheContainer: error, ' + e);
+      this.#logger.error('getTotofoJson: ' + e);
       return null;
     }
   }
 
-  static #parseRaw(rawJson: { streams: RawTotoroStream[] }): RawTotoroStream[] {
+  #parseRaw(rawJson: { streams: RawTotoroStream[] }): RawTotoroStream[] {
     try {
       const rawClients: RawTotoroStream[] = rawJson.streams.filter((c) => {
         return c.publish.active === true && c.app === 'live';
@@ -49,8 +49,8 @@ export class NewLocalCacheContainer extends StreamCacheContainer {
         }
       });
       return clients;
-    } catch (exception) {
-      console.error(`NewLocalCacheContainer#parseRaw: Exception: ${exception}`);
+    } catch (e) {
+      this.#logger.error(`parseRaw: Exception: ${e}`);
       return [];
     }
   }

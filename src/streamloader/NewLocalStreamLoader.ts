@@ -1,4 +1,4 @@
-import { NewLocalCacheContainer } from '../model/cache/NewLocalCacheContainer';
+import { NewLocalCacheContainer } from '../model/cache/LocalCacheContainer';
 import { StreamInfo, StreamPlatform } from '../model/Stream';
 import { User } from '../model/User';
 import { StreamLoader } from './StreamLoader';
