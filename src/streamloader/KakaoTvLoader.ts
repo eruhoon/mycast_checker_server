@@ -63,7 +63,7 @@ export class KakaoTvLoader implements StreamLoader {
       return null;
     }
 
-    const path = res.request.uri.pathname;
+    const path = res.request.path;
     const isLive = path.indexOf('livelink') !== -1;
     if (!isLive) {
       return null;
@@ -85,16 +85,13 @@ export class KakaoTvLoader implements StreamLoader {
     const opt = { timeout: 5000 };
     const res = await axios.get(url, opt);
     const body = res.data;
-    if (res.status !== 200) {
+    if (!res || res.status !== 200 || !body) {
+      console.error('KakaoTvLoader: network error');
       return null;
     }
 
-    if (!body || !body.liveLink) {
-      return null;
-    }
-
-    const channel = body.liveLink.channel;
-    const live = body.liveLink.live;
+    const channel = body.channel;
+    const live = body.live;
 
     const isOnAir = live.status === 'ONAIR';
     if (!isOnAir) {
@@ -105,9 +102,9 @@ export class KakaoTvLoader implements StreamLoader {
       nickname: channel.name,
       title: channel.name,
       description: live.title,
-      url: `http://web-tv.kakao.com//embed/player/livelink/${videoId}`,
+      url: `http://web-tv.kakao.com/embed/player/livelink/${videoId}`,
       thumbnail: live.thumbnailUri,
-      viewer: live.ccuCount,
+      viewer: parseInt(live.ccuCount),
     };
     return video;
   }
