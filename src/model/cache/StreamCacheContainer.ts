@@ -1,4 +1,7 @@
+import { Logger } from '../common/logger/Logger';
 import { IStreamCacheContainer } from './IStreamCacheContainer';
+
+const Log = new Logger('StreamCacheContainer');
 
 export abstract class StreamCacheContainer implements IStreamCacheContainer {
   #scheduler: NodeJS.Timer | null;
@@ -9,7 +12,7 @@ export abstract class StreamCacheContainer implements IStreamCacheContainer {
 
   start(interval: number = 10000): void {
     if (this.#scheduler !== null) {
-      console.error('StreamCacheContainer#start: Already Start');
+      Log.error('start: Already Start');
       return;
     }
     this.update();
