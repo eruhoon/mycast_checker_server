@@ -1,3 +1,4 @@
+import { Logger } from './common/logger/Logger';
 import { UserRow } from './Database';
 import { StreamPlatform } from './Stream';
 
@@ -14,19 +15,21 @@ export type UserParam = {
   background?: string;
 };
 
+const Log = new Logger('User');
+
 export class User {
   static IDX_NONE: number = -1;
 
-  #idx: number;
-  #id: string;
-  #hash: string;
-  #nickname: string;
-  #icon: string;
-  #platform: StreamPlatform;
-  #afreecaId: string;
-  #twitchId: string;
-  #mixerId: string;
-  #background: string;
+  readonly #idx: number;
+  readonly #id: string;
+  readonly #hash: string;
+  readonly #nickname: string;
+  readonly #icon: string;
+  readonly #platform: StreamPlatform;
+  readonly #afreecaId: string;
+  readonly #twitchId: string;
+  readonly #mixerId: string;
+  readonly #background: string;
 
   constructor(param: UserParam) {
     this.#idx = param.idx ? param.idx : User.IDX_NONE;
@@ -78,7 +81,7 @@ export class User {
       case StreamPlatform.MIXER:
         return this.#mixerId;
       default:
-        console.error('User#getStreamKeyId: Invalid Platform');
+        Log.error('getStreamKeyId: invalid platform');
         return '';
     }
   }

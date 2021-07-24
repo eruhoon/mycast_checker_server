@@ -7,8 +7,11 @@ import { IUserAsyncLoader } from './controller/IUserAsyncLoader';
 import { ServerManager } from './manager/ServerManager';
 import { Checker } from './model/checker/Checker';
 import { CheckerType } from './model/checker/CheckerEntry';
+import { Logger } from './model/common/logger/Logger';
 import { StreamPlatform } from './model/Stream';
 import { SocketManager, SocketTag } from './SocketManager';
+
+const Log = new Logger('StreamCheckerServer');
 
 export class StreamCheckerServer {
   static main() {
@@ -31,12 +34,12 @@ export class StreamCheckerServer {
     checker.setOnStreamAddCallback((s) => {
       const timestamp = new Date().getTime();
       if (timestamp - sOnTime < 10000) {
-        console.warn('added at init: skipped');
+        Log.log('added at init: skipped');
         return;
       }
 
       if (s.getType() !== CheckerType.LOCAL) {
-        console.log('added external: skipped');
+        Log.log('added external: skipped');
         return;
       }
       socketManager.notificationNewStream(s.getStream());
