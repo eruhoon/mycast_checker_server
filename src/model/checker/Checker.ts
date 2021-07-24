@@ -12,7 +12,6 @@ import { YoutubeLoader } from '../../streamloader/YoutubeLoader';
 import { NewLocalCacheContainer } from '../cache/NewLocalCacheContainer';
 import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
-import { WowzaCacheContainer } from '../cache/WowzaCacheContainer';
 import { YoutubeCacheContainer } from '../cache/YoutubeCacheContainer';
 import { StreamInfo, StreamPlatform, StreamSet } from '../Stream';
 import { CheckerType } from './CheckerEntry';
@@ -25,7 +24,6 @@ export class Checker {
   #userLoader: IUserAsyncLoader;
   #streamLoader: IStreamAsyncLoader;
 
-  #wowzaCacheManager: WowzaCacheContainer;
   #newLocalCacheManager: NewLocalCacheContainer;
   #totoroCacheManager: TotoroCacheContainer;
   #twitchCacheManager: TwitchCacheContainer;
@@ -37,7 +35,6 @@ export class Checker {
     this.#userLoader = userLoader;
     this.#streamLoader = streamloader;
 
-    this.#wowzaCacheManager = new WowzaCacheContainer();
     this.#newLocalCacheManager = new NewLocalCacheContainer();
     this.#totoroCacheManager = new TotoroCacheContainer();
     this.#twitchCacheManager = new TwitchCacheContainer(
@@ -56,7 +53,6 @@ export class Checker {
   }
 
   initCacheManager() {
-    this.#wowzaCacheManager.start();
     this.#newLocalCacheManager.start();
     this.#totoroCacheManager.start();
     this.#twitchCacheManager.start();
