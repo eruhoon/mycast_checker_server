@@ -23,13 +23,20 @@ export class TotoroCacheContainer extends StreamCacheContainer {
 
   async update(): Promise<void> {
     const json = await TotoroCacheContainer.#getTotoroJson();
+    if (!json) {
+      return;
+    }
     const newCaches = TotoroCacheContainer.#parseRaw(json);
     this.#caches = newCaches;
   }
 
   static async #getTotoroJson(): Promise<any> {
-    const json = await Axios.get(TotoroCacheContainer.#URL);
-    return json.data;
+    try {
+      const json = await Axios.get(TotoroCacheContainer.#URL);
+      return json.data;
+    } catch {
+      return null;
+    }
   }
 
   static #parseRaw(rawJson: { streams: RawTotoroStream[] }): RawTotoroStream[] {

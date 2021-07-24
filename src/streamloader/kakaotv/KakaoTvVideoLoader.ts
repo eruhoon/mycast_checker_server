@@ -6,27 +6,8 @@ const Log = new Logger('KakaoTvVideoLoader');
 
 export class KakaoTvVideoLoader {
   async load(videoId: string): Promise<RawKakaoTvVideo | null> {
-    const host = `http://web-tv.kakao.com/api/v1/app`;
-    const dir = `livelinks/${videoId}/impress`;
-    const query = qs.stringify({
-      fulllevels: 'liveLink',
-      player: 'monet_flash',
-      section: 'home',
-      dteType: 'PC',
-      service: 'kakao_tv',
-      fields: 'ccuCount,thumbnailUri',
-    });
-    const url = `${host}/${dir}?${query}`;
-
-    const opt = { timeout: 5000 };
-    const res = await axios.get(url, opt);
-    const body = res.data;
-    if (!res || res.status !== 200 || !body) {
-      Log.error('KakaoTvLoader: network error');
-      return null;
-    }
-
-    if (!body.liveLink) {
+    const body = await this.#request(videoId);
+    if (!body || !body.liveLink) {
       Log.error('KakaoTvLoader: structure error');
       return null;
     }
@@ -49,6 +30,27 @@ export class KakaoTvVideoLoader {
     };
     return video;
   }
+
+  async #request(videoId: string): Promise<RawVideo | null> {
+    const host = `http://web-tv.kakao.com/api/v1/app`;
+    const dir = `livelinks/${videoId}/impress`;
+    const query = qs.stringify({
+      fulllevels: 'liveLink',
+      player: 'monet_flash',
+      section: 'home',
+      dteType: 'PC',
+      service: 'kakao_tv',
+      fields: 'ccuCount,thumbnailUri',
+    });
+    const url = `${host}/${dir}?${query}`;
+    try {
+      const { data } = await axios.get(url, { timeout: 5000 });
+      return data;
+    } catch (e) {
+      Log.error('request: error: ' + e);
+      return null;
+    }
+  }
 }
 
 type RawKakaoTvVideo = {
@@ -58,4 +60,28 @@ type RawKakaoTvVideo = {
   url: string;
   thumbnail: string;
   viewer: number;
+};
+
+type RawVideo = {
+  liveLink: {
+    channelId: number;
+    liveId: number;
+    displayTitle: string;
+    channel: {
+      id: number;
+      userId: number;
+      name: string;
+      description: string;
+    };
+    live: {
+      id: number;
+      userId: number;
+      channelId: number;
+      title: string;
+      description: string;
+      status: string;
+      ccuCount: string;
+      thumbnailUri: string;
+    };
+  };
 };
