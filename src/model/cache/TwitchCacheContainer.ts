@@ -5,8 +5,11 @@ import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamPlatform } from '../../model/Stream';
 import { TwitchStreamCache } from '../../model/TwitchStreamCache';
+import { Logger } from '../common/logger/Logger';
 import { TwitchManager } from '../twitch/TwitchManager';
 import { StreamCacheContainer } from './StreamCacheContainer';
+
+const Log = new Logger('TwitchCacheContainer');
 
 export class TwitchCacheContainer extends StreamCacheContainer {
   #caches: TwitchStreamCache[] = [];
@@ -29,48 +32,34 @@ export class TwitchCacheContainer extends StreamCacheContainer {
   }
 
   async update() {
-    console.time('TwitchCacheContainer#update');
+    const keywordsFromUser = await this.#getKeywordFromUser();
+    const keywordsFromStream = await this.#getKeywordsFromStream();
 
-    if (this.#userLoader === null || this.#streamLoader === null) {
-      console.error('TwitchCacheContainer#update: no loader');
-    } else {
-      const keywordsFromUser: string[] = (await this.#userLoader.getUsers())
-        .filter((u) => u.getStreamPlatform() === StreamPlatform.TWITCH)
-        .map((u) => u.getStreamKeyId());
+    const keywords: string[] = [];
+    const addWithoutDuplicated = (keyword: string) => {
+      if (!keyword) {
+        return;
+      }
+      if (keywords.findIndex((k) => k === keyword) !== -1) {
+        return;
+      }
+      keywords.push(keyword);
+    };
+    keywordsFromUser.forEach((keyword) => addWithoutDuplicated(keyword));
+    keywordsFromStream.forEach((keyword) => addWithoutDuplicated(keyword));
 
-      const keywordsFromStream: string[] = (
-        await this.#streamLoader.getStreams()
-      )
-        .filter((stream) => stream.platform === StreamPlatform.TWITCH)
-        .map((stream) => stream.keyword);
+    this.#applyKeywords(keywords);
+    const userData = await this.#twitchManager.loadUser(keywords);
+    this.#applyUserInfos(userData);
+    const streams = await this.#twitchManager.loadStream(
+      userData.map((u) => u.login)
+    );
+    this.#applyStreamInfos(streams);
+    this.#caches = this.#newCaches;
 
-      const keywords: string[] = [];
-      const addWithoutDuplicated = (keyword: string) => {
-        if (!keyword) {
-          return;
-        }
-        if (keywords.findIndex((k) => k === keyword) !== -1) {
-          return;
-        }
-        keywords.push(keyword);
-      };
-      keywordsFromUser.forEach((keyword) => addWithoutDuplicated(keyword));
-      keywordsFromStream.forEach((keyword) => addWithoutDuplicated(keyword));
-
-      this.#applyKeywords(keywords);
-      const userData = await this.#twitchManager.loadUser(keywords);
-      this.#applyUserInfos(userData);
-      const streams = await this.#twitchManager.loadStream(
-        userData.map((u) => u.login)
-      );
-      this.#applyStreamInfos(streams);
-      this.#caches = this.#newCaches;
-
-      const total = this.#caches.length;
-      const onair = this.#caches.filter((cache) => cache.stream != null).length;
-      console.log(`TwitchCacheContainer#update: ${onair}/${total}`);
-    }
-    console.timeEnd('TwitchCacheContainer#update');
+    const total = this.#caches.length;
+    const onair = this.#caches.filter((cache) => cache.stream != null).length;
+    Log.log(`update: ${onair}/${total}`);
   }
 
   getCache(keyword: string): TwitchStreamCache | null {
@@ -79,6 +68,22 @@ export class TwitchCacheContainer extends StreamCacheContainer {
       return null;
     }
     return cache;
+  }
+
+  async #getKeywordFromUser(): Promise<string[]> {
+    const users = await this.#userLoader.getUsers();
+    const keywords: string[] = users
+      .filter((u) => u.getStreamPlatform() === StreamPlatform.TWITCH)
+      .map((u) => u.getStreamKeyId());
+    return keywords;
+  }
+
+  async #getKeywordsFromStream(): Promise<string[]> {
+    const streams = await this.#streamLoader.getStreams();
+    const keywords: string[] = streams
+      .filter((stream) => stream.platform === StreamPlatform.TWITCH)
+      .map((stream) => stream.keyword);
+    return keywords;
   }
 
   #applyKeywords(keywords: string[]) {
