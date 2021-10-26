@@ -21,8 +21,9 @@ export class ServerManager {
 
     const key = process.env.SSL_PRIVKEY;
     const cert = process.env.SSL_CERT;
+    const ca = process.env.SSL_FULLCHAIN;
 
-    if (!key || !cert) {
+    if (!key || !cert || !ca) {
       throw new Error('ServerManager: environment value not set');
     }
 
@@ -31,6 +32,7 @@ export class ServerManager {
         {
           key: readFileSync(key),
           cert: readFileSync(cert),
+          ca: readFileSync(ca),
         },
         this.#app
       );
