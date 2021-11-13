@@ -74,6 +74,8 @@ export class ServerManager {
     const whiteList = [
       'http://localhost:4200',
       'http://mycast.xyz',
+      'https://mycast.xyz',
+      'https://test.mycast.xyz',
       'http://mycast.xyz:10080',
     ];
     return whiteList.indexOf(host) > -1;

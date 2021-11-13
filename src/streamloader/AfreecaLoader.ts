@@ -52,12 +52,12 @@ export class AfreecaLoader implements StreamLoader {
     const id = realBroad.user_id;
     const broadNo = realBroad.broad_no;
     const prefix = id.substring(0, 2);
-
+    const imgHost = 'profile.img.afreecatv.com';
     const stream: StreamInfo = {
       result: true,
       platform: StreamPlatform.AFREECA,
       keyid: realBroad.user_id,
-      icon: `http://stimg.afreeca.com/LOGO/${prefix}/${id}/${id}.jpg`,
+      icon: `https://${imgHost}/LOGO/${prefix}/${id}/${id}.jpg`,
       nickname: realBroad.user_nick,
       title: realBroad.station_name,
       description: realBroad.broad_title,
