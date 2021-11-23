@@ -35,7 +35,7 @@ export class KakaoTvLoader implements StreamLoader {
       onair: true,
       title: video.title,
       description: video.description,
-      url: video.url,
+      url: `https://tv.kakao.com/embed/player/livelink/${channel.videoId}`,
       viewer: video.viewer,
     };
     return stream;
