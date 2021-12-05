@@ -118,6 +118,7 @@ export class Checker {
           loader = new KakaoTvLoader(row.keyword);
           break;
         case StreamPlatform.YOUTUBE:
+          // loader = new YoutubeLoader(row.keyword);
           loader = new YoutubeLoader(this.#youtubeCacheManager, row.keyword);
           break;
       }
