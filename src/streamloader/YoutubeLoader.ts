@@ -19,7 +19,7 @@ export class YoutubeLoader implements StreamLoader {
       const detail = await this.#requestVideoInfo(videoId);
       return {
         keyid: this.#channelId,
-        description: 'youtube',
+        description: detail?.description || '',
         icon: detail?.icon || '',
         nickname: this.#channelId,
         onair: true,
@@ -33,11 +33,13 @@ export class YoutubeLoader implements StreamLoader {
     }
   }
 
-  async #requestVideoInfo(
-    videoId: string
-  ): Promise<{ title: string; icon: string; viewer: number } | null> {
+  async #requestVideoInfo(videoId: string): Promise<{
+    title: string;
+    description: string;
+    icon: string;
+    viewer: number;
+  } | null> {
     const url = `https://www.youtube.com/watch?v=${videoId}`;
-
     const { data } = await axios.get(url);
     const regex = /var ytInitialData = (.*);</;
     const match = regex.exec(data);
@@ -54,12 +56,14 @@ export class YoutubeLoader implements StreamLoader {
         (c: any) => c.videoSecondaryInfoRenderer
       ).videoSecondaryInfoRenderer;
       const owner = secondary?.owner;
-      const icon = owner?.videoOwnerRenderer?.thumbnail?.thumbnails[0]?.url;
-      const title = primary.title.runs[0]?.text;
+      const ownerRenderer = owner?.videoOwnerRenderer;
+      const icon = ownerRenderer?.thumbnail?.thumbnails[0]?.url;
+      const title = ownerRenderer?.title?.runs[0]?.text;
+      const description = primary.title.runs[0]?.text;
       const viewCount = primary.viewCount?.videoViewCountRenderer.viewCount;
       const viewerText = viewCount?.runs[1]?.text;
       const viewer = Number.parseInt(viewerText.replace(',', ''));
-      return { title, icon, viewer };
+      return { title, description, icon, viewer };
     }
     return null;
   }
