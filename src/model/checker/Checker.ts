@@ -3,6 +3,8 @@ import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
 import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
 import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
+import { LckClNaverLoader } from '../../streamloader/lck/LckClNaverLoader';
+import { LckNaverLoader } from '../../streamloader/lck/LckNaverLoader';
 import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
 import { StreamLoader } from '../../streamloader/StreamLoader';
 import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
@@ -23,6 +25,9 @@ import {
 export class Checker {
   #userLoader: IUserAsyncLoader;
   #streamLoader: IStreamAsyncLoader;
+
+  #lckLoader = new LckNaverLoader();
+  #lckClLoader = new LckClNaverLoader();
 
   #newLocalCacheManager: NewLocalCacheContainer;
   #totoroCacheManager: TotoroCacheContainer;
@@ -135,6 +140,16 @@ export class Checker {
         });
       }
     });
+
+    const lckInfo = await this.#lckLoader.getInfo();
+    if (lckInfo) {
+      this.#addStream(CheckerType.EXTERNAL, lckInfo);
+    }
+
+    const lckClInfo = await this.#lckClLoader.getInfo();
+    if (lckClInfo) {
+      this.#addStream(CheckerType.EXTERNAL, lckClInfo);
+    }
   }
 
   getStreams(): StreamSet {

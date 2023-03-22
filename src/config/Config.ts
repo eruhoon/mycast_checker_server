@@ -1,6 +1,6 @@
 export class Config {
   // DEFAULT PORT
-  static readonly DEFAULT_PORT: number = 9000;
+  static readonly DEFAULT_PORT: number = 9001;
 
   static readonly NEED_EXP = [
     0, 15, 34, 57, 92, 135, 372, 560, 840, 1242, 1242, 1242, 1242, 1242, 1242,
