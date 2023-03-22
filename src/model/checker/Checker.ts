@@ -141,15 +141,15 @@ export class Checker {
       }
     });
 
-    const lckInfo = await this.#lckLoader.getInfo();
-    if (lckInfo) {
-      this.#addStream(CheckerType.EXTERNAL, lckInfo);
-    }
+    // const lckInfo = await this.#lckLoader.getInfo();
+    // if (lckInfo) {
+    //   this.#addStream(CheckerType.EXTERNAL, lckInfo);
+    // }
 
-    const lckClInfo = await this.#lckClLoader.getInfo();
-    if (lckClInfo) {
-      this.#addStream(CheckerType.EXTERNAL, lckClInfo);
-    }
+    // const lckClInfo = await this.#lckClLoader.getInfo();
+    // if (lckClInfo) {
+    //   this.#addStream(CheckerType.EXTERNAL, lckClInfo);
+    // }
   }
 
   getStreams(): StreamSet {
