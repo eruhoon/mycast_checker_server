@@ -10,7 +10,7 @@ import { StreamLoader } from '../../streamloader/StreamLoader';
 import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
 import { TwtichLoader } from '../../streamloader/TwitchLoader';
 import { UserExternalDecorator } from '../../streamloader/UserExternalDecorator';
-import { YoutubeLoader } from '../../streamloader/YoutubeLoader';
+import { YoutubeHandleLoader } from '../../streamloader/YoutubeHandleLoader';
 import { NewLocalCacheContainer } from '../cache/LocalCacheContainer';
 import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
@@ -124,7 +124,10 @@ export class Checker {
           break;
         case StreamPlatform.YOUTUBE:
           // loader = new YoutubeLoader(row.keyword);
-          loader = new YoutubeLoader(this.#youtubeCacheManager, row.keyword);
+          loader = new YoutubeHandleLoader(
+            this.#youtubeCacheManager,
+            row.keyword
+          );
           break;
       }
 
