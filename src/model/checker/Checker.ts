@@ -96,6 +96,7 @@ export class Checker {
             this.#youtubeCacheManager,
             user.getStreamKeyId()
           );
+          loader = new UserExternalDecorator(user, loader);
           break;
       }
 
