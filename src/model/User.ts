@@ -33,8 +33,8 @@ export class User {
   readonly #twitchId: string;
   readonly #mixerId: string;
   readonly #chzzkId: string;
-  readonly #youtubeHandle: string;
-  readonly #youtubeVideoId: string;
+  readonly youtubeHandle: string;
+  readonly youtubeVideoId: string;
   readonly #background: string;
 
   constructor(param: UserParam) {
@@ -48,8 +48,8 @@ export class User {
     this.#twitchId = param.twitchId ? param.twitchId : '';
     this.#mixerId = param.mixerId ? param.mixerId : '';
     this.#chzzkId = param.chzzkId ?? '';
-    this.#youtubeHandle = param.youtubeHandle ?? '';
-    this.#youtubeVideoId = param.youtubeVideoId ?? '';
+    this.youtubeHandle = param.youtubeHandle ?? '';
+    this.youtubeVideoId = param.youtubeVideoId ?? '';
     this.#background = param.background ? param.background : '';
   }
 
@@ -92,9 +92,9 @@ export class User {
       case StreamPlatform.CHZZK:
         return this.#chzzkId;
       case StreamPlatform.YOUTUBE:
-        return this.#youtubeHandle;
+        return this.youtubeHandle;
       case StreamPlatform.YOUTUBE_PRIVATE:
-        return this.#youtubeVideoId;
+        return this.youtubeVideoId;
       default:
         Log.error('getStreamKeyId: invalid platform');
         return '';

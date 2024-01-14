@@ -109,12 +109,12 @@ export class Checker {
               user,
               new YoutubeHandleLoader(
                 this.#youtubeCacheManager,
-                user.getStreamKeyId()
+                user.youtubeHandle
               )
             ),
             new UserExternalDecorator(
               user,
-              new YoutubeVideoLoader(user.getStreamKeyId())
+              new YoutubeVideoLoader(user.youtubeVideoId)
             ),
           ];
           break;
