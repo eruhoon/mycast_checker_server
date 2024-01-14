@@ -68,44 +68,58 @@ export class Checker {
 
     const users = await this.#userLoader.getUsers();
     users.forEach((user) => {
-      let loader: StreamLoader | null = null;
+      let loaders: StreamLoader[] = [];
       const platform = user.getStreamPlatform();
       switch (platform) {
         case StreamPlatform.LOCAL:
-          loader = new NewLocalStreamLoader(this.#newLocalCacheManager, user);
+          loaders = [
+            new NewLocalStreamLoader(this.#newLocalCacheManager, user),
+          ];
           break;
         case StreamPlatform.TOTORO:
-          loader = new TotoroStreamLoader(this.#totoroCacheManager, user);
+          loaders = [new TotoroStreamLoader(this.#totoroCacheManager, user)];
           break;
         case StreamPlatform.AFREECA:
-          loader = new AfreecaLoader(user.getStreamKeyId());
-          loader = new UserExternalDecorator(user, loader);
+          loaders = [
+            new UserExternalDecorator(
+              user,
+              new AfreecaLoader(user.getStreamKeyId())
+            ),
+          ];
           break;
         case StreamPlatform.TWITCH:
-          loader = new TwtichLoader(
-            this.#twitchCacheManager,
-            user.getStreamKeyId()
-          );
-          loader = new UserExternalDecorator(user, loader);
+          loaders = [
+            new UserExternalDecorator(
+              user,
+              new TwtichLoader(this.#twitchCacheManager, user.getStreamKeyId())
+            ),
+          ];
           break;
         case StreamPlatform.CHZZK:
-          loader = new ChzzkLoader(user.getStreamKeyId());
-          loader = new UserExternalDecorator(user, loader);
+          loaders = [
+            new UserExternalDecorator(
+              user,
+              new ChzzkLoader(user.getStreamKeyId())
+            ),
+          ];
           break;
         case StreamPlatform.YOUTUBE:
-          loader = new YoutubeHandleLoader(
-            this.#youtubeCacheManager,
-            user.getStreamKeyId()
-          );
-          loader = new UserExternalDecorator(user, loader);
-          break;
-        case StreamPlatform.YOUTUBE_PRIVATE:
-          loader = new YoutubeVideoLoader(user.getStreamKeyId());
-          loader = new UserExternalDecorator(user, loader);
+          loaders = [
+            new UserExternalDecorator(
+              user,
+              new YoutubeHandleLoader(
+                this.#youtubeCacheManager,
+                user.getStreamKeyId()
+              )
+            ),
+            new UserExternalDecorator(
+              user,
+              new YoutubeVideoLoader(user.getStreamKeyId())
+            ),
+          ];
           break;
       }
-
-      if (loader !== null) {
+      loaders.forEach((loader) => {
         loader.getInfo().then((info) => {
           if (!info) {
             return;
@@ -119,7 +133,7 @@ export class Checker {
           }
           this.#addStream(CheckerType.LOCAL, info);
         });
-      }
+      });
     });
 
     const streamRows = await this.#streamLoader.getStreams();
