@@ -25,5 +25,6 @@ export declare const enum StreamPlatform {
   YOUTUBE = 'youtube',
   TOTORO = 'totoro',
   MIXER = 'mixer',
+  CHZZK = 'chzzk',
   LCK = 'lck',
 }

@@ -12,6 +12,7 @@ export type UserParam = {
   afreecaId?: string;
   twitchId?: string;
   mixerId?: string;
+  chzzkId?: string;
   background?: string;
 };
 
@@ -29,6 +30,7 @@ export class User {
   readonly #afreecaId: string;
   readonly #twitchId: string;
   readonly #mixerId: string;
+  readonly #chzzkId: string;
   readonly #background: string;
 
   constructor(param: UserParam) {
@@ -41,6 +43,7 @@ export class User {
     this.#afreecaId = param.afreecaId ? param.afreecaId : '';
     this.#twitchId = param.twitchId ? param.twitchId : '';
     this.#mixerId = param.mixerId ? param.mixerId : '';
+    this.#chzzkId = param.chzzkId ?? '';
     this.#background = param.background ? param.background : '';
   }
 
@@ -80,6 +83,8 @@ export class User {
         return this.#twitchId;
       case StreamPlatform.MIXER:
         return this.#mixerId;
+      case StreamPlatform.CHZZK:
+        return this.#chzzkId;
       default:
         Log.error('getStreamKeyId: invalid platform');
         return '';
@@ -101,6 +106,7 @@ export class User {
       twitchId: row.twitch_id,
       afreecaId: row.afreeca_id,
       mixerId: row.mixer_id,
+      chzzkId: row.chzzk_id,
       background: row.broadcast_bgimg,
     });
   }

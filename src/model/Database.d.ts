@@ -12,6 +12,8 @@ export type UserRow = {
   daumpot_id: string;
   twitch_id: string;
   mixer_id: string;
+  chzzk_id: string;
+  youtube_handle: string;
 };
 
 export type StreamRow = {

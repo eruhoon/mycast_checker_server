@@ -2,6 +2,7 @@ import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
 import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
+import { ChzzkLoader } from '../../streamloader/ChzzkLoader';
 import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
 import { LckClNaverLoader } from '../../streamloader/lck/LckClNaverLoader';
 import { LckNaverLoader } from '../../streamloader/lck/LckNaverLoader';
@@ -89,6 +90,10 @@ export class Checker {
           );
           loader = new UserExternalDecorator(user, loader);
           break;
+        case StreamPlatform.CHZZK:
+          loader = new ChzzkLoader(user.getStreamKeyId());
+          loader = new UserExternalDecorator(user, loader);
+          break;
       }
 
       if (loader !== null) {
@@ -128,6 +133,9 @@ export class Checker {
             this.#youtubeCacheManager,
             row.keyword
           );
+          break;
+        case StreamPlatform.CHZZK:
+          loader = new ChzzkLoader(row.keyword);
           break;
       }
 
