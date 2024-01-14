@@ -12,6 +12,7 @@ import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
 import { TwtichLoader } from '../../streamloader/TwitchLoader';
 import { UserExternalDecorator } from '../../streamloader/UserExternalDecorator';
 import { YoutubeHandleLoader } from '../../streamloader/YoutubeHandleLoader';
+import { YoutubeVideoLoader } from '../../streamloader/YoutubeVideoLoader';
 import { NewLocalCacheContainer } from '../cache/LocalCacheContainer';
 import { TotoroCacheContainer } from '../cache/TotoroCacheContainer';
 import { TwitchCacheContainer } from '../cache/TwitchCacheContainer';
@@ -96,6 +97,10 @@ export class Checker {
             this.#youtubeCacheManager,
             user.getStreamKeyId()
           );
+          loader = new UserExternalDecorator(user, loader);
+          break;
+        case StreamPlatform.YOUTUBE_PRIVATE:
+          loader = new YoutubeVideoLoader(user.getStreamKeyId());
           loader = new UserExternalDecorator(user, loader);
           break;
       }

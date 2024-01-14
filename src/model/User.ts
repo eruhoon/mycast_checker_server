@@ -14,6 +14,7 @@ export type UserParam = {
   mixerId?: string;
   chzzkId?: string;
   youtubeHandle?: string;
+  youtubeVideoId?: string;
   background?: string;
 };
 
@@ -33,6 +34,7 @@ export class User {
   readonly #mixerId: string;
   readonly #chzzkId: string;
   readonly #youtubeHandle: string;
+  readonly #youtubeVideoId: string;
   readonly #background: string;
 
   constructor(param: UserParam) {
@@ -47,6 +49,7 @@ export class User {
     this.#mixerId = param.mixerId ? param.mixerId : '';
     this.#chzzkId = param.chzzkId ?? '';
     this.#youtubeHandle = param.youtubeHandle ?? '';
+    this.#youtubeVideoId = param.youtubeVideoId ?? '';
     this.#background = param.background ? param.background : '';
   }
 
@@ -90,6 +93,8 @@ export class User {
         return this.#chzzkId;
       case StreamPlatform.YOUTUBE:
         return this.#youtubeHandle;
+      case StreamPlatform.YOUTUBE_PRIVATE:
+        return this.#youtubeVideoId;
       default:
         Log.error('getStreamKeyId: invalid platform');
         return '';
@@ -113,6 +118,7 @@ export class User {
       mixerId: row.mixer_id,
       chzzkId: row.chzzk_id,
       youtubeHandle: row.youtube_handle,
+      youtubeVideoId: row.youtube_video_id,
       background: row.broadcast_bgimg,
     });
   }

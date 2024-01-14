@@ -14,6 +14,7 @@ export type UserRow = {
   mixer_id: string;
   chzzk_id: string;
   youtube_handle: string;
+  youtube_video_id: string;
 };
 
 export type StreamRow = {

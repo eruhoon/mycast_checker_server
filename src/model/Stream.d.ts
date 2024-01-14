@@ -23,6 +23,7 @@ export declare const enum StreamPlatform {
   AFREECA = 'afreeca',
   KAKAOTV = 'kakaotv',
   YOUTUBE = 'youtube',
+  YOUTUBE_PRIVATE = 'youtube-private',
   TOTORO = 'totoro',
   MIXER = 'mixer',
   CHZZK = 'chzzk',
