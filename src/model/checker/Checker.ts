@@ -27,9 +27,6 @@ export class Checker {
   #userLoader: IUserAsyncLoader;
   #streamLoader: IStreamAsyncLoader;
 
-  #lckLoader = new LckNaverLoader();
-  #lckClLoader = new LckClNaverLoader();
-
   #newLocalCacheManager: NewLocalCacheContainer;
   #totoroCacheManager: TotoroCacheContainer;
   #twitchCacheManager: TwitchCacheContainer;
@@ -128,7 +125,6 @@ export class Checker {
           loader = new KakaoTvLoader(row.keyword);
           break;
         case StreamPlatform.YOUTUBE:
-          // loader = new YoutubeLoader(row.keyword);
           loader = new YoutubeHandleLoader(
             this.#youtubeCacheManager,
             row.keyword
@@ -151,16 +147,6 @@ export class Checker {
         });
       }
     });
-
-    // const lckInfo = await this.#lckLoader.getInfo();
-    // if (lckInfo) {
-    //   this.#addStream(CheckerType.EXTERNAL, lckInfo);
-    // }
-
-    // const lckClInfo = await this.#lckClLoader.getInfo();
-    // if (lckClInfo) {
-    //   this.#addStream(CheckerType.EXTERNAL, lckClInfo);
-    // }
   }
 
   getStreams(): StreamSet {
