@@ -91,6 +91,12 @@ export class Checker {
           loader = new ChzzkLoader(user.getStreamKeyId());
           loader = new UserExternalDecorator(user, loader);
           break;
+        case StreamPlatform.YOUTUBE:
+          loader = new YoutubeHandleLoader(
+            this.#youtubeCacheManager,
+            user.getStreamKeyId()
+          );
+          break;
       }
 
       if (loader !== null) {
