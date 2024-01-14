@@ -112,6 +112,7 @@ export class User {
       afreecaId: row.afreeca_id,
       mixerId: row.mixer_id,
       chzzkId: row.chzzk_id,
+      youtubeHandle: row.youtube_handle,
       background: row.broadcast_bgimg,
     });
   }
