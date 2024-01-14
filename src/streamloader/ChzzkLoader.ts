@@ -12,7 +12,7 @@ export class ChzzkLoader implements StreamLoader {
 
   async getInfo(): Promise<StreamInfo | null> {
     const raw = await this.#manager.getLiveDetail(this.#keyword);
-    if (!raw) {
+    if (!raw || raw.content.status !== 'OPEN') {
       return null;
     }
     const stream: StreamInfo = {

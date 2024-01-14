@@ -28,11 +28,11 @@ export class User {
   readonly #hash: string;
   readonly #nickname: string;
   readonly #icon: string;
-  readonly #platform: StreamPlatform;
-  readonly #afreecaId: string;
-  readonly #twitchId: string;
-  readonly #mixerId: string;
-  readonly #chzzkId: string;
+  readonly platform: StreamPlatform;
+  readonly afreecaId: string;
+  readonly twitchId: string;
+  readonly mixerId: string;
+  readonly chzzkId: string;
   readonly youtubeHandle: string;
   readonly youtubeVideoId: string;
   readonly #background: string;
@@ -43,11 +43,11 @@ export class User {
     this.#hash = param.hash ? param.hash : '';
     this.#nickname = param.nickname ? param.nickname : '';
     this.#icon = param.icon ? param.icon : '';
-    this.#platform = param.platform ? param.platform : StreamPlatform.LOCAL;
-    this.#afreecaId = param.afreecaId ? param.afreecaId : '';
-    this.#twitchId = param.twitchId ? param.twitchId : '';
-    this.#mixerId = param.mixerId ? param.mixerId : '';
-    this.#chzzkId = param.chzzkId ?? '';
+    this.platform = param.platform ? param.platform : StreamPlatform.LOCAL;
+    this.afreecaId = param.afreecaId ? param.afreecaId : '';
+    this.twitchId = param.twitchId ? param.twitchId : '';
+    this.mixerId = param.mixerId ? param.mixerId : '';
+    this.chzzkId = param.chzzkId ?? '';
     this.youtubeHandle = param.youtubeHandle ?? '';
     this.youtubeVideoId = param.youtubeVideoId ?? '';
     this.#background = param.background ? param.background : '';
@@ -74,23 +74,23 @@ export class User {
   }
 
   getStreamPlatform(): StreamPlatform {
-    return this.#platform;
+    return this.platform;
   }
 
   getStreamKeyId(): string {
-    switch (this.#platform) {
+    switch (this.platform) {
       case StreamPlatform.LOCAL:
         return this.#hash.substring(0, 5);
       case StreamPlatform.TOTORO:
         return this.#hash.substring(0, 5);
       case StreamPlatform.AFREECA:
-        return this.#afreecaId;
+        return this.afreecaId;
       case StreamPlatform.TWITCH:
-        return this.#twitchId;
+        return this.twitchId;
       case StreamPlatform.MIXER:
-        return this.#mixerId;
+        return this.mixerId;
       case StreamPlatform.CHZZK:
-        return this.#chzzkId;
+        return this.chzzkId;
       case StreamPlatform.YOUTUBE:
         return this.youtubeHandle;
       case StreamPlatform.YOUTUBE_PRIVATE:
