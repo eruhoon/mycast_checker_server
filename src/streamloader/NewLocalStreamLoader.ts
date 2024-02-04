@@ -27,7 +27,7 @@ export class NewLocalStreamLoader implements StreamLoader {
       keyid: streamKey,
       icon: this.#user.getIcon(),
       nickname: this.#user.getNickname(),
-      thumbnail: this.#getThumbnail(streamKey),
+      thumbnail: null,
       onair: true,
       title: nickname,
       description: `${nickname}의 방송 [공용채널]`,
