@@ -68,6 +68,9 @@ export class Checker {
     users.forEach((user) => {
       let loaders: StreamLoader[] = [];
       const platform = user.getStreamPlatform();
+      if (platform === StreamPlatform.TWITCH) {
+        return;
+      }
       switch (platform) {
         case StreamPlatform.LOCAL:
           loaders = [
@@ -85,14 +88,14 @@ export class Checker {
             ),
           ];
           break;
-        case StreamPlatform.TWITCH:
-          loaders = [
-            new UserExternalDecorator(
-              user,
-              new TwtichLoader(this.#twitchCacheManager, user.getStreamKeyId())
-            ),
-          ];
-          break;
+        // case StreamPlatform.TWITCH:
+        //   loaders = [
+        //     new UserExternalDecorator(
+        //       user,
+        //       new TwtichLoader(this.#twitchCacheManager, user.getStreamKeyId())
+        //     ),
+        //   ];
+        //   break;
         case StreamPlatform.CHZZK:
           loaders = [
             new UserExternalDecorator(
