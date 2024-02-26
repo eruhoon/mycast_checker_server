@@ -56,11 +56,11 @@ export class YoutubeVideoLoader implements StreamLoader {
       const owner = secondary?.owner;
       const ownerRenderer = owner?.videoOwnerRenderer;
       const icon = ownerRenderer?.thumbnail?.thumbnails[0]?.url;
-      const title = ownerRenderer?.title?.runs?.[0]?.text;
-      const description = primary?.title?.runs?.[0]?.text;
+      const title = ownerRenderer?.title?.runs[0]?.text;
+      const description = primary?.title?.runs[0]?.text;
       const viewCount =
         primary?.viewCount?.videoViewCountRenderer?.viewCount ?? 0;
-      const viewerText = viewCount?.runs?.[1]?.text ?? '';
+      const viewerText = viewCount?.runs[1]?.text;
       const viewer = Number.parseInt(viewerText?.replace(',', ''));
       return { title, description, icon, viewer };
     }
