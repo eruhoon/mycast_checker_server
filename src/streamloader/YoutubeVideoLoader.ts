@@ -60,7 +60,7 @@ export class YoutubeVideoLoader implements StreamLoader {
       const description = primary?.title?.runs?.[0]?.text;
       const viewCount =
         primary?.viewCount?.videoViewCountRenderer?.viewCount ?? 0;
-      const viewerText = viewCount?.runs[1]?.text;
+      const viewerText = viewCount?.runs?.[1]?.text ?? '';
       const viewer = Number.parseInt(viewerText?.replace(',', ''));
       return { title, description, icon, viewer };
     }
