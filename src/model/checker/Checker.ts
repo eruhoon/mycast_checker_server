@@ -4,8 +4,6 @@ import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
 import { AfreecaLoader } from '../../streamloader/AfreecaLoader';
 import { ChzzkLoader } from '../../streamloader/ChzzkLoader';
 import { KakaoTvLoader } from '../../streamloader/KakaoTvLoader';
-import { LckClNaverLoader } from '../../streamloader/lck/LckClNaverLoader';
-import { LckNaverLoader } from '../../streamloader/lck/LckNaverLoader';
 import { NewLocalStreamLoader } from '../../streamloader/NewLocalStreamLoader';
 import { StreamLoader } from '../../streamloader/StreamLoader';
 import { TotoroStreamLoader } from '../../streamloader/TotoroStreamLoader';
@@ -145,7 +143,8 @@ export class Checker {
           loader = new AfreecaLoader(row.keyword);
           break;
         case StreamPlatform.TWITCH:
-          loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
+          // loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
+          loader = null;
           break;
         case StreamPlatform.KAKAOTV:
           loader = new KakaoTvLoader(row.keyword);
