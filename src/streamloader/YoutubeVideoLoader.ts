@@ -47,10 +47,10 @@ export class YoutubeVideoLoader implements StreamLoader {
       const watchResults = contents?.twoColumnWatchNextResults;
       const results = watchResults?.results?.results;
       const innerContents = results?.contents;
-      const primary = innerContents.find(
+      const primary = innerContents?.find(
         (c: any) => c.videoPrimaryInfoRenderer
       ).videoPrimaryInfoRenderer;
-      const secondary = innerContents.find(
+      const secondary = innerContents?.find(
         (c: any) => c.videoSecondaryInfoRenderer
       ).videoSecondaryInfoRenderer;
       const owner = secondary?.owner;
