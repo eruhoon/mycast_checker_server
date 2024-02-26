@@ -138,13 +138,15 @@ export class Checker {
     streamRows.forEach((row) => {
       let loader: StreamLoader | null = null;
       const platform = row.platform;
+      if (platform === StreamPlatform.TWITCH) {
+        return;
+      }
       switch (platform) {
         case StreamPlatform.AFREECA:
           loader = new AfreecaLoader(row.keyword);
           break;
         case StreamPlatform.TWITCH:
-          // loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
-          loader = null;
+          loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
           break;
         case StreamPlatform.KAKAOTV:
           loader = new KakaoTvLoader(row.keyword);
