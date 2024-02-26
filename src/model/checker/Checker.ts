@@ -145,9 +145,9 @@ export class Checker {
         case StreamPlatform.AFREECA:
           loader = new AfreecaLoader(row.keyword);
           break;
-        case StreamPlatform.TWITCH:
-          loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
-          break;
+        // case StreamPlatform.TWITCH:
+        //   loader = new TwtichLoader(this.#twitchCacheManager, row.keyword);
+        //   break;
         case StreamPlatform.KAKAOTV:
           loader = new KakaoTvLoader(row.keyword);
           break;
