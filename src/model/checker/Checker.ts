@@ -58,7 +58,6 @@ export class Checker {
     this.#newLocalCacheManager.start();
     this.#totoroCacheManager.start();
     this.#twitchCacheManager.start();
-    this.#youtubeCacheManager.start(60000);
   }
 
   async update() {

@@ -31,6 +31,11 @@ export class YoutubeVideoLoader implements StreamLoader {
     };
   }
 
+  async getInfo2(): Promise<StreamInfo | null> {
+    this.#requestVideoInfo(this.#videoId);
+    return null;
+  }
+
   async #requestVideoInfo(videoId: string): Promise<{
     title: string;
     description: string;
@@ -38,7 +43,8 @@ export class YoutubeVideoLoader implements StreamLoader {
     viewer: number;
   } | null> {
     const url = `https://www.youtube.com/watch?v=${videoId}`;
-    const { data } = await axios.get(url);
+    const { data, headers } = await axios.get(url);
+    console.log((data as string).length);
     const regex = /var ytInitialData = (.*);</;
     const match = regex.exec(data);
     if (match) {

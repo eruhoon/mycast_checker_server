@@ -4,13 +4,25 @@ import { YoutubeCacheContainer } from '../model/cache/YoutubeCacheContainer';
 import { StreamLoader } from './StreamLoader';
 
 export class YoutubeHandleLoader implements StreamLoader {
+  #container: YoutubeCacheContainer;
   #handle: string;
 
   constructor(container: YoutubeCacheContainer, handle: string) {
     this.#handle = handle;
+    this.#container = container;
   }
 
   async getInfo(): Promise<StreamInfo | null> {
+    const cached = this.#container.getCache(this.#handle);
+    if (cached !== undefined) {
+      return cached;
+    }
+    const info = await this.getInfoByRequest();
+    this.#container.updateCache(this.#handle, info);
+    return info;
+  }
+
+  async getInfoByRequest(): Promise<StreamInfo | null> {
     const live = await this.#findLiveVideo();
     if (!live) {
       return null;
@@ -35,7 +47,7 @@ export class YoutubeHandleLoader implements StreamLoader {
     const { data } = await axios.get<string>(
       `https://www.youtube.com/${this.#handle}/streams`
     );
-
+    console.log(data.length);
     const match = data.match(/\"videoRenderer\":\{.*?\}/g);
     const found = match?.find((str) => str.includes('_live'));
     const videoIdMatch = found?.match(/\"videoId\":\"(.*?)\"/);
@@ -57,6 +69,7 @@ export class YoutubeHandleLoader implements StreamLoader {
   } | null> {
     const url = `https://www.youtube.com/watch?v=${videoId}`;
     const { data } = await axios.get(url);
+    console.log(data.length);
     const regex = /var ytInitialData = (.*);</;
     const match = regex.exec(data);
     if (match) {
