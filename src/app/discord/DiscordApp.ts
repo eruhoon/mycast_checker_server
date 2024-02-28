@@ -30,10 +30,9 @@ export class DiscordApp {
         console.log('핑');
         msg.reply('퐁!');
       } else if (msg.content === '방송') {
-        const nicknames = this.checker
-          .getStreams()
-          .local.map((s) => s.nickname);
-        msg.reply(`${nicknames.join(',')} 방송 중~`);
+        const streams = this.checker.getStreams().local;
+        const streamStrings = streams.map((s) => `[${s.nickname}](${s.url})`);
+        msg.reply(`${streamStrings.join(',')} 방송 중~`);
       }
     });
 
