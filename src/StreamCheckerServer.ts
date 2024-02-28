@@ -1,3 +1,4 @@
+import { DiscordApp } from './app/discord/DiscordApp';
 import { Config } from './config/Config';
 import { DatabaseLoader } from './controller/DatabaseLoader';
 import { DummyStreamAsyncLoader } from './controller/DummyStreamAsyncLoader';
@@ -14,26 +15,32 @@ import { SocketManager, SocketTag } from './SocketManager';
 const Log = new Logger('StreamCheckerServer');
 
 export class StreamCheckerServer {
-  static main() {
-    const sOnTime = new Date().getTime();
+  readonly onTime: number;
+  readonly discordApp: DiscordApp;
+  readonly userLoader: IUserAsyncLoader;
+  readonly streamLoader: IStreamAsyncLoader;
+  readonly checker: Checker;
 
-    const serverManager: ServerManager = ServerManager.getInstance();
-
-    let userLoader: IUserAsyncLoader;
-    let streamLoader: IStreamAsyncLoader;
+  constructor() {
+    this.onTime = new Date().getTime();
     if (Config.isDebugMode()) {
-      userLoader = new DummyUserAsyncLoader();
-      streamLoader = new DummyStreamAsyncLoader();
+      this.userLoader = new DummyUserAsyncLoader();
+      this.streamLoader = new DummyStreamAsyncLoader();
     } else {
       const databaseLoader = new DatabaseLoader();
-      userLoader = databaseLoader;
-      streamLoader = databaseLoader;
+      this.userLoader = databaseLoader;
+      this.streamLoader = databaseLoader;
     }
+    this.checker = new Checker(this.userLoader, this.streamLoader);
+    this.discordApp = new DiscordApp(this.checker);
+  }
 
-    const checker = new Checker(userLoader, streamLoader);
-    checker.setOnStreamAddCallback((s) => {
+  main() {
+    const serverManager: ServerManager = ServerManager.getInstance();
+
+    this.checker.setOnStreamAddCallback((s) => {
       const timestamp = new Date().getTime();
-      if (timestamp - sOnTime < 10000) {
+      if (timestamp - this.onTime < 10000) {
         Log.log('added at init: skipped');
         return;
       }
@@ -45,22 +52,22 @@ export class StreamCheckerServer {
       socketManager.notificationNewStream(s.getStream());
     });
     serverManager.get('/stream/', (req, res) => {
-      const streams = checker.getStreams();
+      const streams = this.checker.getStreams();
       res.json(streams);
     });
 
     serverManager.get('/local/', (req, res) => {
-      const streams = checker.getStreams().local;
+      const streams = this.checker.getStreams().local;
       res.json(streams);
     });
 
     serverManager.get('/external/', (req, res) => {
-      const streams = checker.getStreams().external;
+      const streams = this.checker.getStreams().external;
       res.json(streams);
     });
 
     serverManager.get('/twitch/', (req, res) => {
-      const streams = checker.getStreams().external.filter((e) => {
+      const streams = this.checker.getStreams().external.filter((e) => {
         return e.platform === StreamPlatform.TWITCH;
       });
       res.json(streams);
@@ -70,16 +77,18 @@ export class StreamCheckerServer {
 
     const server = serverManager.getServer();
 
-    const socketManager = new SocketManager(server, userLoader);
+    const socketManager = new SocketManager(server, this.userLoader);
     socketManager.init((socket) => {
-      socket.emit(SocketTag.REFRESH_STREAMS, checker.getStreams());
+      socket.emit(SocketTag.REFRESH_STREAMS, this.checker.getStreams());
     });
 
-    checker.update();
-    socketManager.refreshStreams(checker.getStreams());
+    this.checker.update();
+    socketManager.refreshStreams(this.checker.getStreams());
     setInterval(() => {
-      checker.update();
-      socketManager.refreshStreams(checker.getStreams());
+      this.checker.update();
+      socketManager.refreshStreams(this.checker.getStreams());
     }, 10000);
+
+    this.discordApp.run();
   }
 }

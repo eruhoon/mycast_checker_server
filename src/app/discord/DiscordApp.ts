@@ -1,8 +1,15 @@
 import * as dotenv from 'dotenv';
 import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { Checker } from '../../model/checker/Checker';
 
 export class DiscordApp {
-  main() {
+  readonly checker: Checker;
+
+  constructor(checker: Checker) {
+    this.checker = checker;
+  }
+
+  run() {
     dotenv.config();
     const token = process.env.DISCORD_TOKEN;
 
@@ -22,6 +29,11 @@ export class DiscordApp {
       if (msg.content === '핑') {
         console.log('핑');
         msg.reply('퐁!');
+      } else if (msg.content === '방송') {
+        const nicknames = this.checker
+          .getStreams()
+          .local.map((s) => s.nickname);
+        msg.reply(`${nicknames.join(',')} 방송 중~`);
       }
     });
 
