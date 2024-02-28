@@ -1,5 +1,4 @@
 import axios from 'axios';
-import * as qs from 'qs';
 import { Logger } from '../../model/common/logger/Logger';
 
 const Log = new Logger('KakaoTvVideoLoader');
@@ -34,7 +33,7 @@ export class KakaoTvVideoLoader {
   async #request(videoId: string): Promise<RawVideo | null> {
     const host = `http://web-tv.kakao.com/api/v1/app`;
     const dir = `livelinks/${videoId}/impress`;
-    const query = qs.stringify({
+    const query = new URLSearchParams({
       fulllevels: 'liveLink',
       player: 'monet_flash',
       section: 'home',
