@@ -8,7 +8,6 @@
     "express": "^4.18.2",
     "iconv-lite": "^0.4.24",
     "mysql": "^2.18.1",
-    "request": "^2.88.2",
     "socket.io": "^2.5.0",
     "xml-parser": "^1.2.1",
     "xml2js": "^0.4.23"
