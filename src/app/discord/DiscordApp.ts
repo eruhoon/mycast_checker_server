@@ -33,6 +33,24 @@ export class DiscordApp {
         const streams = this.checker.getStreams().local;
         const streamStrings = streams.map((s) => `[${s.nickname}](${s.url})`);
         msg.reply(`${streamStrings.join(',')} 방송 중~`);
+      } else if (msg.content === '치지직') {
+        const streams = this.checker
+          .getStreams()
+          .external.filter((s) => s.platform === 'chzzk');
+        const streamStrings = streams.map((s) => `[${s.nickname}](${s.url})`);
+        msg.reply(`${streamStrings.join(',')} 방송 중~`);
+      } else if (msg.content === '유튜브') {
+        const streams = this.checker
+          .getStreams()
+          .external.filter((s) => s.platform === 'youtube');
+        const streamStrings = streams.map((s) => `[${s.nickname}](${s.url})`);
+        msg.reply(`${streamStrings.join(',')} 방송 중~`);
+      } else if (msg.content === '아프리카') {
+        const streams = this.checker
+          .getStreams()
+          .external.filter((s) => s.platform === 'afreeca');
+        const streamStrings = streams.map((s) => `[${s.nickname}](${s.url})`);
+        msg.reply(`${streamStrings.join(',')} 방송 중~`);
       }
     });
 
