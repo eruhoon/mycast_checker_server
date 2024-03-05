@@ -1,3 +1,4 @@
+import { VegaChatApi } from '../../api/vegachat/VegaChatApi';
 import { IStreamAsyncLoader } from '../../controller/IStreamAsyncLoader';
 import { IUserAsyncLoader } from '../../controller/IUserAsyncLoader';
 import { StreamRewardProvider } from '../../controller/StreamRewardProvider';
@@ -25,6 +26,7 @@ import {
 export class Checker {
   #userLoader: IUserAsyncLoader;
   #streamLoader: IStreamAsyncLoader;
+  #chatApi: VegaChatApi = new VegaChatApi();
 
   #newLocalCacheManager: NewLocalCacheContainer;
   #totoroCacheManager: TotoroCacheContainer;
@@ -64,7 +66,12 @@ export class Checker {
     this.#updateStream();
 
     const users = await this.#userLoader.getUsers();
-    users.forEach((user) => {
+    const connectedUsers = await this.#chatApi.getCurrentUsers();
+    const filtered = users.filter((user) =>
+      connectedUsers.find((conn) => conn.hash === user.getHash())
+    );
+
+    filtered.forEach((user) => {
       let loaders: StreamLoader[] = [];
       const platform = user.getStreamPlatform();
       if (platform === StreamPlatform.TWITCH) {
