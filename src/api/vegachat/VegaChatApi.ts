@@ -4,7 +4,7 @@ export class VegaChatApi {
   readonly #url = 'https://mycast.xyz:8002';
 
   async getCurrentUsers(): Promise<VegaChatUser[]> {
-    return (await axios.get(`${this.#url}/users`)) ?? [];
+    return (await axios.get(`${this.#url}/users`))?.data ?? [];
   }
 }
 
