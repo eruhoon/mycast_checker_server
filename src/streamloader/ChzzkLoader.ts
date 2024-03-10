@@ -11,7 +11,8 @@ export class ChzzkLoader implements StreamLoader {
   }
 
   async getInfo(): Promise<StreamInfo | null> {
-    const raw = await this.#manager.getLiveDetail(this.#keyword);
+    const profile = await this.#manager.getProfile(this.#keyword);
+    const raw = await this.#manager.getLiveStatus(this.#keyword);
     if (!raw || raw.content.status !== 'OPEN') {
       return null;
     }
@@ -19,12 +20,12 @@ export class ChzzkLoader implements StreamLoader {
       result: true,
       platform: StreamPlatform.CHZZK,
       keyid: this.#keyword,
-      icon: raw.content.channel.channelImageUrl,
-      nickname: raw.content.channel.channelName,
-      title: raw.content.channel.channelName,
+      icon: profile.content.profileImageUrl,
+      nickname: profile.content.nickname,
+      title: profile.content.nickname,
       description: raw.content.liveTitle,
       url: `https://chzzk.naver.com/live/${this.#keyword}`,
-      thumbnail: raw.content.liveImageUrl,
+      thumbnail: '',
       onair: true,
       viewer: raw.content.concurrentUserCount,
     };
