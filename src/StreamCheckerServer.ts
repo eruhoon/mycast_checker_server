@@ -1,4 +1,3 @@
-import { DiscordApp } from './app/discord/DiscordApp';
 import { Config } from './config/Config';
 import { DatabaseLoader } from './controller/DatabaseLoader';
 import { DummyStreamAsyncLoader } from './controller/DummyStreamAsyncLoader';
@@ -16,7 +15,6 @@ const Log = new Logger('StreamCheckerServer');
 
 export class StreamCheckerServer {
   readonly onTime: number;
-  readonly discordApp: DiscordApp;
   readonly userLoader: IUserAsyncLoader;
   readonly streamLoader: IStreamAsyncLoader;
   readonly checker: Checker;
@@ -32,7 +30,6 @@ export class StreamCheckerServer {
       this.streamLoader = databaseLoader;
     }
     this.checker = new Checker(this.userLoader, this.streamLoader);
-    this.discordApp = new DiscordApp(this.checker);
   }
 
   main() {
@@ -88,7 +85,5 @@ export class StreamCheckerServer {
       this.checker.update();
       socketManager.refreshStreams(this.checker.getStreams());
     }, 10000);
-
-    this.discordApp.run();
   }
 }
