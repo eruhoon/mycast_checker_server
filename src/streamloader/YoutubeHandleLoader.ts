@@ -47,15 +47,31 @@ export class YoutubeHandleLoader implements StreamLoader {
     const { data } = await axios.get<string>(
       `https://www.youtube.com/${this.#handle}/streams`
     );
-    console.log(data.length);
-    const match = data.match(/\"videoRenderer\":\{.*?\}/g);
-    const found = match?.find((str) => str.includes('_live'));
-    const videoIdMatch = found?.match(/\"videoId\":\"(.*?)\"/);
-    const videoId = videoIdMatch?.[1];
-    const thumbMatch = found?.match(/\"url\":\"(.*?)\"/);
-    const thumbnail = thumbMatch?.[1] ?? '';
-    if (videoId) {
-      return { id: videoId, thumbnail };
+
+    const isLive = data.indexOf('"style":"LIVE"') > 0;
+    const scriptMatch = data.match(/var ytInitialData = (.*?);<\/script>/);
+    const rawJson = scriptMatch?.[1];
+    if (isLive && rawJson) {
+      const json = JSON.parse(scriptMatch?.[1]);
+      const tabs = json?.contents?.twoColumnBrowseResultsRenderer?.tabs;
+      const liveTab = tabs?.find(
+        (tab: any) => tab.tabRenderer.title === '라이브'
+      );
+      const rawLiveContents =
+        liveTab?.tabRenderer?.content?.richGridRenderer?.contents;
+      const liveContents = rawLiveContents
+        .map((raw: any) => raw.richItemRenderer?.content?.videoRenderer)
+        .filter((c: any) => c)
+        .filter((c: any) => !c.upcomingEventData)
+        .filter((c: any) => !c.lengthText);
+      if (liveContents.length > 0) {
+        const liveContent = liveContents[0];
+        const videoId = liveContent.videoId;
+        const thumbnail = liveContent.thumbnail.thumbnails?.[0]?.url;
+        return { id: videoId, thumbnail };
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
