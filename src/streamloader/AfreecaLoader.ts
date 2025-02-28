@@ -22,11 +22,11 @@ export class AfreecaLoader implements StreamLoader {
   }
 
   async #requestInfo(): Promise<RawAfreecaInfo | null> {
-    const host = 'http://sch.afreeca.com/api.php';
+    const host = 'http://sch.sooplive.co.kr/api.php';
     const query = new URLSearchParams({
       m: 'liveSearch',
       v: '1.0',
-      szOrder: '',
+      szOrder: 'score',
       c: 'EUC-KR',
       szKeyword: this.#id,
     });
