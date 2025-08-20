@@ -12,6 +12,10 @@ export class YoutubeHandleLoader implements StreamLoader {
     this.#container = container;
   }
 
+  get handleText(): string {
+    return this.#handle.startsWith('@') ? this.#handle.slice(1) : this.#handle;
+  }
+
   async getInfo(): Promise<StreamInfo | null> {
     const cached = this.#container.getCache(this.#handle);
     if (cached !== undefined) {
@@ -44,8 +48,10 @@ export class YoutubeHandleLoader implements StreamLoader {
   }
 
   async #findLiveVideo(): Promise<{ id: string; thumbnail: string } | null> {
+    const handleText = this.handleText;
+    const encodedHandle = encodeURIComponent(handleText);
     const { data } = await axios.get<string>(
-      `https://www.youtube.com/${this.#handle}/streams`
+      `https://www.youtube.com/@${encodedHandle}/streams`
     );
 
     const isLive = data.indexOf('"style":"LIVE"') > 0;
